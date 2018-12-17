@@ -1,0 +1,19 @@
+class TransportationGraph
+types
+-- TODO Define types here
+	public String : seq of char;
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+	protected stations : set of Station := {};
+operations
+-- TODO Define operations here
+	
+	public TransportationGraph: String ==>
+
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end TransportationGraph

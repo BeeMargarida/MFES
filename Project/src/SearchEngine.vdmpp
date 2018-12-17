@@ -1,0 +1,19 @@
+class SearchEngine
+types
+-- TODO Define types here
+
+								 
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+	protected graph : Graph;
+	protected trips : seq of Trip;
+operations
+-- TODO Define operations here
+	
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end SearchEngine
