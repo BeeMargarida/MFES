@@ -1,8 +1,8 @@
 class Trip
 types
 -- TODO Define types here
-	public Segment :: startCity : Utilities`String
-								 		destinationCity : Utilities`String
+	public Segment :: startCity : seq of char
+								 		destinationCity : seq of char
 								 		timeDuration: real
 								 		distance: real
 								 		price: real;

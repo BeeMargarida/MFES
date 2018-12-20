@@ -20,8 +20,6 @@ operations
 		return self;
 	);
 	
-	
-	
 functions
 -- TODO Define functiones here
 traces
