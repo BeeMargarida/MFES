@@ -1,19 +1,20 @@
-class TransportationGraph
+class Trip
 types
 -- TODO Define types here
-	public String : seq of char;
+	public Segment :: startCity : seq of char
+								 		destinationCity : seq of char
+								 		timeDuration: real
+								 		distance: real
+								 		price: real;
 values
 -- TODO Define values here
 instance variables
 -- TODO Define instance variables here
-	protected stations : set of Station := {};
+	protected segments : seq of Segment;
 operations
 -- TODO Define operations here
-	
-	public TransportationGraph: String ==>
-
 functions
 -- TODO Define functiones here
 traces
 -- TODO Define Combinatorial Test Traces here
-end TransportationGraph
+end Trip

@@ -1,0 +1,43 @@
+class TransportGraph
+
+types
+	String = seq of char;
+	Type = Connection`Type;
+	
+instance variables
+	private stations : set of String;
+	private connections: seq of Connection;
+
+operations
+	-- Constructor
+	public TransportGraph:() ==> TransportGraph
+	TransportGraph() ==
+	(
+		stations := {};
+		connections := [];
+		createDatabase();
+	);
+	
+	
+	private addConnection: Type * String * String * real * seq of nat ==> ()
+	addConnection(t, s, d, dist, ttbl) ==
+		(dcl tempConnection: Connection;
+			tempConnection := new Connection(t, s, d, dist, ttbl);
+			connections := connections ^ [tempConnection];
+			
+			stations := stations union {s, d};
+			);
+		
+	public createDatabase: () ==> ()
+		createDatabase() ==
+		(
+			addConnection(<Bus>, "Porto", "Lisbon", 300, [690, 720]);
+			addConnection(<Plane>, "Amsterdam", "Bologna", 300, [60, 720]);
+			addConnection(<Plane>, "Bologna", "Paris", 2900, [30, 721]);
+			-- TODO add more connections
+		);	
+functions
+
+traces
+
+end TransportGraph
