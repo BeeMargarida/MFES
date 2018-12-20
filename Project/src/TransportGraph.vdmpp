@@ -2,6 +2,7 @@ class TransportGraph
 
 types
 	Type = Connection`Type;
+	String = Utilities`String;
 	
 instance variables
 	private stations : set of Utilities`String;

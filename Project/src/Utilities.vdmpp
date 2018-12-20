@@ -1,6 +1,5 @@
 class Utilities
 types
-
 	public String = seq of char;
 	
 values

@@ -2,6 +2,7 @@ class Connection
 
 types
 	public Type = <Plane> | <Bus> | <Train> | <Walk>;
+	public String = Utilities`String;
 
 values
 	-- euros / km; constants; to separate in a header file later
