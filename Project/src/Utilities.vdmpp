@@ -7,9 +7,10 @@ values
 instance variables
 -- TODO Define instance variables here
 operations
--- TODO Define operations here
+	
+
 functions
--- TODO Define functiones here
+	
 traces
 -- TODO Define Combinatorial Test Traces here
 end Utilities
