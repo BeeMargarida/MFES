@@ -2,6 +2,7 @@ class Connection
 
 types
 	public Type = <Plane> | <Bus> | <Train> | <Walk>;
+	public String = Utilities`String;
 
 values
 	-- euros / km; constants; to separate in a header file later
@@ -18,8 +19,8 @@ values
 instance variables
 	-- declarations and initializations
 	public type: Type;
-	public source: Station;
-	public destination: Station;
+	public source: Utilities`String;
+	public destination: Utilities`String;
 	public distance: real;
 	public price: real;
 	public duration: real;
@@ -31,7 +32,7 @@ instance variables
 	
 operations
 -- Constructor
-	public Connection: Type * Station * Station * real * seq of nat ==> Connection
+	public Connection: Type * String * Utilities`String * real * seq of nat ==> Connection
 	Connection(t, s, d, dist, ttbl) ==
 	(
 		type := t;

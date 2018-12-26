@@ -18,8 +18,8 @@ values
 instance variables
 	-- declarations and initializations
 	public type: Type;
-	public source: Station;
-	public destination: Station;
+	public source: Utilities`Station;
+	public destination: Utilities`Station;
 	public distance: real;
 	public price: real;
 	public duration: real;
@@ -31,7 +31,7 @@ instance variables
 	
 operations
 -- Constructor
-	public Connection: Type * Station * Station * real * seq of nat ==> Connection
+	public Connection: Type * Utilities`Station * Utilities`Station * real * seq of nat ==> Connection
 	Connection(t, s, d, dist, ttbl) ==
 	(
 		type := t;

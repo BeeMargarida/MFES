@@ -2,9 +2,10 @@ class TransportGraph
 
 types
 	public Type = Connection`Type;
+	public String = Utilities`String;
 	
 instance variables
-	private stations : set of Station;
+	private stations : set of Utilities`String;
 	private connections: set of Connection;
 
 operations
@@ -18,16 +19,13 @@ operations
 	);
 	
 	
-	private addConnection: Type * Utilities`String * Utilities`String * real * seq of nat ==> ()
+	private addConnection: Type * String * String * real * seq of nat ==> ()
 	addConnection(t, s, d, dist, ttbl) ==
 		(dcl tempConnection: Connection;
-			dcl originStation : Station := Station(s, false, 0);
-			dcl destinationStation : Station := Station(d, false, 0);
-			
-			tempConnection := new Connection(t, originStation, destinationStation, dist, ttbl);
+			tempConnection := new Connection(t, s, d, dist, ttbl);
 			connections := connections union {tempConnection};
 			
-			stations := stations union {originStation, destinationStation};
+			stations := stations union {s, d};
 			);
 		
 	public createDatabase: () ==> ()
@@ -53,10 +51,7 @@ operations
 	public listConnections: () ==> set of Connection 
 		listConnections() == return connections;
 		
-	public listStations: () ==> set of Station
-		listStations() == return stations;
-		
-	public stringEqual: Utilities`String * Utilities`String ==> bool
+	public stringEqual: String * String ==> bool
 	stringEqual(s1, s2) ==
 	(
 	 if len s1 <> len s2 then
@@ -67,47 +62,26 @@ operations
 	 return true;
 	);
 	
-	public getConnectionsWithSource: Utilities`String ==> set of Connection
+	public getConnectionsWithSource: String ==> set of Connection
 	getConnectionsWithSource(s) ==
 	(dcl result: set of Connection;
 	 result := {};
 		for all e in set connections do
 		(
-			if stringEqual(e.source.name, s) then result := result union {e}; 
+			if stringEqual(e.source, s) then result := result union {e}; 
 		);
 		return result;
 	);
 	
-	public getNeighborsOfNode: Utilities`String ==> set of Station
-	getNeighborsOfNode(name) ==
-	(
-		dcl result: set of Station := {};
-		for all e in set connections do
-		(
-			if stringEqual(e.source.name, name) then result := result union {e.destination}; 
-		);
-		return result;
-	);
-	
-	public getConnectionsWithDestination: Utilities`String ==> set of Connection
+	public getConnectionsWithDestination: String ==> set of Connection
 	getConnectionsWithDestination(d) ==
 	(dcl result: set of Connection;
 	 result := {};
 		for all e in set connections do
 		(
-			if stringEqual(e.destination.name, d) then result := result union {e}; 
+			if stringEqual(e.destination, d) then result := result union {e}; 
 		);
 		return result;
-	);
-	
-	public getStation: Utilities`String ==> Station
-	getStation(stationName) ==
-	(
-		dcl stationRes : Station;
-		for all station in set stations do (
-			if stringEqual(station.name, stationName) then stationRes := station;
-		); 
-		return stationRes;
 	);
 	
 functions

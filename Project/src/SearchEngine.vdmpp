@@ -1,7 +1,6 @@
 class SearchEngine
 types
 -- TODO Define types here
-
 								 
 values
 -- TODO Define values here
@@ -9,7 +8,11 @@ instance variables
 
 	protected transportMap: TransportGraph;
 	protected trips: seq of Trip := [];
+	protected settledNodes: set of Station := {};
+	protected unsettledNodes: set of Station := {};
+	protected distances: map Station to real := {|->};
 	
+		
 operations
 
 	public SearchEngine: TransportGraph * seq of Trip ==> SearchEngine
@@ -20,7 +23,180 @@ operations
 		return self;
 	);
 	
+	private removeHighestValue: seq of Station ==> seq of Station
+	removeHighestValue(heap) == 
+	(
+		dcl max : nat := 1;
+		dcl index : nat := 1;
+		dcl finalHeap : seq of Station := [];
+		
+		while( index < len heap ) do (
+			
+			dcl heapMax : Station := heap(max);
+			dcl heapCurr : Station := heap(index);
+			
+			if(heapCurr.weigth > heapMax.weigth) then (
+				max := index;
+			);
+			
+			index := index + 1;
+			
+		);
+		
+		index := 1;
+		
+		while(index < len heap) do (
+			dcl heapCurr : Station := heap(index);
+			if(index <> max) then finalHeap := finalHeap ^ [heapCurr];
+		);
+		
+		return finalHeap;
+	);
 	
+	private getLowestDistanceNode: set of Station ==> Station
+	getLowestDistanceNode(unsettledNodes) == 
+	(
+		dcl node : Station;
+		dcl lowestDist : real := 100000;
+		
+		for all n in set unsettledNodes do (
+			
+			dcl weigth : real := n.weigth;
+			
+			if(weigth < lowestDist) then (
+				lowestDist := weigth;
+				node := n;
+			);
+			
+		);
+		
+		return node;
+	);
+	
+	/*
+	private remove : set of Utilities`Station * Utilities`Station ==> set of Utilities`Station
+	remove(unsettledNodes, node) == 
+	(
+		dcl newUnsettledNodes : set of Utilities`Station;
+		
+		for all n in set unsettledNodes do (
+			if(stringEqual(n.name, node.name) = false) then (
+				newUnsettledNodes := newUnsettledNodes union {n};
+			);
+		);
+		
+		return newUnsettledNodes;
+	);*/
+	
+	-- print s.getPathsDist(['P','o','r','t','o'],['F','a','r','o'])
+	public disjkstraAlgorithm: TransportGraph * Utilities`String ==> ()
+	disjkstraAlgorithm(graph, origin) ==
+	(
+		dcl station : Station := transportMap.getStation(origin);
+		
+		distances := distances ++ {station |-> 0};
+		unsettledNodes := unsettledNodes union {station};
+		
+		while(unsettledNodes <> {}) do (
+		
+			dcl minimumNode : Station := getMinimumNode(unsettledNodes);
+			settledNodes := settledNodes union {minimumNode};
+			unsettledNodes := unsettledNodes\{minimumNode};
+			
+			findMinimalDistances(minimumNode);
+		
+		);
+	);
+	
+	private findMinimalDistances: Station ==> () 
+	findMinimalDistances(node) ==
+	(
+		dcl adjacentNodes: set of Station := transportMap.getNeighborsOfNode(node.name);
+		dcl prev: seq of Station := [];
+		
+		for all target in set adjacentNodes do (
+		
+			prev := target.getPreviousNodes();
+			
+			if(getShortestDistance(target) > getShortestDistance(node) + getDistance(node, target)) then (
+				
+				distances := distances ++ {target |-> getShortestDistance(node) + getDistance(node, target)};
+				prev := prev ^ [target];
+				target.setPreviousStations(prev);
+				
+				unsettledNodes := unsettledNodes union {target}; 
+				
+			)
+			else if (getShortestDistance(target) = getShortestDistance(node) + getDistance(node, target)) then (
+				
+				prev := prev ^ [target];
+				target.setPreviousStations(prev);
+				
+			)
+		
+		);
+		
+	);
+	
+	private getMinimumNode: set of Station ==> Station 
+	getMinimumNode(unsettledNodes) == 
+	(
+		dcl minimum : Station := new Station("",false,0);
+		for all n in set unsettledNodes do (
+			if(minimum.name = "") then (
+				minimum := n;
+			)
+			else (
+				if(getShortestDistance(n) < getShortestDistance(minimum)) then (
+					minimum := n;
+				); 
+			);
+		);
+		
+		return minimum;
+	);
+	
+	private getShortestDistance: Station ==> real 
+	getShortestDistance(destination) == 
+	(
+		-- verify this
+		dcl d: set of real := distances <: destination;
+		dcl d1 : real;
+
+		
+		if(d = nil) then (
+			return 1000000;
+		) 
+		else (
+			return d;
+		);
+	);
+	
+	private getDistance: Station * Station ==> real
+	getDistance(node, target) ==
+	(
+		for all con in set transportMap.listConnections() do (
+			
+			if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
+				-- change this later to anything we like
+				return con.distance;
+			);
+			
+		);
+		
+		return 0;
+	);
+	
+	private stringEqual: Utilities`String * Utilities`String ==> bool
+	stringEqual(s1, s2) ==
+	(
+	 if len s1 <> len s2 then
+	 	return false;
+	 for idx = 1 to len s1 do
+	 	if s1(idx) <> s2(idx) then return false;
+	 
+	 return true;
+	);
 	
 functions
 -- TODO Define functiones here

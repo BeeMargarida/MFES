@@ -1,0 +1,45 @@
+class Station
+types
+values
+-- TODO Define values here
+instance variables
+	
+	public name: Utilities`String;
+	public visited: bool;
+	public weigth: real;
+	private previousStations: seq of Station := [];
+	
+operations
+
+	public Station: Utilities`String * bool * real ==> Station
+	Station(n, v, w) ==
+	(
+		name := n;
+		visited := v;
+		weigth := w;
+		return self;
+	);
+	
+	public addPreviousStation: Station ==> ()
+	addPreviousStation(station) == 
+	(
+		previousStations := previousStations ^ [station];
+	);
+	
+	public getPreviousNodes: () ==> seq of Station
+	getPreviousNodes() == 
+	(
+		return previousStations;
+	);
+	
+	public setPreviousStations: seq of Station ==> ()
+	setPreviousStations(stations) == 
+	(
+		previousStations := stations
+	);
+	
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Station

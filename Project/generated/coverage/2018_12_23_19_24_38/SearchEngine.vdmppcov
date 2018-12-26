@@ -1,0 +1,186 @@
+class SearchEngine
+types
+-- TODO Define types here
+
+								 
+values
+-- TODO Define values here
+instance variables
+
+	protected transportMap: TransportGraph;
+	protected trips: seq of Trip := [];
+	
+operations
+
+	public SearchEngine: TransportGraph * seq of Trip ==> SearchEngine
+	SearchEngine(graph, t) ==
+	(
+		transportMap := graph;
+		trips := t;
+		return self;
+	);
+	
+	/*
+template <class T>
+vector<T> Graph<T>::dfs() const {
+	typename vector<Vertex<T>*>::const_iterator it= vertexSet.begin();
+	typename vector<Vertex<T>*>::const_iterator ite= vertexSet.end();
+	for (; it !=ite; it++)
+		(*it)->visited=false;
+	vector<T> res;
+	it=vertexSet.begin();
+	for (; it !=ite; it++)
+	    if ( (*it)->visited==false )
+	    	dfs(*it,res);
+	return res;
+}
+
+template <class T>
+void Graph<T>::dfs(Vertex<T> *v,vector<T> &res) const {
+	v->visited = true;
+	res.push_back(v->info);
+	typename vector<Edge<T> >::iterator it= (v->adj).begin();
+	typename vector<Edge<T> >::iterator ite= (v->adj).end();
+	for (; it !=ite; it++)
+	    if ( it->dest->visited == false ){
+	    	//cout << "ok ";
+	    	dfs(it->dest, res);
+	    }
+}
+
+template<class T>
+void Graph<T>::dijkstraShortestPath(const T &s) {
+
+	for(unsigned int i = 0; i < vertexSet.size(); i++) {
+		vertexSet[i]->path = NULL;
+		vertexSet[i]->dist = INT_INFINITY;
+		vertexSet[i]->processing = false;
+	}
+
+	Vertex<T>* v = getVertex(s);
+	v->dist = 0;
+
+	vector< Vertex<T>* > pq;
+	pq.push_back(v);
+
+	make_heap(pq.begin(), pq.end());
+
+
+	while( !pq.empty() ) {
+
+		v = pq.front();
+		pop_heap(pq.begin(), pq.end());
+		pq.pop_back();
+
+		for(unsigned int i = 0; i < v->adj.size(); i++) {
+			Vertex<T>* w = v->adj[i].dest;
+
+			if(v->dist + v->adj[i].weight < w->dist ) {
+
+				w->dist = v->dist + v->adj[i].weight;
+				w->path = v;
+
+				//se já estiver na lista, apenas a actualiza
+				if(!w->processing)
+				{
+					w->processing = true;
+					pq.push_back(w);
+				}
+
+				make_heap (pq.begin(),pq.end(),vertex_greater_than<T>());
+			}
+		}
+	}
+	*/
+	
+	private removeHighestValue: seq of Utilities`Station ==> seq of Utilities`Station
+	removeHighestValue(heap) == 
+	(
+		dcl max : nat := 1;
+		dcl index : nat := 1;
+		dcl finalHeap : seq of Utilities`Station := [];
+		
+		while( index < len heap ) do (
+			
+			dcl heapMax : Utilities`Station := heap(max);
+			dcl heapCurr : Utilities`Station := heap(index);
+			
+			if(heapCurr.weigth > heapMax.weigth) then (
+				max := index;
+			);
+			
+			index := index + 1;
+			
+		);
+		
+		index := 1;
+		
+		while(index < len heap) do (
+			dcl heapCurr : Utilities`Station := heap(index);
+			if(index <> max) then finalHeap := finalHeap ^ [heapCurr];
+		);
+		
+		return finalHeap;
+	);
+	
+
+	public getPathsDist: Utilities`String * Utilities`String ==> seq of Utilities`Station
+	getPathsDist(origin, destination) ==
+	(
+		-- make list of connections (empty)
+		dcl trips : seq of Trip;
+		dcl counterNumberOfPaths : nat := 0;
+		dcl foundPaths : seq of Connection := [];
+		dcl heapPaths : seq of Utilities`Station := [];
+	
+		dcl station : Utilities`Station := transportMap.getStation(origin); 
+		heapPaths := heapPaths ^ [ station ];
+		
+		while( heapPaths <> [] and counterNumberOfPaths < 5) do (
+			
+			dcl connectionsOrigin : set of Connection := transportMap.getConnectionsWithSource(origin);
+			
+			-- remove highest value from heapPaths
+			heapPaths := removeHighestValue(heapPaths);
+			station := hd heapPaths;
+			
+			
+			for all con in set connectionsOrigin do (
+				
+				dcl currentStation : Utilities`Station := con.destination;
+				
+				if(station.weigth + con.distance < currentStation.weigth) then (
+				
+					currentStation.weigth := station.weigth + con.distance;
+					
+					if( currentStation.visited = false ) then (
+						currentStation.visited := true;
+						heapPaths := heapPaths ^ [currentStation];
+					); 
+				
+				);
+				
+			);
+			
+		); 			
+		
+		-- return trips;
+		return heapPaths;
+	);
+	
+	private stringEqual: Utilities`String * Utilities`String ==> bool
+	stringEqual(s1, s2) ==
+	(
+	 if len s1 <> len s2 then
+	 	return false;
+	 for idx = 1 to len s1 do
+	 	if s1(idx) <> s2(idx) then return false;
+	 
+	 return true;
+	);
+	
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end SearchEngine

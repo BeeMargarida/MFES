@@ -4,7 +4,7 @@ types
 	public Type = Connection`Type;
 	
 instance variables
-	private stations : set of Station;
+	private stations : set of Utilities`Station;
 	private connections: set of Connection;
 
 operations
@@ -21,8 +21,8 @@ operations
 	private addConnection: Type * Utilities`String * Utilities`String * real * seq of nat ==> ()
 	addConnection(t, s, d, dist, ttbl) ==
 		(dcl tempConnection: Connection;
-			dcl originStation : Station := Station(s, false, 0);
-			dcl destinationStation : Station := Station(d, false, 0);
+			dcl originStation : Utilities`Station := mk_Utilities`Station(s, false, 0);
+			dcl destinationStation : Utilities`Station := mk_Utilities`Station(d, false, 0);
 			
 			tempConnection := new Connection(t, originStation, destinationStation, dist, ttbl);
 			connections := connections union {tempConnection};
@@ -53,9 +53,6 @@ operations
 	public listConnections: () ==> set of Connection 
 		listConnections() == return connections;
 		
-	public listStations: () ==> set of Station
-		listStations() == return stations;
-		
 	public stringEqual: Utilities`String * Utilities`String ==> bool
 	stringEqual(s1, s2) ==
 	(
@@ -78,17 +75,6 @@ operations
 		return result;
 	);
 	
-	public getNeighborsOfNode: Utilities`String ==> set of Station
-	getNeighborsOfNode(name) ==
-	(
-		dcl result: set of Station := {};
-		for all e in set connections do
-		(
-			if stringEqual(e.source.name, name) then result := result union {e.destination}; 
-		);
-		return result;
-	);
-	
 	public getConnectionsWithDestination: Utilities`String ==> set of Connection
 	getConnectionsWithDestination(d) ==
 	(dcl result: set of Connection;
@@ -100,10 +86,10 @@ operations
 		return result;
 	);
 	
-	public getStation: Utilities`String ==> Station
+	public getStation: Utilities`String ==> Utilities`Station
 	getStation(stationName) ==
 	(
-		dcl stationRes : Station;
+		dcl stationRes : Utilities`Station;
 		for all station in set stations do (
 			if stringEqual(station.name, stationName) then stationRes := station;
 		); 
