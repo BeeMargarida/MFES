@@ -74,10 +74,22 @@ operations
 		return node;
 	);
 	
-	---------------------------------------------------------------------------------------------
-	/** 
-	*  	Disjktra Algorithm
-	**/
+	/*
+	private remove : set of Utilities`Station * Utilities`Station ==> set of Utilities`Station
+	remove(unsettledNodes, node) == 
+	(
+		dcl newUnsettledNodes : set of Utilities`Station;
+		
+		for all n in set unsettledNodes do (
+			if(stringEqual(n.name, node.name) = false) then (
+				newUnsettledNodes := newUnsettledNodes union {n};
+			);
+		);
+		
+		return newUnsettledNodes;
+	);*/
+	
+	-- print s.getPathsDist(['P','o','r','t','o'],['F','a','r','o'])
 	public disjkstraAlgorithm: Utilities`String ==> ()
 	disjkstraAlgorithm(origin) ==
 	(
@@ -167,7 +179,17 @@ operations
 		else return 1000000;
 	);
 	
-	---------------------------------------------------------------------------------------------
+	private stringEqual: Utilities`String * Utilities`String ==> bool
+	stringEqual(s1, s2) ==
+	(
+	 if len s1 <> len s2 then
+	 	return false;
+	 for idx = 1 to len s1 do
+	 	if s1(idx) <> s2(idx) then return false;
+	 
+	 return true;
+	);
+	
 	/** 
 	* Returns seq of nodes from origin to destination
 	**/
@@ -180,19 +202,17 @@ operations
 		dcl tmp : map Station to Station := {stationDest} <: prev;
 		dcl tmp2 : set of Station := rng tmp;
 		
-		if (tmp2 = {}) then (
+		if (t) then (
 			return [];
 		);
 		
 		path := path ^ [stationDest];
 		
-		while (tmp2 <> {}) do (
+		while (prev(stationDest) <> undefined) do (
 			
 			stationDest := prev(stationDest);
 			path := path ^ [stationDest];
 			
-			tmp := {stationDest} <: prev;
-			tmp2 := rng tmp;
 		);
 		
 		revertedPath := revertSeq(path);
@@ -203,38 +223,17 @@ operations
 	private revertSeq: seq of Station ==> seq of Station
 	revertSeq(stations) ==
 	(
-		dcl result : seq of Station := stations;
-		dcl i : nat := 0;
-		
-		for sta in stations do (
-			 result(len stations - i) := sta;
-			 i := i + 1;  
-		);
-		
-		return result;
+		-- end this
+		return stations;
 	);
 	
 	/*
-		HOW TO RUN:
-		
 		create t := new TransportGraph()
 		create s := new SearchEngine(t, [])
 		print s.disjkstraAlgorithm(['P','o','r','t','o'])
 		print s.getPath(['M','a','d','r','i','d'])
-		print s.getPath(['B','a','r','c','e','l','o','n','a'])
-		
 	*/
 	
-	private stringEqual: Utilities`String * Utilities`String ==> bool
-	stringEqual(s1, s2) ==
-	(
-	 if len s1 <> len s2 then
-	 	return false;
-	 for idx = 1 to len s1 do
-	 	if s1(idx) <> s2(idx) then return false;
-	 
-	 return true;
-	);
 functions
 -- TODO Define functiones here
 traces

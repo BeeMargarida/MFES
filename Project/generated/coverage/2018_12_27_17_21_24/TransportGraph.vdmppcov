@@ -45,7 +45,7 @@ operations
 			addConnection(<Bus>,   "Lisbon", "Faro", 285, [8, 12]);
 			addConnection(<Plane>, "Lisbon", "Madrid", 650, [8, 10, 12, 15, 19, 22]);
 			addConnection(<Train>, "Lisbon", "Madrid", 680, [8, 10, 12, 15, 17, 19, 22]);
-			addConnection(<Plane>, "Lisbon", "Barcelona", 1347, [8, 12, 15, 19, 22]);
+			addConnection(<Plane>, "Lisbon", "Barcelona", 1247, [8, 12, 15, 19, 22]);
 			addConnection(<Train>, "Madrid", "Barcelona", 625, [8, 10, 12, 15, 17, 19, 22]);
 			addConnection(<Plane>, "Madrid", "Barcelona", 625, [8, 12, 15, 19, 22]);
 			-- TODO add more connections
