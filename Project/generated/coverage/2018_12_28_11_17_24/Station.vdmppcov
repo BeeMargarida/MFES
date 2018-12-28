@@ -6,7 +6,7 @@ instance variables
 	
 	public name: Utilities`String;
 	public visited: bool;
-	public weight: real;
+	public weigth: real;
 	private calculatedVariables: seq of real := [0,0,0];
 	
 operations
@@ -16,17 +16,15 @@ operations
 	(
 		name := n;
 		visited := v;
-		weight := w;
+		weigth := w;
 		return self;
-	)
-	post name = n and visited = v and weight = w;
+	);
 	
 	public setCalculatedVariables: seq of real ==> ()
 	setCalculatedVariables(vars) ==
 	(
 		calculatedVariables := vars;
-	)
-	post calculatedVariables = vars;
+	);
 	
 	public getCalculatedVariables: () ==> seq of real
 	getCalculatedVariables() ==

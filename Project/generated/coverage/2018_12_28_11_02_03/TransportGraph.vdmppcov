@@ -44,7 +44,6 @@ operations
 			addConnection(<Train>, "Lisbon", "Faro", 280, [9, 11, 15, 19]);
 			addConnection(<Plane>, "Lisbon", "Faro", 250, [8, 12, 20]);
 			addConnection(<Bus>,   "Lisbon", "Faro", 285, [8, 12]);
-			addConnection(<Bus>, "Lisbon", "Madrid", 750, [8, 12, 15, 17]);
 			addConnection(<Plane>, "Lisbon", "Madrid", 650, [8, 10, 12, 15, 19, 22]);
 			addConnection(<Train>, "Lisbon", "Madrid", 680, [8, 10, 12, 15, 17, 19, 22]);
 			addConnection(<Plane>, "Lisbon", "Barcelona", 1347, [8, 12, 15, 19, 22]);

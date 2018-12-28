@@ -1,7 +1,6 @@
 class SearchEngine
 types
-	public Answer:: seq of Station
-									seq of real;
+-- TODO Define types here
 								 
 values
 -- TODO Define values here
@@ -11,7 +10,7 @@ instance variables
 	protected trips: seq of Trip := [];
 	protected settledNodes: set of Station := {};
 	protected unsettledNodes: set of Station := {};
-	protected distances: map Station to seq of real := {|->}; -- seq of reals --> 1: distance; 2: price; 3: duration 
+	protected distances: map Station to seq of real := {|->};
 	protected prev: map Station to Station := {|->}
 	
 		
@@ -23,9 +22,57 @@ operations
 		transportMap := graph;
 		trips := t;
 		return self;
-	)
-	post transportMap = graph and trips = t;
+	);
 	
+	private removeHighestValue: seq of Station ==> seq of Station
+	removeHighestValue(heap) == 
+	(
+		dcl max : nat := 1;
+		dcl index : nat := 1;
+		dcl finalHeap : seq of Station := [];
+		
+		while( index < len heap ) do (
+			
+			dcl heapMax : Station := heap(max);
+			dcl heapCurr : Station := heap(index);
+			
+			if(heapCurr.weigth > heapMax.weigth) then (
+				max := index;
+			);
+			
+			index := index + 1;
+			
+		);
+		
+		index := 1;
+		
+		while(index < len heap) do (
+			dcl heapCurr : Station := heap(index);
+			if(index <> max) then finalHeap := finalHeap ^ [heapCurr];
+		);
+		
+		return finalHeap;
+	);
+	
+	private getLowestDistanceNode: set of Station ==> Station
+	getLowestDistanceNode(unsettledNodes) == 
+	(
+		dcl node : Station;
+		dcl lowestDist : real := 100000;
+		
+		for all n in set unsettledNodes do (
+			
+			dcl weigth : real := n.weigth;
+			
+			if(weigth < lowestDist) then (
+				lowestDist := weigth;
+				node := n;
+			);
+			
+		);
+		
+		return node;
+	);
 	
 	---------------------------------------------------------------------------------------------
 	/** 
@@ -49,8 +96,7 @@ operations
 			findMinimalDistances(minimumNode, weightFactor);
 		
 		);
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private findMinimalDistances: Station * nat ==> () 
 	findMinimalDistances(node, weightFactor) ==
@@ -73,14 +119,12 @@ operations
 				newSeq := [newDist,newPrice,newDuration];
 				
 				distances := distances ++ {target |-> newSeq};
-				target.setCalculatedVariables(newSeq);
 				prev := prev ++ {target |-> node};
 				
 				unsettledNodes := unsettledNodes union {target}; 
 			)
 		);
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private getMinimumNode: nat ==> Station 
 	getMinimumNode(weightFactor) == 
@@ -98,8 +142,7 @@ operations
 		);
 		
 		return minimum;
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private getShortestDistance: Station * nat ==> real 
 	getShortestDistance(destination, weightFactor) == 
@@ -132,8 +175,7 @@ operations
 		);
 		
 		return 0;
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private getFirstFromSet: set of seq of real ==> seq of real
 	getFirstFromSet(reals) == 
@@ -153,9 +195,7 @@ operations
 	(	
 		dcl path : seq of Station := [];
 		dcl revertedPath: seq of Station := [];
-		
 		dcl stationDest : Station := transportMap.getStation(destination);
-		
 		dcl tmp : map Station to Station := {stationDest} <: prev;
 		dcl tmp2 : set of Station := rng tmp;
 		
@@ -198,31 +238,22 @@ operations
 		
 		create t := new TransportGraph()
 		create s := new SearchEngine(t, [])
-		print s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2)
-		
-		SPECIFIC FUNCTIONS: 
-		print s.disjkstraAlgorithm(['P','o','r','t','o'], 2)
+		print s.disjkstraAlgorithm(['P','o','r','t','o'])
 		print s.getPath(['M','a','d','r','i','d'])
 		print s.getPath(['B','a','r','c','e','l','o','n','a'])
 		
 	*/
 	
-	public rome2Rio: Utilities`String * Utilities`String * set of nat * nat ==> Answer 
+	public rome2Rio: Utilities`String * Utilities`String * set of Utilities`String * nat ==> seq of Station --change this to trips 
 	rome2Rio(origin, destination, meansOfTransportation, weightFactor) ==
 	(
-		dcl answerSeq : seq of Station := [];
-		dcl answer : Answer;
-		dcl stationDest : Station := transportMap.getStation(destination);
-		
+		dcl answer : seq of Station := [];
 		disjkstraAlgorithm(origin, weightFactor);
-		answerSeq := getPath(destination);
-	
-		answer := mk_Answer(answerSeq, stationDest.getCalculatedVariables());
+		answer := getPath(destination);
 		
 		return answer;
 		
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private stringEqual: Utilities`String * Utilities`String ==> bool
 	stringEqual(s1, s2) ==

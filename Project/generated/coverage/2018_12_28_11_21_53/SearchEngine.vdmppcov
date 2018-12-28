@@ -23,9 +23,57 @@ operations
 		transportMap := graph;
 		trips := t;
 		return self;
-	)
-	post transportMap = graph and trips = t;
+	);
 	
+	private removeHighestValue: seq of Station ==> seq of Station
+	removeHighestValue(heap) == 
+	(
+		dcl max : nat := 1;
+		dcl index : nat := 1;
+		dcl finalHeap : seq of Station := [];
+		
+		while( index < len heap ) do (
+			
+			dcl heapMax : Station := heap(max);
+			dcl heapCurr : Station := heap(index);
+			
+			if(heapCurr.weigth > heapMax.weigth) then (
+				max := index;
+			);
+			
+			index := index + 1;
+			
+		);
+		
+		index := 1;
+		
+		while(index < len heap) do (
+			dcl heapCurr : Station := heap(index);
+			if(index <> max) then finalHeap := finalHeap ^ [heapCurr];
+		);
+		
+		return finalHeap;
+	);
+	
+	private getLowestDistanceNode: set of Station ==> Station
+	getLowestDistanceNode(unsettledNodes) == 
+	(
+		dcl node : Station;
+		dcl lowestDist : real := 100000;
+		
+		for all n in set unsettledNodes do (
+			
+			dcl weigth : real := n.weigth;
+			
+			if(weigth < lowestDist) then (
+				lowestDist := weigth;
+				node := n;
+			);
+			
+		);
+		
+		return node;
+	);
 	
 	---------------------------------------------------------------------------------------------
 	/** 
@@ -49,8 +97,7 @@ operations
 			findMinimalDistances(minimumNode, weightFactor);
 		
 		);
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private findMinimalDistances: Station * nat ==> () 
 	findMinimalDistances(node, weightFactor) ==
@@ -79,8 +126,7 @@ operations
 				unsettledNodes := unsettledNodes union {target}; 
 			)
 		);
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private getMinimumNode: nat ==> Station 
 	getMinimumNode(weightFactor) == 
@@ -98,8 +144,7 @@ operations
 		);
 		
 		return minimum;
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private getShortestDistance: Station * nat ==> real 
 	getShortestDistance(destination, weightFactor) == 
@@ -132,8 +177,7 @@ operations
 		);
 		
 		return 0;
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private getFirstFromSet: set of seq of real ==> seq of real
 	getFirstFromSet(reals) == 
@@ -221,8 +265,7 @@ operations
 		
 		return answer;
 		
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	);
 	
 	private stringEqual: Utilities`String * Utilities`String ==> bool
 	stringEqual(s1, s2) ==
