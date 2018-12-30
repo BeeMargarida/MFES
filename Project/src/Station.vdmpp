@@ -7,6 +7,7 @@ instance variables
 	public name: Utilities`String;
 	public visited: bool;
 	public weight: real;
+	public arrivalTime: real;
 	private calculatedVariables: seq of real := [0,0,0];
 	
 operations
@@ -17,6 +18,7 @@ operations
 		name := n;
 		visited := v;
 		weight := w;
+		
 		return self;
 	)
 	post name = n and visited = v and weight = w;
@@ -28,6 +30,13 @@ operations
 	)
 	post calculatedVariables = vars;
 	
+	public setArrivalTime: real ==> ()
+	setArrivalTime(time) ==
+	(
+		arrivalTime := time;
+		
+	);
+		
 	public getCalculatedVariables: () ==> seq of real
 	getCalculatedVariables() ==
 	(

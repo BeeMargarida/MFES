@@ -1,8 +1,8 @@
 class SearchEngine
 types
+	public Type = Connection`Type;
 	public Answer:: seq of Station
 									seq of real;
-								 
 values
 -- TODO Define values here
 instance variables
@@ -37,6 +37,8 @@ operations
 		dcl station : Station := transportMap.getStation(origin);
 		
 		distances := distances ++ {station |-> [0,0,0]};
+		station.setArrivalTime(0);
+		
 		-- prev := prev ++ {station |-> station};
 		unsettledNodes := unsettledNodes union {station};
 		
@@ -52,32 +54,143 @@ operations
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
 	
+	/* returns the minimum waiting time when we change transportation in one station or -1, if the
+		connecton is not possible regarding the schedule */
+	
+	private getWaitingTime: Station * Station ==> real
+	getWaitingTime(targetNode, intermediateNode) == (
+		dcl intermediateConnections : set of Connection;
+		dcl timeDiff : real;
+		dcl minDiff : real;
+		
+		minDiff := Utilities`MAX_INT;
+		intermediateConnections := transportMap.getConnectionsWithSource(intermediateNode.name) inter
+															 transportMap.getConnectionsWithDestination(targetNode.name);
+		
+		for all availableConnection in set intermediateConnections do (
+			for idx = 1 to len availableConnection.timetable do (
+				timeDiff := availableConnection.timetable(idx) - intermediateNode.arrivalTime;
+				if (timeDiff >= 0 and timeDiff < minDiff) then (
+					minDiff := timeDiff;
+				);
+			);
+		);
+		
+		if (minDiff = Utilities`MAX_INT) then
+			return -1;
+			
+		return minDiff;
+	);
+	
+	private getConnectionToUse: Station * Station ==> Connection
+	getConnectionToUse(targetNode, intermediateNode) == (
+		dcl intermediateConnections : set of Connection;
+		dcl timeDiff : real;
+		dcl minDiff : real;
+		dcl connectionToUse : Connection;
+		
+		minDiff := Utilities`MAX_INT;
+		intermediateConnections := transportMap.getConnectionsWithSource(intermediateNode.name) inter
+															 transportMap.getConnectionsWithDestination(targetNode.name);
+		
+		for all availableConnection in set intermediateConnections do (
+			for idx = 1 to len availableConnection.timetable do (
+				timeDiff := availableConnection.timetable(idx) - intermediateNode.arrivalTime;
+				if (timeDiff >= 0 and timeDiff < minDiff) then (
+					minDiff := timeDiff;
+					connectionToUse := availableConnection;
+				);
+			);
+		);
+		return connectionToUse;
+	);
+	
+	/* from all possible connections between startNode and targetNode,
+	   return the duration of the shortest one */
+	private findMinDuration: set of Connection ==> real
+	findMinDuration(connectionsSet) ==
+	(
+		dcl minDuration : real;
+		
+		minDuration := Utilities`MAX_INT;
+		for all c in set connectionsSet do (
+			if c.duration <= minDuration then (
+				minDuration := c.duration;
+			);
+		);
+		return minDuration;
+	);
+	
+	/* gets the arrivalTime in targetNode from startNode on the shortest route regarding distance */
+	private getArrivalTime: real * Station * Station * Type * bool ==> real
+	getArrivalTime(startTime, startNode, targetNode, meanOfTransportation, selectedMean) ==
+	(
+		dcl validConnections : set of Connection;
+		dcl connectionsFromSource : set of Connection;
+		dcl minArrivalTime : real;
+		
+		validConnections := {};
+		connectionsFromSource := transportMap.getConnectionsWithSource(startNode.name);
+		
+		for all c in set connectionsFromSource do (
+			if (stringEqual(c.destination.name, targetNode.name)) then ( /* if they are connections to target node */
+				if (selectedMean = true) then (
+					 if (c.type = meanOfTransportation) then (
+					 	validConnections := validConnections union {c};
+					 );
+				) else (
+					validConnections := validConnections union {c};
+				);
+			);
+		);
+		
+		minArrivalTime := startTime + startNode.arrivalTime + findMinDuration(validConnections);
+		
+		return minArrivalTime;
+	);
+	
 	private findMinimalDistances: Station * nat ==> () 
 	findMinimalDistances(node, weightFactor) ==
 	(
 		dcl adjacentNodes: set of Station := transportMap.getNeighborsOfNode(node.name);
+		dcl meanOfTransportation : Type;
+		dcl neighborArrivalTime : real;
+		dcl startTime : real := 0;
 		
+		meanOfTransportation := <Bus>;
+		/* compute arrivalTime for all neighbors of the source node */
+		for all neighbor in set adjacentNodes do (
+			neighborArrivalTime := getArrivalTime(0, node, neighbor, meanOfTransportation, false);
+			neighbor.setArrivalTime(neighborArrivalTime);
+		);
+
 		for all target in set adjacentNodes do (
 					
-			if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + getDistance(node, target, weightFactor)) then (
-				
-				dcl newPrice : real;
-				dcl newDuration : real;
-				dcl newDist : real;
-				dcl newSeq : seq of real := [];
-				
-				newDist := getShortestDistance(node, 1) + getDistance(node, target, 1); 
-				newPrice := getShortestDistance(node, 2) + getDistance(node, target, 2);
-				newDuration := getShortestDistance(node, 3) + getDistance(node, target, 3); 
-				
-				newSeq := [newDist,newPrice,newDuration];
-				
-				distances := distances ++ {target |-> newSeq};
-				target.setCalculatedVariables(newSeq);
-				prev := prev ++ {target |-> node};
-				
-				unsettledNodes := unsettledNodes union {target}; 
-			)
+			if (getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + getDistance(node, target, weightFactor)) then (
+				dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meanOfTransportation, false);
+				if (getWaitingTime(target, node) >= 0) then (
+					dcl connectionToUse : Connection;
+					dcl newPrice : real;
+					dcl newDuration : real;
+					dcl newDist : real;
+					dcl newSeq : seq of real := [];
+					
+					-- TODO: Use the data from connectionToUse
+					connectionToUse := getConnectionToUse(target, node);
+					newDist := getShortestDistance(node, 1) + getDistance(node, target, 1); 
+					newPrice := getShortestDistance(node, 2) + getDistance(node, target, 2);
+					newDuration := getShortestDistance(node, 3) + getDistance(node, target, 3); 
+					
+					newSeq := [newDist,newPrice,newDuration];
+					
+					distances := distances ++ {target |-> newSeq};
+					target.setCalculatedVariables(newSeq);
+					target.setArrivalTime(newArrivalTime);
+					prev := prev ++ {target |-> node};
+							
+					unsettledNodes := unsettledNodes union {target}; 
+				);
+			);
 		);
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
@@ -199,6 +312,7 @@ operations
 		create t := new TransportGraph()
 		create s := new SearchEngine(t, [])
 		print s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2)
+		print s.rome2Rio(['P','o','r','t','o'], ['F','a','r','o'], {1,2}, 2)
 		
 		SPECIFIC FUNCTIONS: 
 		print s.disjkstraAlgorithm(['P','o','r','t','o'], 2)

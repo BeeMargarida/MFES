@@ -23,7 +23,7 @@ instance variables
 	public distance: real;
 	public price: real;
 	public duration: real;
-	public timetable : seq of nat;
+	public timetable : seq of real;
 	
 	inv source <> destination;
 	inv price >= 0;
@@ -31,7 +31,7 @@ instance variables
 	
 operations
 -- Constructor
-	public Connection: Type * Station * Station * real * seq of nat ==> Connection
+	public Connection: Type * Station * Station * real * seq of real ==> Connection
 	Connection(t, s, d, dist, ttbl) ==
 	(
 		type := t;
@@ -41,9 +41,10 @@ operations
 		price := getPrice(t, dist);
 		duration := getDuration(t, dist);
 		timetable := ttbl;
+		
 		return self;
 	);
-	
+		
 	private getPrice: Type * real ==> real
 	getPrice(t, dist) ==
 	(dcl priceKm: real;
@@ -62,7 +63,7 @@ operations
 	(dcl speed: real;
 		cases t:
 				<Plane> -> speed := 760,
-				<Bus> -> speed := 80,
+				<Bus> -> speed := 80,	
 				<Train> -> speed := 100,
 				<Walk> -> speed := 4
 			end;
