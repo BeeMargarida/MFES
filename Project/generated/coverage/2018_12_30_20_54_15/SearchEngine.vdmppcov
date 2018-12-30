@@ -4,7 +4,7 @@ types
 	public ConnectionInfo :: con: seq of Connection
 														type: Type
 														weight: real;
-	public FinalAnswer :: seq of Answer;
+	public FinalAnswer :: seq of seq of Station;
 	public Answer:: stations: seq of Station
 									seq of real;
 values
@@ -396,29 +396,27 @@ operations
 		if(meansOfTransportation = {}) then (
 			
 			dcl finalAnswer : FinalAnswer;
-			dcl answerSeq : seq of Answer := [];
+			dcl answerSeq : seq of seq of Station := [];
 			dcl answerOne : seq of Station := [];
-			dcl means : set of set of Connection`Type := {
-				{<Bus>},{<Plane>},{<Train>},{<Walk>},{<Bus>,<Plane>},{<Bus>,<Train>},{<Bus>,<Walk>},{<Plane>,<Train>},{<Plane>,<Walk>},
-				{<Train>,<Walk>},{<Bus>,<Train>,<Walk>},{<Bus>,<Train>,<Plane>},{<Plane>,<Train>,<Walk>},{<Bus>,<Plane>,<Walk>},{<Bus>,<Plane>,<Train>,<Walk>}
-			};
+			dcl means : set of set of Connection`Type := {{<Bus>},{<Plane>},{<Train>},{<Walk>},{<Bus>,<Plane>},{<Bus>,<Train>},{<Bus>,<Walk>},{<Plane>,<Train>},{<Plane>,<Walk>},{<Train>,<Walk>},{<Bus>,<Plane>,<Train>,<Walk>}};
 			
 			for all mean in set means do (
 			
 				dcl answer : Answer;
+				
 				prev := {|->};
 				distances := {|->};
 				settledNodes := {};
 				unsettledNodes := {};
 				answerOne := [];
 				
-				IO`println("#################################################################################");
+				IO`println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 				IO`println(mean);
 				
 				dijkstraAlgorithm(origin, mean, weightFactor);
 				answerOne := getPath(destination);
 				
-				IO`println("Path for combination mentioned above:");
+				IO`println("\n\n");
 				for el in answerOne do (
 					IO`println(el);
 				);
@@ -427,19 +425,18 @@ operations
 				if(prev = {|->}) then 
 					answer := mk_Answer([],[])
 				else if ((prev(transportMap.getStation(destination)) = transportMap.getStation(origin)) and (stationDest.getCalculatedVariables()(1) = 0 and stationDest.getCalculatedVariables()(2) = 0 and stationDest.getCalculatedVariables()(3) = 0) ) then(
-					answer := mk_Answer([],[]);
+						answer := mk_Answer([],[]);
 				)
 				else (
-					answer := mk_Answer(answerOne, stationDest.getCalculatedVariables());
-					IO`println(answer);
-					answerSeq := answerSeq ^ [answer];
-					
-					IO`println(len answerSeq);
-					IO`println("Array with the paths of each possibility\n\n");
-					for el in answerSeq do (
-						IO`println(el);
-					);
-					IO`println("\n\n");
+						-- answer := mk_Answer(answerOne, stationDest.getCalculatedVariables());
+						IO`println(answer);
+						answerSeq := answerSeq ^ [answerOne];
+						
+						IO`println("YEEEE\n\n");
+						for el in answerSeq do (
+							IO`println(el);
+						);
+						IO`println("\n\n");
 				);
 				
 			);
@@ -485,7 +482,7 @@ operations
 					answer := mk_Answer(answerSeq, stationDest.getCalculatedVariables());
 			);
 			
-			finalAnswer := mk_FinalAnswer([answer]);
+			finalAnswer := mk_FinalAnswer([answerSeq]);
 			return finalAnswer;
 			
 		)

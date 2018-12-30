@@ -1,11 +1,8 @@
 class SearchEngine
 types
 	public Type = Connection`Type;
-	public ConnectionInfo :: con: seq of Connection
-														type: Type
-														weight: real;
 	public FinalAnswer :: seq of Answer;
-	public Answer:: stations: seq of Station
+	public Answer:: seq of Station
 									seq of real;
 values
 -- TODO Define values here
@@ -107,9 +104,6 @@ operations
 				);
 			);
 		);
-		
-		IO`println("CONUSE");
-		IO`println(connectionToUse);
 		return connectionToUse;
 	);
 	
@@ -172,36 +166,32 @@ operations
 		);
 
 		for all target in set adjacentNodes do (
-		
-			dcl con : ConnectionInfo := getDistanceConnection(node, target, meansOfTransportation,weightFactor);
-			if(con.con <> []) then (
-			
-				if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + con.weight) then (
-					dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
-	
-					if (getWaitingTime(target, node) >= 0) then (
-						-- dcl connectionToUse : Connection;
-						dcl newPrice : real;
-						dcl newDuration : real;
-						dcl newDist : real;
-						dcl newSeq : seq of real := [];
+				
+			if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + getDistance(node, target, meansOfTransportation, weightFactor)) then (
+				dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
+
+				if (getWaitingTime(target, node) >= 0) then (
+					dcl connectionToUse : Connection;
+					dcl newPrice : real;
+					dcl newDuration : real;
+					dcl newDist : real;
+					dcl newSeq : seq of real := [];
+				
+					-- TODO: Use the data from connectionToUse
+					connectionToUse := getConnectionToUse(target, node);
+					newDist := getShortestDistance(node, 1) + getDistance(node, target, meansOfTransportation, 1); 
+					newPrice := getShortestDistance(node, 2) + getDistance(node, target, meansOfTransportation, 2);
+					newDuration := getShortestDistance(node, 3) + getDistance(node, target, meansOfTransportation, 3); 
+				
+					newSeq := [newDist,newPrice,newDuration];
 					
-						-- TODO: Use the data from connectionToUse
-						-- connectionToUse := getConnectionToUse(target, node);
-						newDist := getShortestDistance(node, 1) + getDistanceFromConnection(con.con(1), 1); 
-						newPrice := getShortestDistance(node, 2) + getDistanceFromConnection(con.con(1), 2);
-						newDuration := getShortestDistance(node, 3) + getDistanceFromConnection(con.con(1), 3); 
+					distances := distances ++ {target |-> newSeq};
+					target.setCalculatedVariables(newSeq);
+					target.setArrivalTime(newArrivalTime);
+					target.setMeanOfTransportationUsed(connectionToUse.type);
+					prev := prev ++ {target |-> node};
 					
-						newSeq := [newDist,newPrice,newDuration];
-						
-						distances := distances ++ {target |-> newSeq};
-						target.setCalculatedVariables(newSeq);
-						target.setArrivalTime(newArrivalTime);
-						target.setMeanOfTransportationUsed(con.type);
-						prev := prev ++ {target |-> node};
-						
-						unsettledNodes := unsettledNodes union {target}; 
-					);
+					unsettledNodes := unsettledNodes union {target}; 
 				);
 			);
 		);
@@ -240,10 +230,20 @@ operations
 	private getDistance: Station * Station * set of Connection`Type * nat ==> real
 	getDistance(node, target, meansOfTransportation, weightFactor) ==
 	(
-		for all con in set transportMap.listConnections() do (		
+		for all con in set transportMap.listConnections() do (
+		
+			--IO`println("yee");
+			--IO`println(con.type);
+			--IO`println(meansOfTransportation);
+			
 			if(con.type in set meansOfTransportation) then (
 			
 				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
+				
+					--IO`println("HERE");
+					/*IO`println(con.type);
+					IO`println(con.source.name);
+					IO`println(con.destination.name);*/
 					
 					if(weightFactor = 1) then (
 						return con.distance;
@@ -261,55 +261,6 @@ operations
 		return 0;
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
-	
-	private getDistanceConnection: Station * Station * set of Connection`Type * nat ==> ConnectionInfo
-	getDistanceConnection(node, target, meansOfTransportation, weightFactor) ==
-	(
-		dcl conTmp : Connection;
-		dcl connectionInfo : ConnectionInfo := undefined;
-		
-		for all con in set transportMap.listConnections() do (		
-			if(con.type in set meansOfTransportation) then (
-			
-				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
-					
-					if(weightFactor = 1) then (
-						connectionInfo := mk_ConnectionInfo([con], con.type, con.distance);
-					) 
-					else if (weightFactor = 2) then (
-						connectionInfo := mk_ConnectionInfo([con], con.type, con.price);
-					)
-					else if (weightFactor = 3) then (
-						connectionInfo := mk_ConnectionInfo([con], con.type, con.duration);
-					);
-					return connectionInfo;
-				);
-			);
-		);
-		
-		connectionInfo := mk_ConnectionInfo([], <Walk>, 1000000);
-		return connectionInfo;
-		
-	);
-	
-	private getDistanceFromConnection: Connection * nat ==> real
-	getDistanceFromConnection(con, weightFactor) ==
-	(
-		
-		if(weightFactor = 1) then (
-			return con.distance;
-		) 
-		else if (weightFactor = 2) then (
-			return con.price;
-		)
-		else if (weightFactor = 3) then (
-			return con.duration;
-		);
-		
-		return 0;
-	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
-	
 	
 	private getFirstFromSet: set of seq of real ==> seq of real
 	getFirstFromSet(reals) == 
@@ -390,56 +341,34 @@ operations
 		dcl stationDest : Station := transportMap.getStation(destination);
 		prev := {|->};
 		distances := {|->};
-		settledNodes := {};
-		unsettledNodes := {};
 		
 		if(meansOfTransportation = {}) then (
 			
 			dcl finalAnswer : FinalAnswer;
 			dcl answerSeq : seq of Answer := [];
+			dcl answer : Answer;
 			dcl answerOne : seq of Station := [];
-			dcl means : set of set of Connection`Type := {
-				{<Bus>},{<Plane>},{<Train>},{<Walk>},{<Bus>,<Plane>},{<Bus>,<Train>},{<Bus>,<Walk>},{<Plane>,<Train>},{<Plane>,<Walk>},
-				{<Train>,<Walk>},{<Bus>,<Train>,<Walk>},{<Bus>,<Train>,<Plane>},{<Plane>,<Train>,<Walk>},{<Bus>,<Plane>,<Walk>},{<Bus>,<Plane>,<Train>,<Walk>}
-			};
+			dcl means : set of set of Connection`Type := {{<Bus>},{<Plane>},{<Train>},{<Walk>},{<Bus>,<Plane>},{<Bus>,<Train>},{<Bus>,<Walk>},{<Plane>,<Train>},{<Plane>,<Walk>},{<Train>,<Walk>},{<Bus>,<Plane>,<Train>,<Walk>}};
 			
 			for all mean in set means do (
-			
-				dcl answer : Answer;
 				prev := {|->};
 				distances := {|->};
-				settledNodes := {};
-				unsettledNodes := {};
+				IO`println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 				answerOne := [];
-				
-				IO`println("#################################################################################");
-				IO`println(mean);
-				
 				dijkstraAlgorithm(origin, mean, weightFactor);
 				answerOne := getPath(destination);
-				
-				IO`println("Path for combination mentioned above:");
+				IO`println("\n\n");
 				for el in answerOne do (
 					IO`println(el);
 				);
 				IO`println("\n\n");
 				
-				if(prev = {|->}) then 
-					answer := mk_Answer([],[])
-				else if ((prev(transportMap.getStation(destination)) = transportMap.getStation(origin)) and (stationDest.getCalculatedVariables()(1) = 0 and stationDest.getCalculatedVariables()(2) = 0 and stationDest.getCalculatedVariables()(3) = 0) ) then(
-					answer := mk_Answer([],[]);
+				if ((prev(transportMap.getStation(destination)) = transportMap.getStation(origin)) and (stationDest.getCalculatedVariables()(1) = 0 and stationDest.getCalculatedVariables()(2) = 0 and stationDest.getCalculatedVariables()(3) = 0) ) then(
+						answer := mk_Answer([],[]);
 				)
 				else (
-					answer := mk_Answer(answerOne, stationDest.getCalculatedVariables());
-					IO`println(answer);
-					answerSeq := answerSeq ^ [answer];
-					
-					IO`println(len answerSeq);
-					IO`println("Array with the paths of each possibility\n\n");
-					for el in answerSeq do (
-						IO`println(el);
-					);
-					IO`println("\n\n");
+						answer := mk_Answer(answerOne, stationDest.getCalculatedVariables());
+						answerSeq := answerSeq ^ [answer];
 				);
 				
 			);
@@ -489,6 +418,9 @@ operations
 			return finalAnswer;
 			
 		)
+		
+		
+		
 		
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
