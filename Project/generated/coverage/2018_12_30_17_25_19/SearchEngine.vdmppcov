@@ -231,16 +231,11 @@ operations
 	getDistance(node, target, meansOfTransportation, weightFactor) ==
 	(
 		for all con in set transportMap.listConnections() do (
-		
 			IO`println("yee");
 			IO`println(con.type);
 			IO`println(meansOfTransportation);
-			
 			if(con.type in set meansOfTransportation) then (
-			
 				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
-				
-					IO`println("HERE");
 					/*IO`println(con.type);
 					IO`println(con.source.name);
 					IO`println(con.destination.name);*/
@@ -349,15 +344,10 @@ operations
 			dcl means : set of set of Connection`Type := {{<Bus>},{<Plane>},{<Train>},{<Walk>},{<Bus>,<Plane>},{<Bus>,<Train>},{<Bus>,<Walk>},{<Plane>,<Train>},{<Plane>,<Walk>},{<Train>,<Walk>},{<Bus>,<Plane>,<Train>,<Walk>}};
 			
 			for all mean in set means do (
-				IO`println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+				
 				answerOne := [];
 				dijkstraAlgorithm(origin, mean, weightFactor);
 				answerOne := getPath(destination);
-				IO`println("\n\n");
-				for el in answerOne do (
-					IO`println(el);
-				);
-				IO`println("\n\n");
 				
 				if ((prev(transportMap.getStation(destination)) = transportMap.getStation(origin)) and (stationDest.getCalculatedVariables()(1) = 0 and stationDest.getCalculatedVariables()(2) = 0 and stationDest.getCalculatedVariables()(3) = 0) ) then(
 						answer := mk_Answer([],[]);
@@ -366,6 +356,7 @@ operations
 						answer := mk_Answer(answerOne, stationDest.getCalculatedVariables());
 						answerSeq := answerSeq ^ [answer];
 				);
+			
 				
 			);
 			

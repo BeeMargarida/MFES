@@ -258,7 +258,7 @@ operations
 			);
 		);
 		
-		return 0;
+		return 100000000000000000;
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
 	

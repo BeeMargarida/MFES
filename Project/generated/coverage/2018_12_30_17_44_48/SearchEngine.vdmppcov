@@ -237,7 +237,6 @@ operations
 			IO`println(meansOfTransportation);
 			
 			if(con.type in set meansOfTransportation) then (
-			
 				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
 				
 					IO`println("HERE");
@@ -258,7 +257,7 @@ operations
 			);
 		);
 		
-		return 0;
+		return 10000000000;
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
 	

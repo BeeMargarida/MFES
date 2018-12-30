@@ -231,15 +231,11 @@ operations
 	getDistance(node, target, meansOfTransportation, weightFactor) ==
 	(
 		for all con in set transportMap.listConnections() do (
-		
 			IO`println("yee");
 			IO`println(con.type);
 			IO`println(meansOfTransportation);
-			
 			if(con.type in set meansOfTransportation) then (
-			
 				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
-				
 					IO`println("HERE");
 					/*IO`println(con.type);
 					IO`println(con.source.name);

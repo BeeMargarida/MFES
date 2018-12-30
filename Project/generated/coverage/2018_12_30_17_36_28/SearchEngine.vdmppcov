@@ -231,15 +231,11 @@ operations
 	getDistance(node, target, meansOfTransportation, weightFactor) ==
 	(
 		for all con in set transportMap.listConnections() do (
-		
 			IO`println("yee");
 			IO`println(con.type);
 			IO`println(meansOfTransportation);
-			
 			if(con.type in set meansOfTransportation) then (
-			
 				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
-				
 					IO`println("HERE");
 					/*IO`println(con.type);
 					IO`println(con.source.name);
@@ -353,12 +349,8 @@ operations
 				answerOne := [];
 				dijkstraAlgorithm(origin, mean, weightFactor);
 				answerOne := getPath(destination);
-				IO`println("\n\n");
-				for el in answerOne do (
-					IO`println(el);
-				);
-				IO`println("\n\n");
-				
+				IO`println("\n\nIUABDUIASBFUIASUPBF");
+				IO`println(answerOne = []);
 				if ((prev(transportMap.getStation(destination)) = transportMap.getStation(origin)) and (stationDest.getCalculatedVariables()(1) = 0 and stationDest.getCalculatedVariables()(2) = 0 and stationDest.getCalculatedVariables()(3) = 0) ) then(
 						answer := mk_Answer([],[]);
 				)
