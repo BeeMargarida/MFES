@@ -8,7 +8,7 @@ instance variables
 	public visited: bool;
 	public weight: real;
 	public arrivalTime: real;
-	private calculatedVariables: seq of real := [0,0,0]; -- seq of reals --> 1: distance; 2: price; 3: duration
+	private calculatedVariables: seq of real := [0,0,0];
 	private meanOfTransportationUsed: Connection`Type;
 	
 operations
