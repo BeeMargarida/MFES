@@ -10,6 +10,7 @@ values
 instance variables
 
 	protected transportMap: TransportGraph;
+	protected trips: seq of Trip := [];
 	protected settledNodes: set of Station := {};
 	protected unsettledNodes: set of Station := {};
 	protected distances: map Station to seq of real := {|->}; -- seq of reals --> 1: distance; 2: price; 3: duration 
@@ -18,13 +19,14 @@ instance variables
 		
 operations
 
-	public SearchEngine: TransportGraph ==> SearchEngine
-	SearchEngine(graph) ==
+	public SearchEngine: TransportGraph * seq of Trip ==> SearchEngine
+	SearchEngine(graph, t) ==
 	(
 		transportMap := graph;
+		trips := t;
 		return self;
 	)
-	post transportMap = graph;
+	post transportMap = graph and trips = t;
 	
 	
 	---------------------------------------------------------------------------------------------
@@ -369,7 +371,7 @@ operations
 		HOW TO RUN:
 		
 		create t := new TransportGraph()
-		create s := new SearchEngine(t)
+		create s := new SearchEngine(t, [])
 		print s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2)
 		print s.rome2Rio(['P','o','r','t','o'], ['F','a','r','o'], {1,2}, 2)
 		
@@ -424,6 +426,8 @@ operations
 						i := i + 1;
 					);
 					trip.setFinalResults(stationDest.getCalculatedVariables());
+					--answer := mk_Answer(answerOne, stationDest.getCalculatedVariables());
+					-- PROBLEM IS HERE!!!!!! LINE BELLOW!
 					trips := trips ^ [trip];
 					
 				);

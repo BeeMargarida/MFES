@@ -34,7 +34,7 @@ operations
 	public addSegmentFirst: Utilities`String * seq of real ==> ()
 	addSegmentFirst(origin, distValues) ==
 	(
-		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), <NONE>);
+		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), undefined);
 		segments := segments ^[segment]; 
 	);
 	
