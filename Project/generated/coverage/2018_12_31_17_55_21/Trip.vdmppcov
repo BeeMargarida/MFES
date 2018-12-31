@@ -1,0 +1,51 @@
+class Trip
+types
+-- TODO Define types here
+	public Segment :: startCity : Utilities`String
+								 		--destinationCity : Utilities`String
+								 		timeDuration: real
+								 		distance: real
+								 		price: real
+								 		meanOfTransport: Connection`Type;
+values
+-- TODO Define values here
+instance variables
+
+	protected segments : seq of Segment;
+	protected finalResults : seq of real;
+	
+operations
+
+	public Trip: seq of Segment ==> Trip
+	Trip(segs) ==
+	(
+		segments := segs;
+		finalResults := [];
+		return self;
+	);
+	
+	public addSegment: Utilities`String * seq of real * Connection`Type ==> ()
+	addSegment(origin, distValues, meanType) ==
+	(
+		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), meanType);
+		segments := segments ^[segment]; 
+	);
+	
+	public addSegmentFirst: Utilities`String * seq of real ==> ()
+	addSegmentFirst(origin, distValues) ==
+	(
+		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), <NONE>);
+		segments := segments ^[segment]; 
+	);
+	
+	public setFinalResults : seq of real ==> ()
+	setFinalResults(results) ==
+	(
+		finalResults := results;
+	);    
+
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Trip

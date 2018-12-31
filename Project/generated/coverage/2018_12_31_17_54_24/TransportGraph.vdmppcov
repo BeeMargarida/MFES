@@ -1,0 +1,153 @@
+class TransportGraph
+
+types
+	public Type = Connection`Type;
+	
+instance variables
+	private stations : set of Station;
+	private connections: set of Connection;
+
+operations
+	-- Constructor
+	public TransportGraph:() ==> TransportGraph
+	TransportGraph() ==
+	(
+		stations := {};
+		connections := {};
+		createDatabase();
+	);
+	
+	
+	private addConnection: Type * Utilities`String * Utilities`String * real * seq of real ==> ()
+	addConnection(t, s, d, dist, ttbl) ==
+		(
+			dcl tempConnection: Connection;
+			dcl originStation : Station := getStationWithCreation(s);
+			dcl destinationStation : Station := getStationWithCreation(d);
+			
+			tempConnection := new Connection(t, originStation, destinationStation, dist, ttbl);
+			connections := connections union {tempConnection};
+			
+			stations := stations union {originStation, destinationStation};
+		);
+		
+	public createDatabase: () ==> ()
+		createDatabase() ==
+		(
+			addConnection(<Bus>,   "Porto", "Lisbon", 300, [6, 12]);
+			-- addConnection(<Plane>, "Porto", "Lisbon", 300, [8, 22]);
+			addConnection(<Train>, "Porto", "Lisbon", 350, [10, 12, 16, 20, 22]);
+			addConnection(<Bus>,   "Porto", "Madrid", 1500, [6, 12]);
+			addConnection(<Plane>,   "Porto", "Paris", 1300, [8, 20]);
+			addConnection(<Plane>, "Amsterdam", "Bologna", 300, [6, 12]);
+			addConnection(<Plane>, "Bologna", "Paris", 2900, [9, 21]);
+			addConnection(<Bus>,   "Macedo de Cavaleiros", "Porto", 350, [10, 12, 20]);
+			addConnection(<Train>, "Porto", "Madrid", 100, [10, 12, 16, 20, 22]);
+			addConnection(<Train>, "Lisbon", "Faro", 280, [9, 11, 15, 19]);
+			addConnection(<Plane>, "Lisbon", "Faro", 250, [8, 12, 20]);
+			addConnection(<Bus>,   "Lisbon", "Faro", 285, [8, 12]);
+			addConnection(<Bus>, "Lisbon", "Madrid", 750, [8, 12, 15, 17]);
+			addConnection(<Plane>, "Lisbon", "Madrid", 650, [8, 10, 12, 15, 19, 22]);
+			-- addConnection(<Train>, "Lisbon", "Madrid", 680, [8, 10, 12, 15, 17, 19, 22]);
+			addConnection(<Plane>, "Lisbon", "Barcelona", 1347, [8, 12, 15, 19, 22]);
+			addConnection(<Train>, "Madrid", "Barcelona", 625, [8, 10, 12, 15, 17, 19, 22]);
+			addConnection(<Plane>, "Madrid", "Barcelona", 625, [8, 12, 15, 19, 22]);
+			-- TODO add more connections
+		);	
+		
+	public listConnections: () ==> set of Connection 
+		listConnections() == return connections;
+		
+	public listStations: () ==> set of Station
+		listStations() == return stations;
+		
+	public stringEqual: Utilities`String * Utilities`String ==> bool
+	stringEqual(s1, s2) ==
+	(
+	 if len s1 <> len s2 then
+	 	return false;
+	 for idx = 1 to len s1 do
+	 	if s1(idx) <> s2(idx) then return false;
+	 
+	 return true;
+	);
+	
+	public getConnectionsWithSource: Utilities`String ==> set of Connection
+	getConnectionsWithSource(s) ==
+	(dcl result: set of Connection;
+	 result := {};
+		for all e in set connections do
+		(
+			if stringEqual(e.source.name, s) then result := result union {e}; 
+		);
+		return result;
+	);
+	
+	public getConnection: Connection`Type * Utilities`String * Utilities`String ==> Connection 
+	getConnection(type, origin, destination) == 
+		(
+			dcl getCon : Connection;
+
+			for all con in set connections do (
+				if(stringEqual(con.source.name,origin) and stringEqual(con.destination.name, destination) and con.type = type) then
+					return con; 
+			);
+
+		return getCon;
+
+	);
+	
+	public getNeighborsOfNode: Utilities`String ==> set of Station
+	getNeighborsOfNode(name) ==
+	(
+		dcl result: set of Station := {};
+		for all e in set connections do
+		(
+			if stringEqual(e.source.name, name) then result := result union {e.destination};
+		);
+		return result;
+	);
+	
+	public getConnectionsWithDestination: Utilities`String ==> set of Connection
+	getConnectionsWithDestination(d) ==
+	(
+		dcl result: set of Connection;
+	 	result := {};
+		for all e in set connections do
+		(
+			if stringEqual(e.destination.name, d) then result := result union {e}; 
+		);
+		return result;
+	);			
+	
+	public getStation: Utilities`String ==> Station
+	getStation(stationName) ==
+	(
+		dcl stationRes : Station;
+		for all station in set stations do (
+			if stringEqual(station.name, stationName) then stationRes := station;
+		); 
+		return stationRes;
+	);
+	
+	/* Searches for a station by name and, if it does not exist, the station is created with the specified name */
+	public getStationWithCreation: Utilities`String ==> Station
+	getStationWithCreation(stationName) == 
+	(
+		dcl stationRes : Station := new Station("", false, 0);
+		for all station in set stations do (
+			if stringEqual(station.name, stationName) then stationRes := station;
+		); 
+		
+		if(stringEqual(stationRes.name, "")) then (
+			stationRes := new Station(stationName, false, 0);
+		);
+		
+		return stationRes;
+	);
+	
+functions
+
+traces
+
+end TransportGraph
