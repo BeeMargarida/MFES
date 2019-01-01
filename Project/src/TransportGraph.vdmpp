@@ -17,20 +17,22 @@ operations
 		createDatabase();
 	);
 	
-	
+	-- adds a new connection and possibly new stations
 	private addConnection: Type * Utilities`String * Utilities`String * real * seq of real ==> ()
 	addConnection(t, s, d, dist, ttbl) ==
-		(
-			dcl tempConnection: Connection;
-			dcl originStation : Station := getStationWithCreation(s);
-			dcl destinationStation : Station := getStationWithCreation(d);
-			
-			tempConnection := new Connection(t, originStation, destinationStation, dist, ttbl);
-			connections := connections union {tempConnection};
-			
-			stations := stations union {originStation, destinationStation};
-		);
+	(
+		dcl tempConnection: Connection;
+		dcl originStation : Station := getStationWithCreation(s);
+		dcl destinationStation : Station := getStationWithCreation(d);
 		
+		tempConnection := new Connection(t, originStation, destinationStation, dist, ttbl);
+		connections := connections union {tempConnection};
+		
+		stations := stations union {originStation, destinationStation};
+	)
+	pre dist > 0 and ttbl <> [];
+		
+	-- creates new connections and stations
 	public createDatabase: () ==> ()
 		createDatabase() ==
 		(
@@ -55,12 +57,15 @@ operations
 			-- TODO add more connections
 		);	
 		
+	-- lists all connections
 	public listConnections: () ==> set of Connection 
 		listConnections() == return connections;
 		
+	-- lists all stations
 	public listStations: () ==> set of Station
 		listStations() == return stations;
 		
+	-- checks if 2 strings are equal
 	public stringEqual: Utilities`String * Utilities`String ==> bool
 	stringEqual(s1, s2) ==
 	(
@@ -72,6 +77,7 @@ operations
 	 return true;
 	);
 	
+	-- returns connections with the station provided as origin
 	public getConnectionsWithSource: Utilities`String ==> set of Connection
 	getConnectionsWithSource(s) ==
 	(dcl result: set of Connection;
@@ -83,6 +89,7 @@ operations
 		return result;
 	);
 	
+	-- returns connections with the stations provided as origin and destination 
 	public getConnection: Connection`Type * Utilities`String * Utilities`String ==> Connection 
 	getConnection(type, origin, destination) == 
 		(
@@ -97,6 +104,7 @@ operations
 
 	);
 	
+	-- returns all stations that have connections with the origin name equal to the one provided
 	public getNeighborsOfNode: Utilities`String ==> set of Station
 	getNeighborsOfNode(name) ==
 	(
@@ -108,6 +116,7 @@ operations
 		return result;
 	);
 	
+	-- returns all stations that have connections with the destination name equal to the one provided
 	public getConnectionsWithDestination: Utilities`String ==> set of Connection
 	getConnectionsWithDestination(d) ==
 	(
@@ -120,6 +129,7 @@ operations
 		return result;
 	);			
 	
+	-- returns station with the name provided
 	public getStation: Utilities`String ==> Station
 	getStation(stationName) ==
 	(
@@ -130,17 +140,18 @@ operations
 		return stationRes;
 	);
 	
-	/* Searches for a station by name and, if it does not exist, the station is created with the specified name */
+	
+	-- Searches for a station by name and, if it does not exist, the station is created with the specified name 
 	public getStationWithCreation: Utilities`String ==> Station
 	getStationWithCreation(stationName) == 
 	(
-		dcl stationRes : Station := new Station("", false, 0);
+		dcl stationRes : Station := new Station("", 0);
 		for all station in set stations do (
 			if stringEqual(station.name, stationName) then stationRes := station;
 		); 
 		
 		if(stringEqual(stationRes.name, "")) then (
-			stationRes := new Station(stationName, false, 0);
+			stationRes := new Station(stationName, 0);
 		);
 		
 		return stationRes;

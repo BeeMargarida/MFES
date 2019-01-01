@@ -15,15 +15,18 @@ instance variables
 	protected finalResults : seq of real;
 	
 operations
-
+	
+	-- constructor
 	public Trip: seq of Segment ==> Trip
 	Trip(segs) ==
 	(
 		segments := segs;
 		finalResults := [];
 		return self;
-	);
+	)
+	post segments = segs and finalResults = [];
 	
+	-- add new segment
 	public addSegment: Utilities`String * seq of real * Connection`Type ==> ()
 	addSegment(origin, distValues, meanType) ==
 	(
@@ -31,6 +34,7 @@ operations
 		segments := segments ^[segment]; 
 	);
 	
+	-- add new segment withouy mean of transportation info
 	public addSegmentFirst: Utilities`String * seq of real ==> ()
 	addSegmentFirst(origin, distValues) ==
 	(
@@ -38,17 +42,20 @@ operations
 		segments := segments ^[segment]; 
 	);
 	
+	-- get segments
 	public getSegments: () ==> seq of Segment
 	getSegments() ==
 	(
 		return segments;
 	);
 	
+	-- set final results
 	public setFinalResults : seq of real ==> ()
 	setFinalResults(results) ==
 	(
 		finalResults := results;
-	);    
+	)
+	post finalResults = results;   
 
 functions
 -- TODO Define functiones here

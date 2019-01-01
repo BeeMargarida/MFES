@@ -30,7 +30,7 @@ instance variables
 	inv distance >= 0;
 	
 operations
--- Constructor
+	-- Constructor
 	public Connection: Type * Station * Station * real * seq of real ==> Connection
 	Connection(t, s, d, dist, ttbl) ==
 	(
@@ -43,12 +43,16 @@ operations
 		timetable := ttbl;
 		
 		return self;
-	);
+	)
+	pre dist > 0 and ttbl <> []
+	post distance > 0 and price > 0 and duration > 0 and timetable <> [];
 	
+	-- get type of connection (mean of transporation)
 	public getType: () ==> Type
 	getType() ==
 			return type;
-		
+	
+	-- calculate price of the connection
 	private getPrice: Type * real ==> real
 	getPrice(t, dist) ==
 	(dcl priceKm: real;
@@ -60,8 +64,10 @@ operations
 			end;
 			
 			return priceKm * dist;
-	);
+	)
+	pre dist > 0;
 	
+	-- calculate duration of the connection
 	private getDuration: Type * real ==> real
 	getDuration(t, dist) ==
 	(dcl speed: real;
@@ -72,7 +78,8 @@ operations
 				<Walk> -> speed := 4
 			end;
 			return dist / speed;
-	);
+	)
+	pre dist > 0;
 		
 functions
 -- TODO Define functiones here
