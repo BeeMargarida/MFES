@@ -1,0 +1,146 @@
+class Rome2RioTest
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+		s : SearchEngine := new SearchEngine();
+operations
+-- TODO Define operations here
+		private assertTrue: bool ==> ()
+ 			assertTrue(cond) == return
+ 			pre cond;
+
+ 			private testGraphCreation: () ==> ()
+ 			testGraphCreation() == (
+ 					assertTrue(card s.getTransportGraph().listConnections() > 0);
+ 			);
+ 			
+ 			private testPricePath: () ==> ()
+ 			testPricePath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2, -1);
+ 					dcl segments : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl price : real := segments(3).price;
+					
+ 					assertTrue(price = 57);
+ 					assertTrue(len segments = 3);
+ 					assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+ 			);
+ 			
+ 			private testDistancePath: () ==> ()
+ 			testDistancePath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 1, -1);
+ 					dcl segments : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl distance : real := segments(3).distance;
+ 					
+ 					assertTrue(distance = 950);
+ 					assertTrue(len segments = 3);
+ 					assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+ 			);
+ 			
+ 			private testDurationPath: () ==> ()
+ 			testDurationPath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+ 					dcl segments : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl duration : real := segments(3).timeDuration;
+ 					
+ 					assertTrue(duration = 1.25);
+ 					assertTrue(len segments = 3);
+ 					assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+ 			);
+ 			
+ 			private testMaxDurationOnePath: () ==> ()
+ 			testMaxDurationOnePath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, 1);
+ 					assertTrue(answer = []);
+ 			);
+ 			
+ 			private testCombinationPath: () ==> ()
+ 			testCombinationPath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['B','a','r','c','e','l','o','n','a'], {}, 2, 3);
+ 					dcl segments1 : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl segments2 : seq of Trip`Segment := answer(2).getSegments();
+ 					
+ 					assertTrue(segments1(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments1(2).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments1(3).startCity = ['B','a','r','c','e','l','o','n','a']);
+ 					assertTrue(answer(1).getFinalResults()(3) = 2.167105263157895);
+ 					
+ 					assertTrue(segments2(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments2(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments2(3).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments2(4).startCity = ['B','a','r','c','e','l','o','n','a']);
+ 					assertTrue(answer(2).getFinalResults()(3) = 2.0723684210526314);
+ 			);
+ 			
+ 			private testCombinationPathWithMaximumDuration: () ==> ()
+ 			testCombinationPathWithMaximumDuration() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {}, 3, 1.25);
+ 					dcl segments1 : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl segments2 : seq of Trip`Segment := answer(2).getSegments();
+ 					dcl segments3 : seq of Trip`Segment := answer(3).getSegments();
+ 					
+ 					assertTrue(segments1(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments1(2).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments1(2).timeDuration = 1);
+ 					
+ 					assertTrue(segments2(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments2(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments2(3).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments2(3).timeDuration = 1.25);
+ 					
+ 					assertTrue(segments3(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments3(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments3(3).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments3(3).timeDuration = 13.125);
+ 			);
+ 			
+ 			private testNoPath: () ==> ()
+ 			testNoPath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {4}, 3, -1);
+					assertTrue(answer = []);
+					
+					answer := s.rome2Rio(['G','a','i','a'], ['K','r','a','k','o','w'], {}, 3, -1);
+					assertTrue(answer = []);
+ 			);
+ 			
+ 			private testWrongStations: () ==> ()
+ 			testWrongStations() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','e','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+					assertTrue(answer = []);
+					answer := s.rome2Rio(['P','o','r','t','o'], ['M','e','d','r','i','d'], {1,2}, 3, -1);
+					assertTrue(answer = []);
+ 			);
+ 			
+ 			private testArrivalTimeProblem: () ==> ()
+ 			testArrivalTimeProblem() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['M','a','d','r','i','d'], ['M','o','s','c','o','w'], {1,2,3,4}, 2, -1);
+					
+					assertTrue(answer = []);
+ 			);
+ 			 			
+ 			public static main: () ==> ()
+ 			main() == (
+						new Rome2RioTest().testGraphCreation();
+						new Rome2RioTest().testPricePath();
+						new Rome2RioTest().testDistancePath();
+						new Rome2RioTest().testDurationPath();
+						new Rome2RioTest().testMaxDurationOnePath();
+						new Rome2RioTest().testCombinationPath();
+						new Rome2RioTest().testNoPath();
+						new Rome2RioTest().testWrongStations();
+						new Rome2RioTest().testArrivalTimeProblem();
+			);
+			
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Rome2RioTest
