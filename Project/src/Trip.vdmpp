@@ -6,14 +6,14 @@ types
 								 		timeDuration: real
 								 		distance: real
 								 		price: real
-								 		meanOfTransport: Connection`Type;
-values
--- TODO Define values here
-instance variables
+								 		meanOfTransport: Connection`Type
+								 		seatsAvailable: nat;
 
+instance variables
 	protected segments : seq of Segment;
 	protected finalResults : seq of real;
-	
+	protected availableSeatsForTrip : nat;
+		
 operations
 	
 	-- constructor
@@ -27,18 +27,18 @@ operations
 	post segments = segs and finalResults = [];
 	
 	-- add new segment
-	public addSegment: Utilities`String * seq of real * Connection`Type ==> ()
-	addSegment(origin, distValues, meanType) ==
+	public addSegment: Utilities`String * seq of real * Connection`Type * nat ==> ()
+	addSegment(origin, distValues, meanType, seatsAvailable) ==
 	(
-		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), meanType);
+		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), meanType, seatsAvailable);
 		segments := segments ^[segment]; 
 	);
 	
 	-- add new segment withouy mean of transportation info
-	public addSegmentFirst: Utilities`String * seq of real ==> ()
-	addSegmentFirst(origin, distValues) ==
+	public addSegmentFirst: Utilities`String * seq of real  * nat ==> ()
+	addSegmentFirst(origin, distValues, seatsAvailable) ==
 	(
-		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), <NONE>);
+		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), <NONE>, seatsAvailable);
 		segments := segments ^[segment]; 
 	);
 	
@@ -57,6 +57,23 @@ operations
 	)
 	post finalResults = results;   
 
+	-- gets number of seats available per trip
+	public getAvailableSeats: () ==> nat
+	getAvailableSeats() ==
+	(
+		for all sgm in set segments do (
+			if (sgm.seatsAvailable <= minSeatsAvailable) then
+				minSeatsAvailable := sgm.seatsAvailable;
+		);
+		return minSeatsAvailable;
+	);
+	
+	public setAvailableSeats: nat ==> ()
+	setAvailableSeats(nrSeats) ==
+	(
+		availableSeatsForTrip := nrSeats;
+	);
+		
 functions
 -- TODO Define functiones here
 traces

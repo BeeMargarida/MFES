@@ -1,0 +1,51 @@
+class TicketingSystem
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+	public users: map nat to map nat to real := {|->}; -- userID -> {passwd -> money} 
+
+operations
+
+	-- constructor
+	public TicketingSystem: () ==> TicketingSystem
+	TicketingSystem() ==
+	(
+		createUserDatabase();
+	);
+	
+	public addUser: nat * nat * real ==> ()
+	addUser(id, passwd, amount) ==
+	(
+		users := users munion {id |-> {passwd |-> amount} };
+	)
+	pre id >= 0 and passwd > 999 and passwd <= 9999 and amount >= 0;
+	
+	public createUserDatabase: () ==> ()
+	createUserDatabase() ==
+	(
+		addUser(12, 1234, 1000);
+		addUser(13, 5555, 9273);
+		addUser(14, 8790, 7834);
+	);
+	
+--	public buyTickets: nat * nat * Trip ==> bool
+--	buyTickets(userID, passwd, selectedTrip, nrSeatsToBuy) ==
+--	(
+--		if passwd = dom users(userID) then
+--			if (rng users(userID) >= trip.price) then (
+--				-- there are ebough seats
+--				if (selectedTrip.getAvailableSeats() >= nrSeatsToBuy) then (
+--					trip.
+--				-- discount
+--			) else
+--			 -- not eough moneu\y
+--			 ) else
+--			 -- passwd not correct
+--			 )
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end TicketingSystem

@@ -2,22 +2,19 @@ class SearchEngine
 types
 	public Type = Connection`Type;
 	public ConnectionInfo :: con: seq of Connection
-														type: Type
-														weight: real;
-	
-values
--- TODO Define values here
+													 type: Type
+													 weight: real;
+
 instance variables
 
 	protected transportMap: TransportGraph;
 	protected settledNodes: set of Station := {};
 	protected unsettledNodes: set of Station := {};
-	protected distances: map Station to seq of real := {|->}; -- seq of reals --> 1: distance; 2: price; 3: duration 
+	protected distances: map Station to seq of real := {|->}; 
 	protected prev: map Station to Station := {|->}
 	
 		
 operations
-	
 	-- constructor
 	public SearchEngine: () ==> SearchEngine
 	SearchEngine() ==
@@ -26,8 +23,8 @@ operations
 		return self;
 	);
 	
-	
 	-- dijkstra algorithm logic and main function
+	-- weightFactor is 1: distance; 2: price; 3: duration
 	public dijkstraAlgorithm: Utilities`String * set of Connection`Type * nat ==> ()
 	dijkstraAlgorithm(origin, meansOfTransportation, weightFactor) ==
 	(
@@ -138,7 +135,7 @@ operations
 
 		for all target in set adjacentNodes do (
 		
-			dcl con : ConnectionInfo := getDistanceConnection(node, target, meansOfTransportation,weightFactor);
+			dcl con : ConnectionInfo := getDistanceConnection(node, target, meansOfTransportation, weightFactor);
 			if(con.con <> []) then (
 			
 				if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + con.weight) then (
@@ -161,6 +158,7 @@ operations
 						target.setCalculatedVariables(newSeq);
 						target.setArrivalTime(newArrivalTime);
 						target.setMeanOfTransportationUsed(con.type);
+						target.setAvailableSeats(con.seatsAvailable); -- here1
 						prev := prev ++ {target |-> node};
 						
 						unsettledNodes := unsettledNodes union {target}; 
@@ -396,8 +394,8 @@ operations
 					for el in answerOne do (
 					
 						IO`println(el);
-						if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables())
-						else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed());
+						if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables(), el.getAvailableSeats())
+						else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed(), el.getAvailableSeats());
 						i := i + 1;
 						
 					);
@@ -446,8 +444,8 @@ operations
 			else (
 					dcl i : nat := 0;
 					for el in answerSeq do (
-						if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables())
-						else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed());
+						if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables(), el.getAvailableSeats())
+						else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed(), el.getAvailableSeats());
 						i := i + 1;
 					);
 					trips := trips ^ [trip];
@@ -457,7 +455,6 @@ operations
 			return trips;
 			
 		)
-		
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
 	
