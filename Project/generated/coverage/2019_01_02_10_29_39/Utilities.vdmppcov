@@ -1,0 +1,17 @@
+class Utilities
+types
+	public String = seq of char;
+	
+values
+	public MAX_INT = 256;
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+operations
+	
+
+functions
+	
+traces
+-- TODO Define Combinatorial Test Traces here
+end Utilities
