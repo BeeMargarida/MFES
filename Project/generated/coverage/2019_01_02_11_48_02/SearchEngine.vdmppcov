@@ -14,7 +14,7 @@ instance variables
 	protected unsettledNodes: set of Station := {};
 	protected distances: map Station to seq of real := {|->}; -- seq of reals --> 1: distance; 2: price; 3: duration 
 	protected prev: map Station to Station := {|->};
-	protected stationOrigin : Station;
+	protected station : Station;
 	
 		
 operations
@@ -47,8 +47,8 @@ operations
 		
 		);
 	)
-	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap)
-	post IsShortestPath(distances, prev, unsettledNodes, stationOrigin, transportMap);
+	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(station, transportMap);
+	-- post IsShortestPath(distances, prev, unsettledNodes, station, transportMap);
 	
 	
 	-- returns the minimum waiting time when we change transportation in one station or -1, if the
@@ -372,9 +372,9 @@ operations
 	public rome2Rio: Utilities`String * Utilities`String * set of nat * nat ==> seq of Trip 
 	rome2Rio(origin, destination, meansOfTransportation, weightFactor) ==
 	(
+		dcl stationOrigin : Station := transportMap.getStation(origin);
 		dcl stationDest : Station := transportMap.getStation(destination);
 		dcl trips : seq of Trip := [];
-		stationOrigin := transportMap.getStation(origin);
 		prev := {|->};
 		distances := {|->};
 		settledNodes := {};
@@ -537,19 +537,8 @@ functions
 	(
 		sta in set g.stations
 	);
-	
-	IsShortestPath(distances : map Station to seq of real, prev: map Station to Station, unsettledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
-		definesShortestDist(distances, prev, unsettledNodes, stationOrigin,transportMap) and setOfLinkedVertices(unsettledNodes, stationOrigin, transportMap);
 
-	definesShortestDist(distances : map Station to seq of real, prev: map Station to Station, unsettledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
-	(
-		true
-	);
-	
-	setOfLinkedVertices(unsettledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
-	(
-		true
-	);
+
 traces
 -- TODO Define Combinatorial Test Traces here
 end SearchEngine
