@@ -1,0 +1,68 @@
+class Station
+types
+values
+-- TODO Define values here
+instance variables
+	
+	public name: Utilities`String;
+	public weight: real;
+	public arrivalTime: real;
+	private calculatedVariables: seq of real := [0,0,0]; -- seq of reals --> 1: distance; 2: price; 3: duration
+	private meanOfTransportationUsed: Connection`Type;
+	
+operations
+	
+	-- constructor
+	public Station: Utilities`String * real ==> Station
+	Station(n, w) ==
+	(
+		name := n;
+		weight := w;
+		
+		return self;
+	)
+	post name = n and weight = w;
+	
+	-- sets calculated variables 
+	public setCalculatedVariables: seq of real ==> ()
+	setCalculatedVariables(vars) ==
+	(
+		calculatedVariables := vars;
+	)
+	post calculatedVariables = vars;
+	
+	-- set arrival Time
+	public setArrivalTime: real ==> ()
+	setArrivalTime(time) ==
+	(
+		arrivalTime := time;
+		
+	);
+		
+	-- get calculated variables
+	public getCalculatedVariables: () ==> seq of real
+	getCalculatedVariables() ==
+	(
+		return calculatedVariables;
+	);
+	
+	-- sets means of transportation used to get to this station
+	public setMeanOfTransportationUsed: Connection`Type ==> ()
+	setMeanOfTransportationUsed(type) ==
+	(
+		meanOfTransportationUsed := type;
+	);
+	
+	-- gets means of transportation used to get to this station
+	public getMeanOfTransportationUsed: () ==> Connection`Type
+	getMeanOfTransportationUsed() ==
+	(
+		return meanOfTransportationUsed;
+	);
+
+	
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Station

@@ -47,6 +47,8 @@ operations
 			findMinimalDistances(minimumNode, meansOfTransportation, weightFactor);
 		
 		);
+		IO`println("YEEEEE");
+		IO`println(settledNodes);
 	)
 	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap)
 	post IsShortestPath(distances, prev, settledNodes, stationOrigin, transportMap);

@@ -24,7 +24,6 @@ operations
 	SearchEngine() ==
 	(
 		transportMap := new TransportGraph();
-		unsettledNodes := transportMap.listStations(); 
 		return self;
 	);
 	
@@ -36,9 +35,9 @@ operations
 		distances := distances ++ {origin |-> [0,0,0]};
 		origin.setArrivalTime(0);
 		
-		settledNodes := settledNodes union {origin};
+		unsettledNodes := unsettledNodes union {origin};
 		
-		while(settledNodes inter unsettledNodes <> {}) do (
+		while(unsettledNodes <> {}) do (
 		
 			dcl minimumNode : Station := getMinimumNode(weightFactor);
 			settledNodes := settledNodes union {minimumNode};
@@ -47,6 +46,8 @@ operations
 			findMinimalDistances(minimumNode, meansOfTransportation, weightFactor);
 		
 		);
+		IO`println("YEEEEE");
+		IO`println(settledNodes);
 	)
 	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap)
 	post IsShortestPath(distances, prev, settledNodes, stationOrigin, transportMap);
@@ -166,7 +167,7 @@ operations
 							target.setMeanOfTransportationUsed(con.type);
 							prev := prev ++ {target |-> node};
 							
-							settledNodes := settledNodes union {target}; 
+							unsettledNodes := unsettledNodes union {target}; 
 						);
 					);
 				);
@@ -180,7 +181,7 @@ operations
 	getMinimumNode(weightFactor) == 
 	(
 		dcl minimum : Station := new Station("",0);
-		for all n in set settledNodes inter unsettledNodes do (
+		for all n in set unsettledNodes do (
 			if(minimum.name = "") then (
 				minimum := n;
 			)
@@ -379,7 +380,7 @@ operations
 		prev := {|->};
 		distances := {|->};
 		settledNodes := {};
-		unsettledNodes := transportMap.listStations();
+		unsettledNodes := {};
 		
 		if(meansOfTransportation = {}) then (
 			
@@ -395,7 +396,7 @@ operations
 				prev := {|->};
 				distances := {|->};
 				settledNodes := {};
-				unsettledNodes := transportMap.listStations();
+				unsettledNodes := {};
 				answerOne := [];
 				
 				
