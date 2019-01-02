@@ -27,9 +27,6 @@ operations
 		return self;
 	);
 	
-	public getTransportGraph: () ==> TransportGraph
-	getTransportGraph() == return transportMap;
-	
 	-- dijkstra algorithm logic and main function
 	public dijkstraAlgorithm: Station * set of Connection`Type * nat ==> ()
 	dijkstraAlgorithm(origin, meansOfTransportation, weightFactor) ==
@@ -50,8 +47,8 @@ operations
 		
 		);
 	)
-	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap)
-	post IsShortestPath(distances, prev, unsettledNodes, stationOrigin, transportMap);
+	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap);
+	-- post IsShortestPath(distances, prev, unsettledNodes, station, transportMap);
 	
 	
 	-- returns the minimum waiting time when we change transportation in one station or -1, if the
@@ -207,6 +204,32 @@ operations
 		
 		return dist(weightFactor);
 	);
+	
+	-- return distance from one node to another
+	private getDistance: Station * Station * set of Connection`Type * nat ==> real
+	getDistance(node, target, meansOfTransportation, weightFactor) ==
+	(
+		for all con in set transportMap.listConnections() do (		
+			if(con.type in set meansOfTransportation) then (
+			
+				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
+					
+					if(weightFactor = 1) then (
+						return con.distance;
+					) 
+					else if (weightFactor = 2) then (
+						return con.price;
+					)
+					else if (weightFactor = 3) then (
+						return con.duration;
+					);
+				);
+			);
+		);
+		
+		return 0;
+	)
+	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
 	
 	-- returns info about the connection from one node to another, if the connection is with the correct mean of transporation and if
 	-- the origin and destination are correct
@@ -397,17 +420,7 @@ operations
 					
 					if(trip.getSegments() <> []) then (
 						trip.setFinalResults(stationDest.getCalculatedVariables());
-						if(trips = []) then (
-								trips := trips ^ [trip];)
-						else (
-								dcl isIn : bool := false;
-								for t in trips do (
-										if(equalTrips(t, trip) = true) then
-												isIn := true;
-								);
-								if( isIn = false ) then
-										trips := trips ^ [trip];
-						);
+						trips := trips ^ [trip];
 					);
 				);
 				
@@ -426,7 +439,6 @@ operations
 			dcl answerSeq : seq of Station := [];
 			dcl trip : Trip := new Trip([]);
 			dcl means : set of Connection`Type := {};
-			dcl i : nat := 0;
 			
 			for all m in set meansOfTransportation do(
 				if( m = 1 ) then(
@@ -442,32 +454,26 @@ operations
 			dijkstraAlgorithm(stationOrigin, means, weightFactor);
 			answerSeq := getPath(destination);
 			
-			for el in answerSeq do (
 			
-			 		if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables())
-					else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed());
-
-					i := i + 1;
-			);
+			if ((prev(transportMap.getStation(destination)) = transportMap.getStation(origin)) and (stationDest.getCalculatedVariables()(1) = 0 and stationDest.getCalculatedVariables()(2) = 0 and stationDest.getCalculatedVariables()(3) = 0) ) then(
+					IO`println("There is no possible path for your options.");
+			)
+			else (
+					dcl i : nat := 0;
+					for el in answerSeq do (
 					
-			if(trip.getSegments() <> []) then (
-			 		trip.setFinalResults(stationDest.getCalculatedVariables());
-					if(trips = []) then (
-							trips := trips ^ [trip];)
-					else (
-							dcl isIn : bool := false;
-							for t in trips do (
-									if(equalTrips(t, trip) = true) then
-											isIn := true;
-							);
-							if( isIn = false ) then
-									trips := trips ^ [trip];
+						if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables())
+						else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed());
+
+						i := i + 1;
+					);
+					
+					if(trip.getSegments() <> []) then (
+						trip.setFinalResults(stationDest.getCalculatedVariables());
+						trips := trips ^ [trip];
 					);
 			);
 			
-			if(trips = []) then (
-					IO`println("There are no possible paths for your options.");	
-			);
 			
 			return trips;
 			
@@ -488,20 +494,6 @@ operations
 	 return true;
 	);
 	
-	-- compare trips
-	public equalTrips: Trip * Trip ==> bool
-	equalTrips(trip1, trip2) == (
-			dcl i : nat := 1;
-			dcl seg2 : seq of Trip`Segment := trip2.getSegments();
-			
-			for s1 in trip1.getSegments() do (
-					if(s1.startCity <> seg2(i).startCity or s1.timeDuration <> seg2(i).timeDuration or s1.distance <> seg2(i).distance or s1.price <> seg2(i).price or s1.meanOfTransport <> seg2(i).meanOfTransport) then
-					  return false;
-					i := i+1;
-			);
-			
-			return true;
-	);
 	
 	/*-- VALIDATION FUNCTIONS
 	public validGraph : TransportGraph ==> bool
@@ -545,19 +537,8 @@ functions
 	(
 		sta in set g.stations
 	);
-	
-	IsShortestPath(distances : map Station to seq of real, prev: map Station to Station, unsettledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
-		definesShortestDist(distances, prev, unsettledNodes, stationOrigin,transportMap) and setOfLinkedVertices(unsettledNodes, stationOrigin, transportMap);
 
-	definesShortestDist(distances : map Station to seq of real, prev: map Station to Station, unsettledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
-	(
-		true
-	);
-	
-	setOfLinkedVertices(unsettledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
-	(
-		true
-	);
+
 traces
 -- TODO Define Combinatorial Test Traces here
 end SearchEngine
