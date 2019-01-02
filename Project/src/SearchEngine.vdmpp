@@ -51,8 +51,8 @@ operations
 		
 		);
 	)
-	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap)
-	post IsShortestPath(distances, prev, settledNodes, stationOrigin, transportMap);
+	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap);
+	--post IsShortestPath(distances, prev, settledNodes, stationOrigin, transportMap);
 	
 	
 	-- returns the minimum waiting time when we change transportation in one station or -1, if the
@@ -352,7 +352,16 @@ operations
 	(
 		dcl stationDest : Station := transportMap.getStation(destination);
 		dcl trips : seq of Trip := [];
+		IO`println(stationDest.name);
+		if(stringEqual(stationDest.name, "Error")) then (
+				IO`println("There is no destination station with that name.");
+				return [];
+		);
 		stationOrigin := transportMap.getStation(origin);
+		if(stringEqual(stationOrigin.name, "Error")) then (
+				IO`println("There is no origin station with that name.");
+				return [];
+		);
 		prev := {|->};
 		distances := {|->};
 		settledNodes := {};
@@ -461,7 +470,7 @@ operations
 									if(equalTrips(t, trip) = true) then
 											isIn := true;
 							);
-							if( isIn = false ) then
+							if(isIn = false) then
 									trips := trips ^ [trip];
 					);
 			);

@@ -89,21 +89,6 @@ operations
 		return result;
 	);
 	
-	-- returns connections with the stations provided as origin and destination 
-	public getConnection: Connection`Type * Utilities`String * Utilities`String ==> Connection 
-	getConnection(type, origin, destination) == 
-		(
-			dcl getCon : Connection;
-
-			for all con in set connections do (
-				if(stringEqual(con.source.name,origin) and stringEqual(con.destination.name, destination) and con.type = type) then
-					return con; 
-			);
-
-		return getCon;
-
-	);
-	
 	-- returns all stations that have connections with the origin name equal to the one provided
 	public getNeighborsOfNode: Utilities`String ==> set of Station
 	getNeighborsOfNode(name) ==
@@ -133,11 +118,11 @@ operations
 	public getStation: Utilities`String ==> Station
 	getStation(stationName) ==
 	(
-		dcl stationRes : Station;
 		for all station in set stations do (
-			if stringEqual(station.name, stationName) then stationRes := station;
+			if stringEqual(station.name, stationName) then 
+					return station;
 		); 
-		return stationRes;
+		return new Station("Error", 0);
 	);
 	
 	
