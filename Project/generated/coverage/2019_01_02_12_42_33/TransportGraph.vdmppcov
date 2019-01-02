@@ -4,8 +4,13 @@ types
 	public Type = Connection`Type;
 	
 instance variables
+<<<<<<< HEAD
 	public stations : set of Station;
 	public connections: set of Connection;
+=======
+	private stations : set of Station;
+	private connections: set of Connection;
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 
 operations
 	-- Constructor
@@ -37,8 +42,13 @@ operations
 		createDatabase() ==
 		(
 			addConnection(<Bus>,   "Porto", "Lisbon", 300, [6, 12]);
+<<<<<<< HEAD
 			-- addConnection(<Plane>, "Porto", "Lisbon", 300, [8, 22]);
 			-- addConnection(<Train>, "Porto", "Lisbon", 350, [10, 12, 16, 20, 22]);
+=======
+			addConnection(<Plane>, "Porto", "Lisbon", 300, [8, 22]);
+			addConnection(<Train>, "Porto", "Lisbon", 350, [10, 12, 16, 20, 22]);
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 			addConnection(<Bus>,   "Porto", "Madrid", 1500, [6, 12]);
 			addConnection(<Plane>,   "Porto", "Paris", 1300, [8, 20]);
 			addConnection(<Plane>, "Amsterdam", "Bologna", 300, [6, 12]);
@@ -50,7 +60,11 @@ operations
 			addConnection(<Bus>,   "Lisbon", "Faro", 285, [8, 12]);
 			addConnection(<Bus>, "Lisbon", "Madrid", 750, [8, 12, 15, 17]);
 			addConnection(<Plane>, "Lisbon", "Madrid", 650, [8, 10, 12, 15, 19, 22]);
+<<<<<<< HEAD
 			-- addConnection(<Train>, "Lisbon", "Madrid", 680, [8, 10, 12, 15, 17, 19, 22]);
+=======
+			addConnection(<Train>, "Lisbon", "Madrid", 680, [8, 10, 12, 15, 17, 19, 22]);
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 			addConnection(<Plane>, "Lisbon", "Barcelona", 1347, [8, 12, 15, 19, 22]);
 			addConnection(<Train>, "Madrid", "Barcelona", 625, [8, 10, 12, 15, 17, 19, 22]);
 			addConnection(<Plane>, "Madrid", "Barcelona", 625, [8, 12, 15, 19, 22]);

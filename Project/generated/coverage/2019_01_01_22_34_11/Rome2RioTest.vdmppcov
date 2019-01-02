@@ -1,0 +1,31 @@
+class Rome2RioTest
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+		s : SearchEngine := new SearchEngine();
+operations
+-- TODO Define operations here
+		private assertTrue: bool ==> ()
+ 		assertTrue(cond) == return
+ 		pre cond;
+ 		
+ 		private testGraphCreation: () ==> ()
+ 		testGraphCreation() == (
+ 			IO`println(s.getTransportGraph());
+ 			return;
+ 		);
+ 		
+ 		public static main: () ==> ()
+ 			main() ==
+ 			(
+						new Rome2RioTest().testGraphCreation();
+			);
+			
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Rome2RioTest

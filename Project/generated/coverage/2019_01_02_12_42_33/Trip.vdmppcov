@@ -55,7 +55,11 @@ operations
 	(
 		finalResults := results;
 	)
+<<<<<<< HEAD
 	post finalResults = results;   
+=======
+	post finalResults = results;
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 
 functions
 -- TODO Define functiones here

@@ -14,7 +14,11 @@ instance variables
 	protected unsettledNodes: set of Station := {};
 	protected distances: map Station to seq of real := {|->}; -- seq of reals --> 1: distance; 2: price; 3: duration 
 	protected prev: map Station to Station := {|->};
+<<<<<<< HEAD
 	protected stationOrigin : Station;
+=======
+	protected station : Station;
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 	
 		
 operations
@@ -24,6 +28,7 @@ operations
 	SearchEngine() ==
 	(
 		transportMap := new TransportGraph();
+<<<<<<< HEAD
 		unsettledNodes := transportMap.listStations(); 
 		return self;
 	);
@@ -39,6 +44,26 @@ operations
 		settledNodes := settledNodes union {origin};
 		
 		while(settledNodes inter unsettledNodes <> {}) do (
+=======
+		return self;
+	);
+	
+	public getTransportGraph: () ==> TransportGraph
+	getTransportGraph() == return transportMap;
+	
+	-- dijkstra algorithm logic and main function
+	public dijkstraAlgorithm: Utilities`String * set of Connection`Type * nat ==> ()
+	dijkstraAlgorithm(origin, meansOfTransportation, weightFactor) ==
+	(
+		station := transportMap.getStation(origin);
+		
+		distances := distances ++ {station |-> [0,0,0]};
+		station.setArrivalTime(0);
+		
+		unsettledNodes := unsettledNodes union {station};
+		
+		while(unsettledNodes <> {}) do (
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 		
 			dcl minimumNode : Station := getMinimumNode(weightFactor);
 			settledNodes := settledNodes union {minimumNode};
@@ -48,8 +73,13 @@ operations
 		
 		);
 	)
+<<<<<<< HEAD
 	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap)
 	post IsShortestPath(distances, prev, settledNodes, stationOrigin, transportMap);
+=======
+	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3)/* and validGraph(transportMap) and validStart(station, transportMap)*/;
+	-- post IsShortestPath(distances, prev, unsettledNodes, station, transportMap);
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 	
 	
 	-- returns the minimum waiting time when we change transportation in one station or -1, if the
@@ -166,7 +196,11 @@ operations
 							target.setMeanOfTransportationUsed(con.type);
 							prev := prev ++ {target |-> node};
 							
+<<<<<<< HEAD
 							settledNodes := settledNodes union {target}; 
+=======
+							unsettledNodes := unsettledNodes union {target}; 
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 						);
 					);
 				);
@@ -180,7 +214,11 @@ operations
 	getMinimumNode(weightFactor) == 
 	(
 		dcl minimum : Station := new Station("",0);
+<<<<<<< HEAD
 		for all n in set settledNodes inter unsettledNodes do (
+=======
+		for all n in set unsettledNodes do (
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 			if(minimum.name = "") then (
 				minimum := n;
 			)
@@ -206,6 +244,7 @@ operations
 		return dist(weightFactor);
 	);
 	
+<<<<<<< HEAD
 	-- return distance from one node to another
 	private getDistance: Station * Station * set of Connection`Type * nat ==> real
 	getDistance(node, target, meansOfTransportation, weightFactor) ==
@@ -232,6 +271,8 @@ operations
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
 	
+=======
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 	-- returns info about the connection from one node to another, if the connection is with the correct mean of transporation and if
 	-- the origin and destination are correct
 	private getDistanceConnection: Station * Station * set of Connection`Type * nat ==> set of ConnectionInfo
@@ -375,11 +416,18 @@ operations
 	(
 		dcl stationDest : Station := transportMap.getStation(destination);
 		dcl trips : seq of Trip := [];
+<<<<<<< HEAD
 		stationOrigin := transportMap.getStation(origin);
 		prev := {|->};
 		distances := {|->};
 		settledNodes := {};
 		unsettledNodes := transportMap.listStations();
+=======
+		prev := {|->};
+		distances := {|->};
+		settledNodes := {};
+		unsettledNodes := {};
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 		
 		if(meansOfTransportation = {}) then (
 			
@@ -395,11 +443,18 @@ operations
 				prev := {|->};
 				distances := {|->};
 				settledNodes := {};
+<<<<<<< HEAD
 				unsettledNodes := transportMap.listStations();
 				answerOne := [];
 				
 				
 				dijkstraAlgorithm(stationOrigin, mean, weightFactor);
+=======
+				unsettledNodes := {};
+				answerOne := [];
+				
+				dijkstraAlgorithm(origin, mean, weightFactor);
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 				answerOne := getPath(destination);
 				
 				IO`println(mean);
@@ -421,7 +476,21 @@ operations
 					
 					if(trip.getSegments() <> []) then (
 						trip.setFinalResults(stationDest.getCalculatedVariables());
+<<<<<<< HEAD
 						trips := trips ^ [trip];
+=======
+						if(trips = []) then (
+								trips := trips ^ [trip];)
+						else (
+								dcl isIn : bool := false;
+								for t in trips do (
+										if(equalTrips(t, trip) = true) then
+												isIn := true;
+								);
+								if( isIn = false ) then
+										trips := trips ^ [trip];
+						);
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 					);
 				);
 				
@@ -440,6 +509,10 @@ operations
 			dcl answerSeq : seq of Station := [];
 			dcl trip : Trip := new Trip([]);
 			dcl means : set of Connection`Type := {};
+<<<<<<< HEAD
+=======
+			dcl i : nat := 0;
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 			
 			for all m in set meansOfTransportation do(
 				if( m = 1 ) then(
@@ -452,6 +525,7 @@ operations
 				means := means union {<Walk>})
 			);
 			
+<<<<<<< HEAD
 			dijkstraAlgorithm(stationOrigin, means, weightFactor);
 			answerSeq := getPath(destination);
 			
@@ -475,6 +549,37 @@ operations
 					);
 			);
 			
+=======
+			dijkstraAlgorithm(origin, means, weightFactor);
+			answerSeq := getPath(destination);
+			
+			for el in answerSeq do (
+			
+			 		if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables())
+					else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed());
+
+					i := i + 1;
+			);
+					
+			if(trip.getSegments() <> []) then (
+			 		trip.setFinalResults(stationDest.getCalculatedVariables());
+					if(trips = []) then (
+							trips := trips ^ [trip];)
+					else (
+							dcl isIn : bool := false;
+							for t in trips do (
+									if(equalTrips(t, trip) = true) then
+											isIn := true;
+							);
+							if( isIn = false ) then
+									trips := trips ^ [trip];
+					);
+			);
+			
+			if(trips = []) then (
+					IO`println("There are no possible paths for your options.");	
+			);
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 			
 			return trips;
 			
@@ -495,6 +600,23 @@ operations
 	 return true;
 	);
 	
+<<<<<<< HEAD
+=======
+	-- compare trips
+	public equalTrips: Trip * Trip ==> bool
+	equalTrips(trip1, trip2) == (
+			dcl i : nat := 1;
+			dcl seg2 : seq of Trip`Segment := trip2.getSegments();
+			
+			for s1 in trip1.getSegments() do (
+					if(s1.startCity <> seg2(i).startCity or s1.timeDuration <> seg2(i).timeDuration or s1.distance <> seg2(i).distance or s1.price <> seg2(i).price or s1.meanOfTransport <> seg2(i).meanOfTransport) then
+					  return false;
+					i := i+1;
+			);
+			
+			return true;
+	);
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 	
 	/*-- VALIDATION FUNCTIONS
 	public validGraph : TransportGraph ==> bool
@@ -529,13 +651,28 @@ functions
 	validGraph(g : TransportGraph) res: bool ==
 	(
 		
+<<<<<<< HEAD
 		forall e in set g.connections & (e.distance <> 0 and e.price <> 0 and e.duration <> 0 and e.timetable <> [] 
 		and e.source in set g.stations and e.destination in set g.stations)
+=======
+		
+		/*dcl connections : set of Connection := g.listConnections();
+		dcl stations : set of Station := g.listStations();
+		for all e in set connections do (
+		
+			if (e.distance = 0 or e.price = 0 or e.duration = 0 or e.timetable = []) then return false;
+			if((e.source not in set stations) or (e.destination not in set stations)) then return false;
+			
+		);
+		return true;*/ 
+		true
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 		
 	);
 	
 	validStart(sta : Station, g : TransportGraph) res: bool ==
 	(
+<<<<<<< HEAD
 		sta in set g.stations
 	);
 	
@@ -561,6 +698,16 @@ functions
 	
 	neighbour(transportMap: TransportGraph, u: Station, v: Station) res: bool ==
 		exists tup in set transportMap.connections & (tup.source = u and tup.destination = v and tup.distance > 0)
+=======
+		
+		/*dcl stations : set of Station := g.listStations();
+		if (sta in set stations) then return true;
+		return false;*/ 
+		true
+	);
+
+
+>>>>>>> 815d3a5ca15d53af507152d1c63d183532845df3
 traces
 -- TODO Define Combinatorial Test Traces here
 end SearchEngine
