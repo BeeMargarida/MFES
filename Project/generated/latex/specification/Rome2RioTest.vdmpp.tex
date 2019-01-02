@@ -1,0 +1,184 @@
+\begin{vdmpp}[breaklines=true]
+class Rome2RioTest
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+  s : SearchEngine := new SearchEngine();
+operations
+-- TODO Define operations here
+(*@
+\label{assertTrue:11}
+@*)
+  private assertTrue: bool ==> ()
+    assertTrue(cond) == return
+    pre cond;
+
+(*@
+\label{testGraphCreation:15}
+@*)
+    private testGraphCreation: () ==> ()
+    testGraphCreation() == (
+      assertTrue(card s.getTransportGraph().listConnections() > 0);
+    );
+    
+(*@
+\label{testPricePath:20}
+@*)
+    private testPricePath: () ==> ()
+    testPricePath() == (
+      dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2);
+      dcl segments : seq of Trip`Segment := answer(1).getSegments();
+      dcl price : real := segments(3).price;
+     
+      assertTrue(price = 57);
+      assertTrue(len segments = 3);
+      assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+      assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+      assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+    );
+    
+(*@
+\label{testDistancePath:33}
+@*)
+    private testDistancePath: () ==> ()
+    testDistancePath() == (
+      dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 1);
+      dcl segments : seq of Trip`Segment := answer(1).getSegments();
+      dcl distance : real := segments(3).distance;
+      
+      assertTrue(distance = 950);
+      assertTrue(len segments = 3);
+      assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+      assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+      assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+    );
+    
+(*@
+\label{testDurationPath:46}
+@*)
+    private testDurationPath: () ==> ()
+    testDurationPath() == (
+      dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3);
+      dcl segments : seq of Trip`Segment := answer(1).getSegments();
+      dcl duration : real := segments(3).timeDuration;
+      
+      assertTrue(duration = 1.25);
+      assertTrue(len segments = 3);
+      assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+      assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+      assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+    );
+    
+(*@
+\label{testCombinationPath:59}
+@*)
+    private testCombinationPath: () ==> ()
+    testCombinationPath() == (
+      dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {}, 3);
+      dcl segments1 : seq of Trip`Segment := answer(1).getSegments();
+      dcl segments2 : seq of Trip`Segment := answer(2).getSegments();
+      dcl segments3 : seq of Trip`Segment := answer(3).getSegments();
+      
+      assertTrue(segments1(1).startCity = ['P','o','r','t','o']);
+      assertTrue(segments1(2).startCity = ['M','a','d','r','i','d']);
+      assertTrue(segments1(2).timeDuration = 1);
+      
+      assertTrue(segments2(1).startCity = ['P','o','r','t','o']);
+      assertTrue(segments2(2).startCity = ['L','i','s','b','o','n']);
+      assertTrue(segments2(3).startCity = ['M','a','d','r','i','d']);
+      assertTrue(segments2(3).timeDuration = 1.25);
+      
+      assertTrue(segments3(1).startCity = ['P','o','r','t','o']);
+      assertTrue(segments3(2).startCity = ['L','i','s','b','o','n']);
+      assertTrue(segments3(3).startCity = ['M','a','d','r','i','d']);
+      assertTrue(segments3(3).timeDuration = 13.125);
+    );
+    
+(*@
+\label{testNoPath:81}
+@*)
+    private testNoPath: () ==> ()
+    testNoPath() == (
+      dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {4}, 3);
+     assertTrue(answer = []);
+     
+     answer := s.rome2Rio(['G','a','i','a'], ['K','r','a','k','o','w'], {}, 3);
+     assertTrue(answer = []);
+(*@
+\label{main:88}
+@*)
+(*@
+\label{testWrongStations:88}
+@*)
+    );
+    
+    private testWrongStations: () ==> ()
+    testWrongStations() == (
+      dcl answer : seq of Trip := s.rome2Rio(['P','e','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3);
+     assertTrue(answer = []);
+     answer := s.rome2Rio(['P','o','r','t','o'], ['M','e','d','r','i','d'], {1,2}, 3);
+     assertTrue(answer = []);
+(*@
+\label{testArrivalTimeProblem:96}
+@*)
+    );
+    
+    private testArrivalTimeProblem: () ==> ()
+    testArrivalTimeProblem() == (
+      dcl answer : seq of Trip := s.rome2Rio(['M','a','d','r','i','d'], ['M','o','s','c','o','w'], {1,2,3,4}, 2);
+     
+     assertTrue(answer = []);
+    );
+        
+    public static main: () ==> ()
+    main() == (
+      new Rome2RioTest().testGraphCreation();
+      new Rome2RioTest().testPricePath();
+      new Rome2RioTest().testDistancePath();
+      new Rome2RioTest().testDurationPath();
+      new Rome2RioTest().testCombinationPath();
+      new Rome2RioTest().testNoPath();
+      new Rome2RioTest().testWrongStations();
+      new Rome2RioTest().testArrivalTimeProblem();
+   );
+   
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Rome2RioTest
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[assertTrue:11]{assertTrue} & 11&100.0\% & 670 \\
+\hline
+\hyperref[main:88]{main} & 88&100.0\% & 12 \\
+\hline
+\hyperref[testArrivalTimeProblem:96]{testArrivalTimeProblem} & 96&100.0\% & 2 \\
+\hline
+\hyperref[testCombinationPath:59]{testCombinationPath} & 59&100.0\% & 11 \\
+\hline
+\hyperref[testDistancePath:33]{testDistancePath} & 33&100.0\% & 11 \\
+\hline
+\hyperref[testDurationPath:46]{testDurationPath} & 46&100.0\% & 11 \\
+\hline
+\hyperref[testGraphCreation:15]{testGraphCreation} & 15&100.0\% & 12 \\
+\hline
+\hyperref[testNoPath:81]{testNoPath} & 81&100.0\% & 11 \\
+\hline
+\hyperref[testPricePath:20]{testPricePath} & 20&100.0\% & 12 \\
+\hline
+\hyperref[testWrongStations:88]{testWrongStations} & 88&100.0\% & 2 \\
+\hline
+\hline
+Rome2RioTest.vdmpp & & 100.0\% & 754 \\
+\hline
+\end{longtable}
+
