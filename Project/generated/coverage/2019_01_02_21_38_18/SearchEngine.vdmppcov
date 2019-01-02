@@ -131,14 +131,14 @@ operations
 	);
 	
 	private waitingTime: Connection * Station ==> real
-	waitingTime(connection, node) ==
+	waitingTime(con, sta) ==
 	(
 		dcl timeDiff : real;
 		dcl minDiff : real;
 		
 		minDiff := Utilities`MAX_INT;
-		for idx = 1 to len connection.timetable do (
-			timeDiff := connection.timetable(idx) - node.arrivalTime;
+		for idx = 1 to len con.timetable do (
+			timeDiff := con.timetable(idx) - sta.arrivalTime;
 			if (timeDiff >= 0 and timeDiff < minDiff) then (
 				minDiff := timeDiff;
 			);
@@ -172,8 +172,8 @@ operations
 				if(con.con <> []) then (
 				
 					if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + con.weight) then (
-						--dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
-						dcl newArrivalTime : real;
+						dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
+		
 						if (waitingTime(con.con(1), node) >= 0) then (
 							
 							dcl newPrice : real;

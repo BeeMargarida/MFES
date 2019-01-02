@@ -172,8 +172,8 @@ operations
 				if(con.con <> []) then (
 				
 					if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + con.weight) then (
-						--dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
-						dcl newArrivalTime : real;
+						dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
+		
 						if (waitingTime(con.con(1), node) >= 0) then (
 							
 							dcl newPrice : real;
