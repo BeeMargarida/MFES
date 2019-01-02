@@ -47,7 +47,12 @@ operations
 		return self;
 	)
 	pre dist > 0 and ttbl <> []
-	post distance > 0 and price >= 0 and duration > 0 and timetable <> [];
+	post distance > 0 and price > 0 and duration > 0 and timetable <> [];
+	
+	-- get type of connection (mean of transporation)
+	public getType: () ==> Type
+	getType() ==
+			return type;
 	
 	-- calculate price of the connection
 	private getPrice: Type * real ==> real

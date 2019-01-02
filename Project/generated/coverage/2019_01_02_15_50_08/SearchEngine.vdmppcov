@@ -135,14 +135,10 @@ operations
 		dcl adjacentNodes: set of Station := transportMap.getNeighborsOfNode(node.name);
 		dcl neighborArrivalTime : real;
 		dcl startTime : real := 0;
-		dcl hasMean : bool := false;
-		
-		if(meansOfTransportation <> {}) then
-				hasMean := true;
 				
 		-- Compute arrivalTime for all neighbors of the source node
 		for all neighbor in set adjacentNodes do (
-			neighborArrivalTime := getArrivalTime(0, node, neighbor, meansOfTransportation, hasMean);
+			neighborArrivalTime := getArrivalTime(0, node, neighbor, meansOfTransportation, false);
 			neighbor.setArrivalTime(neighborArrivalTime);
 		);
 
@@ -229,6 +225,12 @@ operations
 				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
 					
 					if(weightFactor = 1) then (
+						IO`print("1");
+						IO`print(con.source.name);
+						IO`print(con.destination.name);
+						IO`print(con.type);
+						IO`print(con.distance);
+						IO`print("\n\n");
 						connectionInfo := connectionInfo union {mk_ConnectionInfo([con], con.type, con.distance)};
 					) 
 					else if (weightFactor = 2) then (
@@ -249,18 +251,24 @@ operations
 	private getDistanceFromConnection: Connection * nat ==> real
 	getDistanceFromConnection(con, weightFactor) ==
 	(
-		dcl ret : real := 0;
+		
 		if(weightFactor = 1) then (
-			ret := con.distance;
+			IO`print("2");
+			IO`print(con.source.name);
+			IO`print(con.destination.name);
+			IO`print(con.type);
+			IO`print(con.distance);
+			IO`print("\n\n");
+			return con.distance;
 		) 
 		else if (weightFactor = 2) then (
-			ret := con.price;
+			return con.price;
 		)
 		else if (weightFactor = 3) then (
-			ret := con.duration;
+			return con.duration;
 		);
 		
-		return ret;
+		return 0;
 	)
 	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
 	
@@ -456,7 +464,17 @@ operations
 					
 			if(trip.getSegments() <> []) then (
 			 		trip.setFinalResults(stationDest.getCalculatedVariables());
-					trips := trips ^ [trip];
+					if(trips = []) then (
+							trips := trips ^ [trip];)
+					else (
+							dcl isIn : bool := false;
+							for t in trips do (
+									if(equalTrips(t, trip) = true) then
+											isIn := true;
+							);
+							if(isIn = false) then
+									trips := trips ^ [trip];
+					);
 			);
 			
 			if(trips = []) then (
@@ -503,7 +521,7 @@ functions
 	validGraph(g : TransportGraph) res: bool ==
 	(
 		
-		forall e in set g.connections & (e.distance <> 0 and e.price >= 0 and e.duration <> 0 and e.timetable <> [] 
+		forall e in set g.connections & (e.distance <> 0 and e.price <> 0 and e.duration <> 0 and e.timetable <> [] 
 		and e.source in set g.stations and e.destination in set g.stations)
 		
 	);
