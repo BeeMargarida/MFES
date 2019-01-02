@@ -15,6 +15,7 @@ instance variables
 	protected distances: map Station to seq of real := {|->}; -- seq of reals --> 1: distance; 2: price; 3: duration 
 	protected prev: map Station to Station := {|->};
 	protected stationOrigin : Station;
+	protected minimumNode : Station;
 	
 		
 operations
@@ -52,7 +53,7 @@ operations
 		);
 	)
 	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap)
-	post IsShortestPath(distances, prev, settledNodes, stationOrigin, transportMap);
+	post IsShortestPath(distances, prev, settledNodes, stationOrigin, transportMap, meansOfTransportation, weightFactor);
 	
 	
 	-- returns the minimum waiting time when we change transportation in one station or -1, if the
@@ -182,21 +183,22 @@ operations
 	private getMinimumNode: nat ==> Station 
 	getMinimumNode(weightFactor) == 
 	(
-		dcl minimum : Station := new Station("",0);
+		minimumNode := new Station("",0);
 		for all n in set settledNodes inter unsettledNodes do (
-			if(minimum.name = "") then (
-				minimum := n;
+			if(minimumNode.name = "") then (
+				minimumNode := n;
 			)
 			else (
-				if(getShortestDistance(n, weightFactor) < getShortestDistance(minimum, weightFactor)) then (
-					minimum := n;
+				if(getShortestDistance(n, weightFactor) < getShortestDistance(minimumNode, weightFactor)) then (
+					minimumNode := n;
 				); 
 			);
 		);
 		
-		return minimum;
+		return minimumNode;
 	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3
+	post isMinimumNode(weightFactor, distances, minimumNode, transportMap, settledNodes, unsettledNodes);
 	
 	-- returns the minimum distance (or price or duration) in the distance seq
 	private getShortestDistance: Station * nat ==> real 
@@ -520,35 +522,47 @@ functions
 		sta in set g.stations
 	);
 	
-	/*
-		create s := new SearchEngine()
-		print s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2)
-	*/
-	
-	IsShortestPath(distances : map Station to seq of real, prev: map Station to Station, settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
-		definesShortestDist(distances, prev, settledNodes, stationOrigin,transportMap) /*and setOfLinkedVertices(settledNodes, stationOrigin, transportMap)*/;
+	IsShortestPath(distances : map Station to seq of real, prev: map Station to Station, settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph, meansOfTransportation : set of Type, weightFactor: nat) res: bool ==
+		definesShortestDist(distances, prev, settledNodes, stationOrigin,transportMap, meansOfTransportation, weightFactor) 
+		and setOfLinkedVertices(settledNodes, stationOrigin, transportMap, meansOfTransportation);
 
-	definesShortestDist(distances : map Station to seq of real, prev: map Station to Station, settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
+	definesShortestDist(distances : map Station to seq of real, prev: map Station to Station, settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph, meansOfTransportation : set of Type, weightFactor: nat) res: bool ==
 	(
 		distances(stationOrigin) = [0,0,0] and 
 		forall sta in set settledNodes\{stationOrigin} & (exists v in set settledNodes & (
-			prev(sta)=v and neighbour(transportMap, sta, v) /*and
-			let tup in set transportMap.connections be st (tup.source = sta and tup.destination = v) in (distances(sta)(1) = distances(v)(1) + tup.distance)*/))
-		/*and
-		forall u1,v in set settledNodes & (neighbour(transportMap, u1, v) => 
-			let tup in set transportMap.connections be st (tup.source = u1 and tup.destination = v) in (distances(u1)(1) <= distances(v)(1) + tup.distance))
-		*/
+			prev(sta)=v and neighbour(transportMap, sta, v, meansOfTransportation) and
+			let tup in set transportMap.connections be 
+			st (tup.source = v and tup.destination = sta and tup.type = sta.meanOfTransportationUsed) 
+			in (distances(sta)(weightFactor) = distances(v)(weightFactor) + getConnectionWeight(tup, weightFactor))
+		))
+		and
+		forall u1,v in set settledNodes & (neighbour(transportMap, u1, v, meansOfTransportation) => 
+			let tup in set transportMap.connections 
+			be st (tup.source = v and tup.destination = u1 and tup.type in set meansOfTransportation) 
+			in (distances(u1)(weightFactor) <= distances(v)(weightFactor) + getConnectionWeight(tup, weightFactor)))
 	);
 	
-	setOfLinkedVertices(settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
+	getConnectionWeight(connection: Connection, weightFactor: nat) res: real == getConnectionVars(connection)(weightFactor);
+	getConnectionVars(connection: Connection) res: seq of real == connection.calculatedVariables;
+	
+	setOfLinkedVertices(settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph, meansOfTransportation : set of Type) res: bool ==
 	(
-		forall u in set settledNodes & (forall v in set transportMap.stations & neighbour(transportMap, u, v) => v in set settledNodes) and
-		forall u1 in set settledNodes\{stationOrigin} & (exists v in set settledNodes & neighbour(transportMap, u1, v))
+		forall u1 in set settledNodes\{stationOrigin} & (exists v in set settledNodes & neighbour(transportMap, u1, v, meansOfTransportation))
 	);
 	
-	neighbour(transportMap: TransportGraph, u: Station, v: Station) res: bool ==
-		exists tup in set transportMap.connections & (tup.source = u and tup.destination = v and tup.distance > 0)
-		
+	neighbour(transportMap: TransportGraph, u: Station, v: Station, meansOfTransportation : set of Type) res: bool ==
+		exists tup in set transportMap.connections & (tup.source = v and tup.destination = u and getConnectionVars(tup) <> [0,0,0] and tup.type in set meansOfTransportation);
+	
+	
+	isMinimumNode(weightFactor : nat, distances : map Station to seq of real, minimumNode : Station, transportMap : TransportGraph, settledNodes : set of Station, unsettledNodes : set of Station) res: bool ==
+	(
+		dom distances = {minimumNode} 
+		or
+		let sta in set dom distances
+		be st (sta in set settledNodes inter unsettledNodes)
+		in (distances(sta)(weightFactor) >= distances(minimumNode)(weightFactor))
+	);
+	
 traces
 -- TODO Define Combinatorial Test Traces here
 end SearchEngine
