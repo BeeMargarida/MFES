@@ -140,34 +140,32 @@ operations
 
 		for all target in set adjacentNodes do (
 		
-			dcl cons : set of ConnectionInfo := getDistanceConnection(node, target, meansOfTransportation, weightFactor);
-			for all con in set cons do (
-				if(con.con <> []) then (
-				
-					if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + con.weight) then (
-						dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
-		
-						if (getWaitingTime(target, node) >= 0) then (
+			dcl con : ConnectionInfo := getDistanceConnection(node, target, meansOfTransportation,weightFactor);
+			if(con.con <> []) then (
+			
+				if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + con.weight) then (
+					dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
+	
+					if (getWaitingTime(target, node) >= 0) then (
+					
+						dcl newPrice : real;
+						dcl newDuration : real;
+						dcl newDist : real;
+						dcl newSeq : seq of real := [];
+					
+						newDist := getShortestDistance(node, 1) + getDistanceFromConnection(con.con(1), 1); 
+						newPrice := getShortestDistance(node, 2) + getDistanceFromConnection(con.con(1), 2);
+						newDuration := getShortestDistance(node, 3) + getDistanceFromConnection(con.con(1), 3); 
+					
+						newSeq := [newDist,newPrice,newDuration];
 						
-							dcl newPrice : real;
-							dcl newDuration : real;
-							dcl newDist : real;
-							dcl newSeq : seq of real := [];
+						distances := distances ++ {target |-> newSeq};
+						target.setCalculatedVariables(newSeq);
+						target.setArrivalTime(newArrivalTime);
+						target.setMeanOfTransportationUsed(con.type);
+						prev := prev ++ {target |-> node};
 						
-							newDist := getShortestDistance(node, 1) + getDistanceFromConnection(con.con(1), 1); 
-							newPrice := getShortestDistance(node, 2) + getDistanceFromConnection(con.con(1), 2);
-							newDuration := getShortestDistance(node, 3) + getDistanceFromConnection(con.con(1), 3); 
-						
-							newSeq := [newDist,newPrice,newDuration];
-							
-							distances := distances ++ {target |-> newSeq};
-							target.setCalculatedVariables(newSeq);
-							target.setArrivalTime(newArrivalTime);
-							target.setMeanOfTransportationUsed(con.type);
-							prev := prev ++ {target |-> node};
-							
-							unsettledNodes := unsettledNodes union {target}; 
-						);
+						unsettledNodes := unsettledNodes union {target}; 
 					);
 				);
 			);
@@ -234,11 +232,11 @@ operations
 	
 	-- returns info about the connection from one node to another, if the connection is with the correct mean of transporation and if
 	-- the origin and destination are correct
-	private getDistanceConnection: Station * Station * set of Connection`Type * nat ==> set of ConnectionInfo
+	private getDistanceConnection: Station * Station * set of Connection`Type * nat ==> ConnectionInfo
 	getDistanceConnection(node, target, meansOfTransportation, weightFactor) ==
 	(
 		dcl conTmp : Connection;
-		dcl connectionInfo : set of ConnectionInfo := {};
+		dcl connectionInfo : ConnectionInfo := undefined;
 		
 		for all con in set transportMap.listConnections() do (		
 			if(con.type in set meansOfTransportation) then (
@@ -252,18 +250,20 @@ operations
 						IO`print(con.type);
 						IO`print(con.distance);
 						IO`print("\n\n");
-						connectionInfo := connectionInfo union {mk_ConnectionInfo([con], con.type, con.distance)};
+						connectionInfo := mk_ConnectionInfo([con], con.type, con.distance);
 					) 
 					else if (weightFactor = 2) then (
-						connectionInfo := connectionInfo union {mk_ConnectionInfo([con], con.type, con.price)};
+						connectionInfo := mk_ConnectionInfo([con], con.type, con.price);
 					)
 					else if (weightFactor = 3) then (
-						connectionInfo := connectionInfo union {mk_ConnectionInfo([con], con.type, con.duration)};
+						connectionInfo := mk_ConnectionInfo([con], con.type, con.duration);
 					);
+					return connectionInfo;
 				);
 			);
 		);
 		
+		connectionInfo := mk_ConnectionInfo([], <Walk>, 1000000);
 		return connectionInfo;
 		
 	);
