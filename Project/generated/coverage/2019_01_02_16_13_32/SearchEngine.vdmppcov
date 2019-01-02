@@ -1,0 +1,555 @@
+class SearchEngine
+types
+	public Type = Connection`Type;
+	public ConnectionInfo :: con: seq of Connection
+														type: Type
+														weight: real;
+	
+values
+-- TODO Define values here
+instance variables
+
+	protected transportMap: TransportGraph;
+	protected settledNodes: set of Station := {};
+	protected unsettledNodes: set of Station := {};
+	protected distances: map Station to seq of real := {|->}; -- seq of reals --> 1: distance; 2: price; 3: duration 
+	protected prev: map Station to Station := {|->};
+	protected stationOrigin : Station;
+	
+		
+operations
+	
+	-- constructor
+	public SearchEngine: () ==> SearchEngine
+	SearchEngine() ==
+	(
+		transportMap := new TransportGraph();
+		unsettledNodes := transportMap.listStations(); 
+		return self;
+	);
+	
+	public getTransportGraph: () ==> TransportGraph
+	getTransportGraph() == return transportMap;
+	
+	-- dijkstra algorithm logic and main function
+	public dijkstraAlgorithm: Station * set of Connection`Type * nat ==> ()
+	dijkstraAlgorithm(origin, meansOfTransportation, weightFactor) ==
+	(
+		
+		distances := distances ++ {origin |-> [0,0,0]};
+		origin.setArrivalTime(0);
+		
+		settledNodes := settledNodes union {origin};
+		
+		while(settledNodes inter unsettledNodes <> {}) do (
+		
+			dcl minimumNode : Station := getMinimumNode(weightFactor);
+			settledNodes := settledNodes union {minimumNode};
+			unsettledNodes := unsettledNodes\{minimumNode};
+			
+			findMinimalDistances(minimumNode, meansOfTransportation, weightFactor);
+		
+		);
+	)
+	pre (weightFactor = 1 or weightFactor = 2 or weightFactor = 3) and validGraph(transportMap) and validStart(stationOrigin, transportMap);
+	--post IsShortestPath(distances, prev, settledNodes, stationOrigin, transportMap);
+	
+	
+	-- returns the minimum waiting time when we change transportation in one station or -1, if the
+	-- connecton is not possible regarding the schedule 
+	private getWaitingTime: Station * Station ==> real
+	getWaitingTime(targetNode, intermediateNode) == (
+		dcl intermediateConnections : set of Connection;
+		dcl timeDiff : real;
+		dcl minDiff : real;
+		
+		minDiff := Utilities`MAX_INT;
+		intermediateConnections := transportMap.getConnectionsWithSource(intermediateNode.name) inter
+															 transportMap.getConnectionsWithDestination(targetNode.name);
+		
+		for all availableConnection in set intermediateConnections do (
+			for idx = 1 to len availableConnection.timetable do (
+				timeDiff := availableConnection.timetable(idx) - intermediateNode.arrivalTime;
+				if (timeDiff >= 0 and timeDiff < minDiff) then (
+					minDiff := timeDiff;
+				);
+			);
+		);
+		
+		if (minDiff = Utilities`MAX_INT) then
+			return -1;
+			
+		return minDiff;
+	);
+	
+
+	-- from all possible connections between startNode and targetNode,
+	-- return the duration of the shortest one 
+	private findMinDuration: set of Connection ==> real
+	findMinDuration(connectionsSet) ==
+	(
+		dcl minDuration : real;
+		
+		minDuration := Utilities`MAX_INT;
+		for all c in set connectionsSet do (
+			if c.duration <= minDuration then (
+				minDuration := c.duration;
+			);
+		);
+		return minDuration;
+	);
+	
+	-- gets the arrivalTime in targetNode from startNode on the shortest route regarding distance 
+	private getArrivalTime: real * Station * Station * set of Type * bool ==> real
+	getArrivalTime(startTime, startNode, targetNode, meansOfTransportation, selectedMean) ==
+	(
+		dcl validConnections : set of Connection;
+		dcl connectionsFromSource : set of Connection;
+		dcl minArrivalTime : real;
+		
+		validConnections := {};
+		connectionsFromSource := transportMap.getConnectionsWithSource(startNode.name);
+		
+		for all c in set connectionsFromSource do (
+			if (stringEqual(c.destination.name, targetNode.name)) then ( -- if they are connections to target node 
+				if (selectedMean = true) then (
+					 if c.type in set meansOfTransportation then (
+					 	validConnections := validConnections union {c};
+					 );
+				) else (
+					validConnections := validConnections union {c};
+				);
+			);
+		);
+		
+		minArrivalTime := startTime + startNode.arrivalTime + findMinDuration(validConnections);
+		
+		return minArrivalTime;
+	);
+	
+	-- function that goes through all the nodes and their neighbours, to get the minimum distances to each of them
+	private findMinimalDistances: Station * set of Connection`Type * nat ==> () 
+	findMinimalDistances(node, meansOfTransportation, weightFactor) ==
+	(
+		dcl adjacentNodes: set of Station := transportMap.getNeighborsOfNode(node.name);
+		dcl neighborArrivalTime : real;
+		dcl startTime : real := 0;
+		dcl hasMean : bool := false;
+		
+		if(meansOfTransportation <> {}) then
+				hasMean := true;
+				
+		-- Compute arrivalTime for all neighbors of the source node
+		for all neighbor in set adjacentNodes do (
+			neighborArrivalTime := getArrivalTime(0, node, neighbor, meansOfTransportation, hasMean);
+			neighbor.setArrivalTime(neighborArrivalTime);
+		);
+
+		for all target in set adjacentNodes do (
+		
+			dcl cons : set of ConnectionInfo := getDistanceConnection(node, target, meansOfTransportation, weightFactor);
+			for all con in set cons do (
+				if(con.con <> []) then (
+				
+					if(getShortestDistance(target, weightFactor) > getShortestDistance(node, weightFactor) + con.weight) then (
+						dcl newArrivalTime : real := getArrivalTime(startTime, node, target, meansOfTransportation, false);
+		
+						if (getWaitingTime(target, node) >= 0) then (
+						
+							dcl newPrice : real;
+							dcl newDuration : real;
+							dcl newDist : real;
+							dcl newSeq : seq of real := [];
+						
+							newDist := getShortestDistance(node, 1) + getDistanceFromConnection(con.con(1), 1); 
+							newPrice := getShortestDistance(node, 2) + getDistanceFromConnection(con.con(1), 2);
+							newDuration := getShortestDistance(node, 3) + getDistanceFromConnection(con.con(1), 3); 
+						
+							newSeq := [newDist,newPrice,newDuration];
+							
+							distances := distances ++ {target |-> newSeq};
+							target.setCalculatedVariables(newSeq);
+							target.setArrivalTime(newArrivalTime);
+							target.setMeanOfTransportationUsed(con.type);
+							prev := prev ++ {target |-> node};
+							
+							settledNodes := settledNodes union {target}; 
+						);
+					);
+				);
+			);
+		);
+	)
+	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	
+	-- get node that hasn't been visited with the minimum weight factor
+	private getMinimumNode: nat ==> Station 
+	getMinimumNode(weightFactor) == 
+	(
+		dcl minimum : Station := new Station("",0);
+		for all n in set settledNodes inter unsettledNodes do (
+			if(minimum.name = "") then (
+				minimum := n;
+			)
+			else (
+				if(getShortestDistance(n, weightFactor) < getShortestDistance(minimum, weightFactor)) then (
+					minimum := n;
+				); 
+			);
+		);
+		
+		return minimum;
+	)
+	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	
+	-- returns the minimum distance (or price or duration) in the distance seq
+	private getShortestDistance: Station * nat ==> real 
+	getShortestDistance(destination, weightFactor) == 
+	(
+		dcl d: map Station to seq of real := {destination} <: distances;
+		dcl d1 : set of seq of real := rng d;
+		dcl dist : seq of real := getFirstFromSet(d1);
+		
+		return dist(weightFactor);
+	);
+	
+	-- returns info about the connection from one node to another, if the connection is with the correct mean of transporation and if
+	-- the origin and destination are correct
+	private getDistanceConnection: Station * Station * set of Connection`Type * nat ==> set of ConnectionInfo
+	getDistanceConnection(node, target, meansOfTransportation, weightFactor) ==
+	(
+		dcl conTmp : Connection;
+		dcl connectionInfo : set of ConnectionInfo := {};
+		
+		for all con in set transportMap.listConnections() do (		
+			if(con.type in set meansOfTransportation) then (
+			
+				if(stringEqual(con.source.name,node.name) and stringEqual(con.destination.name, target.name)) then (
+					
+					if(weightFactor = 1) then (
+						connectionInfo := connectionInfo union {mk_ConnectionInfo([con], con.type, con.distance)};
+					) 
+					else if (weightFactor = 2) then (
+						connectionInfo := connectionInfo union {mk_ConnectionInfo([con], con.type, con.price)};
+					)
+					else if (weightFactor = 3) then (
+						connectionInfo := connectionInfo union {mk_ConnectionInfo([con], con.type, con.duration)};
+					);
+				);
+			);
+		);
+		
+		return connectionInfo;
+		
+	);
+	
+	-- get distance (or price or duration) from one connection
+	private getDistanceFromConnection: Connection * nat ==> real
+	getDistanceFromConnection(con, weightFactor) ==
+	(
+		dcl ret : real := 0;
+		if(weightFactor = 1) then (
+			ret := con.distance;
+		) 
+		else if (weightFactor = 2) then (
+			ret := con.price;
+		)
+		else if (weightFactor = 3) then (
+			ret := con.duration;
+		);
+		
+		return ret;
+	)
+	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	
+	-- return first element of a set 
+	private getFirstFromSet: set of seq of real ==> seq of real
+	getFirstFromSet(reals) == 
+	(
+		if(reals <> {}) then (
+			for all ds in set reals do return ds;
+		)
+		else return [1000000, 1000000, 1000000];
+	);
+	
+	---------------------------------------------------------------------------------------------
+	 
+	-- Returns seq of nodes from origin to destination
+	public getPath: Utilities`String ==> seq of Station
+	getPath(destination) ==
+	(	
+		dcl path : seq of Station := [];
+		dcl revertedPath: seq of Station := [];
+		
+		dcl stationDest : Station := transportMap.getStation(destination);
+		
+		dcl tmp : map Station to Station := {stationDest} <: prev;
+		dcl tmp2 : set of Station := rng tmp;
+		
+		if (tmp2 = {}) then (
+			return [];
+		);
+		
+		path := path ^ [stationDest];
+		
+		while (tmp2 <> {}) do (
+			
+			stationDest := prev(stationDest);
+			path := path ^ [stationDest];
+			
+			tmp := {stationDest} <: prev;
+			tmp2 := rng tmp;
+		);
+		
+		revertedPath := revertSeq(path);
+		
+		return revertedPath;
+	);
+	
+	-- reverts the order of the sequence
+	private revertSeq: seq of Station ==> seq of Station
+	revertSeq(stations) ==
+	(
+		dcl result : seq of Station := stations;
+		dcl i : nat := 0;
+		
+		for sta in stations do (
+			 result(len stations - i) := sta;
+			 i := i + 1;  
+		);
+		
+		return result;
+	);
+	
+	/*
+		HOW TO RUN:
+		
+		create s := new SearchEngine()
+		print s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2)
+		print s.rome2Rio(['P','o','r','t','o'], ['F','a','r','o'], {1,2}, 2)
+		
+		SPECIFIC FUNCTIONS: 
+		print s.dijkstraAlgorithm(['P','o','r','t','o'], 2)
+		print s.getPath(['M','a','d','r','i','d'])
+		print s.getPath(['B','a','r','c','e','l','o','n','a'])
+		
+	*/
+	
+	-- checks if the user input was with no means of transportation selected or not, if not, calculates all combinations and runs dijkstra algorithm and
+	-- and gets the shortest path for each combination.
+	-- If a combination was provided by the user, the dijkstra algorithm is run and the shortest path related to the weightFactor and with the means of 
+	-- transportation selected is returned
+	public rome2Rio: Utilities`String * Utilities`String * set of nat * nat ==> seq of Trip 
+	rome2Rio(origin, destination, meansOfTransportation, weightFactor) ==
+	(
+		dcl stationDest : Station := transportMap.getStation(destination);
+		dcl trips : seq of Trip := [];
+		IO`println(stationDest.name);
+		if(stringEqual(stationDest.name, "Error")) then (
+				IO`println("There is no destination station with that name.");
+				return [];
+		);
+		stationOrigin := transportMap.getStation(origin);
+		if(stringEqual(stationOrigin.name, "Error")) then (
+				IO`println("There is no origin station with that name.");
+				return [];
+		);
+		prev := {|->};
+		distances := {|->};
+		settledNodes := {};
+		unsettledNodes := transportMap.listStations();
+		
+		if(meansOfTransportation = {}) then (
+			
+			dcl answerOne : seq of Station := [];
+			dcl means : set of set of Connection`Type := {
+				{<Bus>},{<Plane>},{<Train>},{<Walk>},{<Bus>,<Plane>},{<Bus>,<Train>},{<Bus>,<Walk>},{<Plane>,<Train>},{<Plane>,<Walk>},
+				{<Train>,<Walk>},{<Bus>,<Train>,<Walk>},{<Bus>,<Train>,<Plane>},{<Plane>,<Train>,<Walk>},{<Bus>,<Plane>,<Walk>},{<Bus>,<Plane>,<Train>,<Walk>}
+			};
+			
+			for all mean in set means do (
+				
+				dcl trip : Trip := new Trip([]);
+				prev := {|->};
+				distances := {|->};
+				settledNodes := {};
+				unsettledNodes := transportMap.listStations();
+				answerOne := [];
+				
+				
+				dijkstraAlgorithm(stationOrigin, mean, weightFactor);
+				answerOne := getPath(destination);
+				
+				IO`println(mean);
+				IO`println("\n\n");
+				
+				if(prev <> {|->} and stationDest.getCalculatedVariables()(1) <> 0 
+					and stationDest.getCalculatedVariables()(2) <> 0 and stationDest.getCalculatedVariables()(3) <> 0) then (
+				
+					dcl i : nat := 0;
+					for el in answerOne do (
+					
+						IO`println(el);
+						if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables())
+						else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed());
+						i := i + 1;
+						
+					);
+					IO`println("\n\n");
+					
+					if(trip.getSegments() <> []) then (
+						trip.setFinalResults(stationDest.getCalculatedVariables());
+						if(trips = []) then (
+								trips := trips ^ [trip];)
+						else (
+								dcl isIn : bool := false;
+								for t in trips do (
+										if(equalTrips(t, trip) = true) then
+												isIn := true;
+								);
+								if( isIn = false ) then
+										trips := trips ^ [trip];
+						);
+					);
+				);
+				
+			);
+			
+			if(trips = []) then (
+					IO`println("There are no possible paths for your options.");	
+			);
+			
+			return trips;
+			
+			
+		) 
+		else (
+			
+			dcl answerSeq : seq of Station := [];
+			dcl trip : Trip := new Trip([]);
+			dcl means : set of Connection`Type := {};
+			dcl i : nat := 0;
+			
+			for all m in set meansOfTransportation do(
+				if( m = 1 ) then(
+				means := means union {<Bus>})
+				else if( m = 2 ) then(
+				means := means union {<Plane>})
+				else if( m = 3 ) then(
+				means := means union {<Train>})
+				else if( m = 4 ) then(
+				means := means union {<Walk>})
+			);
+			
+			dijkstraAlgorithm(stationOrigin, means, weightFactor);
+			answerSeq := getPath(destination);
+			
+			for el in answerSeq do (
+			
+			 		if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables())
+					else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed());
+
+					i := i + 1;
+			);
+					
+			if(trip.getSegments() <> []) then (
+			 		trip.setFinalResults(stationDest.getCalculatedVariables());
+					if(trips = []) then (
+							trips := trips ^ [trip];)
+					else (
+							dcl isIn : bool := false;
+							for t in trips do (
+									if(equalTrips(t, trip) = true) then
+											isIn := true;
+							);
+							if(isIn = false) then
+									trips := trips ^ [trip];
+					);
+			);
+			
+			if(trips = []) then (
+					IO`println("There are no possible paths for your options.");	
+			);
+			
+			return trips;
+			
+		)
+		
+	)
+	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
+	
+	-- checks if a string is equal
+	private stringEqual: Utilities`String * Utilities`String ==> bool
+	stringEqual(s1, s2) ==
+	(
+	 if len s1 <> len s2 then
+	 	return false;
+	 for idx = 1 to len s1 do
+	 	if s1(idx) <> s2(idx) then return false;
+	 
+	 return true;
+	);
+	
+	-- compare trips
+	public equalTrips: Trip * Trip ==> bool
+	equalTrips(trip1, trip2) == (
+			dcl i : nat := 1;
+			dcl seg2 : seq of Trip`Segment := trip2.getSegments();
+			
+			for s1 in trip1.getSegments() do (
+					if(s1.startCity <> seg2(i).startCity or s1.timeDuration <> seg2(i).timeDuration or s1.distance <> seg2(i).distance or s1.price <> seg2(i).price or s1.meanOfTransport <> seg2(i).meanOfTransport) then
+					  return false;
+					i := i+1;
+			);
+			
+			return true;
+	);
+	
+	
+functions
+	
+	validGraph(g : TransportGraph) res: bool ==
+	(
+		
+		forall e in set g.connections & (e.distance <> 0 and e.price >= 0 and e.duration <> 0 and e.timetable <> [] 
+		and e.source in set g.stations and e.destination in set g.stations)
+		
+	);
+	
+	validStart(sta : Station, g : TransportGraph) res: bool ==
+	(
+		sta in set g.stations
+	);
+	
+	/*
+		create s := new SearchEngine()
+		print s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2)
+	*/
+	
+	IsShortestPath(distances : map Station to seq of real, prev: map Station to Station, settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
+		definesShortestDist(distances, prev, settledNodes, stationOrigin,transportMap) /*and setOfLinkedVertices(settledNodes, stationOrigin, transportMap)*/;
+
+	definesShortestDist(distances : map Station to seq of real, prev: map Station to Station, settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
+	(
+		distances(stationOrigin) = [0,0,0] and 
+		forall sta in set settledNodes\{stationOrigin} & (exists v in set settledNodes & (
+			prev(sta)=v and neighbour(transportMap, sta, v) /*and
+			let tup in set transportMap.connections be st (tup.source = sta and tup.destination = v) in (distances(sta)(1) = distances(v)(1) + tup.distance)*/))
+		/*and
+		forall u1,v in set settledNodes & (neighbour(transportMap, u1, v) => 
+			let tup in set transportMap.connections be st (tup.source = u1 and tup.destination = v) in (distances(u1)(1) <= distances(v)(1) + tup.distance))
+		*/
+	);
+	
+	setOfLinkedVertices(settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph) res: bool ==
+	(
+		forall u in set settledNodes & (forall v in set transportMap.stations & neighbour(transportMap, u, v) => v in set settledNodes) and
+		forall u1 in set settledNodes\{stationOrigin} & (exists v in set settledNodes & neighbour(transportMap, u1, v))
+	);
+	
+	neighbour(transportMap: TransportGraph, u: Station, v: Station) res: bool ==
+		exists tup in set transportMap.connections & (tup.source = u and tup.destination = v and tup.distance > 0)
+		
+traces
+-- TODO Define Combinatorial Test Traces here
+end SearchEngine
