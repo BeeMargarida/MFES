@@ -1,0 +1,21 @@
+class Tests
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+	rome2Rio : Rome2RioTest := new Rome2RioTest();
+	ticketingSystem : TicketingSystemTest := new TicketingSystemTest();
+operations
+	
+	public main: () ==> ()
+ 			main() == (
+						rome2Rio.main();
+						ticketingSystem.main();
+			);
+	
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Tests

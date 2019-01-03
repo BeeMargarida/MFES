@@ -138,7 +138,7 @@ operations
 					
 					assertTrue(answer = []);
 					
-					answer := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {}, 2, 0.01);
+					answer := s.rome2Rio(['M','a','d','r','i','d'], ['M','o','s','c','o','w'], {}, 2, -1);
 					assertTrue(answer = []);
  			);
  			
