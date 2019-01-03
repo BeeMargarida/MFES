@@ -6,7 +6,8 @@ types
 values
 -- TODO Define values here
 instance variables
-	users : set of User;
+	users : set of User := {};
+	transportMap : TransportGraph;
 	
 	-- TODO
 	-- inv uniqueID;
@@ -33,9 +34,10 @@ operations
 	---------------------
 	
 	-- constructor
-	public TicketingSystem: () ==> TicketingSystem
-	TicketingSystem() ==
+	public TicketingSystem: TransportGraph ==> TicketingSystem
+	TicketingSystem(t) ==
 	(
+		transportMap := t;
 		createUserDatabase();
 	);
 	
@@ -86,13 +88,16 @@ operations
 	public buyTickets: nat * nat * Trip * nat ==> bool
 	buyTickets(userID, passwd, selectedTrip, nrSeatsToBuy) ==
 	(
+		IO`println(selectedTrip);
 		if passwd = getUserById(userID).passwd then (
 			if (getUserById(userID).moneyAmount >= selectedTrip.totalPrice() * nrSeatsToBuy) then (
 				-- there are enough seats
 				if selectedTrip.getAvailableSeats() >= nrSeatsToBuy then (
-					-- discountAvailableSeats(nrSeatsToBuy)
+				
+					selectedTrip.discountAvailableSeats(nrSeatsToBuy, transportMap);
 					discountMoney(userID, selectedTrip.totalPrice(), nrSeatsToBuy);
 					return true;
+				
 				) else
 					IO`print("Not enough seats available for purchase");
 					return false;

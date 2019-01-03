@@ -69,17 +69,57 @@ operations
 	(
 	  dcl minSeatsAvailable : nat;
 	  minSeatsAvailable := Utilities`MAX_INT;
-		for idx = 1 to len segments do (
+		for idx = 2 to len segments do (
 			if (segments(idx).seatsAvailable <= minSeatsAvailable) then
 				minSeatsAvailable := segments(idx).seatsAvailable;
 		);
 		return minSeatsAvailable;
 	);
 	
+	public discountAvailableSeats: nat * TransportGraph ==> ()
+	discountAvailableSeats(nrSeatsToBuy, transportMap) ==
+	(
+		dcl index : nat := 1;
+		for seg in segments do (
+			if(index <> 1) then (
+			
+				dcl station : Station := getSegmentStation(transportMap, seg.startCity);
+				dcl prevStation : Station := getSegmentStation(transportMap, segments(index - 1).startCity);
+				station.decreaseAvailableSeats(transportMap.listConnections(), prevStation, nrSeatsToBuy);
+				
+			);
+			index := index + 1;
+		);
+	);
+	
+	private getSegmentStation: TransportGraph * Utilities`String ==> Station 
+	getSegmentStation(transportMap, stationName) ==
+	(
+		dcl stationRes : Station;
+		for all station in set transportMap.listStations() do (
+			if(stringEqual(station.name, stationName)) then (
+				stationRes := station;
+			)
+		);
+		
+		return stationRes;
+	);
+	
 	public totalPrice:() ==> real
 	totalPrice() ==
 	(
 		return finalResults(2);
+	);
+	
+	private stringEqual: Utilities`String * Utilities`String ==> bool
+	stringEqual(s1, s2) ==
+	(
+	 if len s1 <> len s2 then
+	 	return false;
+	 for idx = 1 to len s1 do
+	 	if s1(idx) <> s2(idx) then return false;
+	 
+	 return true;
 	);
 
 functions

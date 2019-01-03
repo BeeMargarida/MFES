@@ -1,0 +1,128 @@
+class Trip
+types
+-- TODO Define types here
+	public Segment :: startCity : Utilities`String
+								 		--destinationCity : Utilities`String
+								 		timeDuration: real
+								 		distance: real
+								 		price: real
+								 		meanOfTransport: Connection`Type
+								 		seatsAvailable: nat
+
+instance variables
+	protected segments : seq of Segment;
+	public finalResults : seq of real;
+	protected availableSeatsForTrip : nat;
+		
+operations
+	
+	-- constructor
+	public Trip: seq of Segment ==> Trip
+	Trip(segs) ==
+	(
+		segments := segs;
+		finalResults := [];
+		return self;
+	)
+	post segments = segs and finalResults = [];
+	
+	-- add new segment
+	public addSegment: Utilities`String * seq of real * Connection`Type * nat ==> ()
+	addSegment(origin, distValues, meanType, seatsAvailable) ==
+	(
+		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), meanType, seatsAvailable);
+		segments := segments ^[segment]; 
+	);
+	
+	-- add new segment withouy mean of transportation info
+	public addSegmentFirst: Utilities`String * seq of real  * nat ==> ()
+	addSegmentFirst(origin, distValues, seatsAvailable) ==
+	(
+		dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), <NONE>, seatsAvailable);
+		segments := segments ^[segment]; 
+	);
+	
+	-- get segments
+	public getSegments: () ==> seq of Segment
+	getSegments() ==
+	(
+		return segments;
+	);
+	
+	-- set final results
+	public setFinalResults : seq of real * real ==> ()
+	setFinalResults(results, arrivalTime) ==
+	(
+		finalResults := [results(1), results(2), arrivalTime];
+	)
+	post finalResults = [results(1), results(2), arrivalTime];
+	
+	public getFinalResults : () ==> seq of real
+	getFinalResults() ==
+	(
+		return finalResults;
+	);
+
+	-- gets number of seats available per trip
+	public getAvailableSeats: () ==> nat
+	getAvailableSeats() ==
+	(
+	  dcl minSeatsAvailable : nat;
+	  minSeatsAvailable := Utilities`MAX_INT;
+		for idx = 1 to len segments do (
+			if (segments(idx).seatsAvailable <= minSeatsAvailable) then
+				minSeatsAvailable := segments(idx).seatsAvailable;
+		);
+		return minSeatsAvailable;
+	);
+	
+	public discountAvailableSeats: nat * TransportGraph ==> ()
+	discountAvailableSeats(nrSeatsToBuy, transportMap) ==
+	(
+		dcl index : nat := 1;
+		for seg in segments do (
+			if(index <> 1) then (
+			
+				dcl station : Station := getSegmentStation(transportMap, seg.startCity);
+				dcl prevStation : Station := getSegmentStation(transportMap, segments(index - 1).startCity);
+				station.decreaseAvailableSeats(transportMap.listConnections(), prevStation, nrSeatsToBuy);
+				
+			);
+		);
+	);
+	
+	private getSegmentStation: TransportGraph * Utilities`String ==> Station 
+	getSegmentStation(transportMap, stationName) ==
+	(
+		dcl stationRes : Station;
+		for all station in set transportMap.listStations() do (
+			if(stringEqual(station.name, stationName)) then (
+				stationRes := station;
+			)
+		);
+		
+		return stationRes;
+	);
+	
+	public totalPrice:() ==> real
+	totalPrice() ==
+	(
+		return finalResults(2);
+	);
+	
+	private stringEqual: Utilities`String * Utilities`String ==> bool
+	stringEqual(s1, s2) ==
+	(
+	 if len s1 <> len s2 then
+	 	return false;
+	 for idx = 1 to len s1 do
+	 	if s1(idx) <> s2(idx) then return false;
+	 
+	 return true;
+	);
+
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Trip
