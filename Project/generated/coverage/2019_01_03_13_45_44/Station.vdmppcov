@@ -1,0 +1,115 @@
+class Station
+types
+values
+-- TODO Define values here
+instance variables
+	
+	public name: Utilities`String;
+	public arrivalTime: real := 0;
+	private calculatedVariables: seq of real := [0,0,0]; -- seq of reals --> 1: distance; 2: price; 3: duration
+	public meanOfTransportationUsed: Connection`Type := <NONE>;
+	private seatsAvailable: nat := 0;
+
+	inv arrivalTime >= 0;
+  inv len calculatedVariables = 3;
+  inv meanOfTransportationUsed = <Bus> or meanOfTransportationUsed = <Plane> or
+     	meanOfTransportationUsed = <Train> or meanOfTransportationUsed = <Walk> or meanOfTransportationUsed = <NONE>;
+	inv seatsAvailable >= 0;
+
+			
+operations
+	
+	-- constructor
+	public Station: Utilities`String ==> Station
+	Station(n) ==
+	(
+		name := n;		
+		return self;
+	)
+	post name = n;
+	
+	-- sets calculated variables 
+	public setCalculatedVariables: seq of real ==> ()
+	setCalculatedVariables(vars) ==
+	(
+		calculatedVariables := vars;
+	)
+	post calculatedVariables = vars;
+	
+	-- set arrival Time
+	public setArrivalTime: real ==> ()
+	setArrivalTime(time) ==
+	(
+		arrivalTime := time;
+		
+	);
+		
+	-- get calculated variables
+	public getCalculatedVariables: () ==> seq of real
+	getCalculatedVariables() ==
+	(
+		return calculatedVariables;
+	);
+	
+	-- sets means of transportation used to get to this station
+	public setMeanOfTransportationUsed: Connection`Type ==> ()
+	setMeanOfTransportationUsed(type) ==
+	(
+		meanOfTransportationUsed := type;
+	);
+	
+	-- gets means of transportation used to get to this station
+	public getMeanOfTransportationUsed: () ==> Connection`Type
+	getMeanOfTransportationUsed() ==
+	(
+		return meanOfTransportationUsed;
+	);
+
+	public setAvailableSeats: nat ==> ()
+	setAvailableSeats(seats) ==
+	(
+		seatsAvailable := seats;
+	);
+	
+	public getAvailableSeats: set of Connection * Station ==> nat
+	getAvailableSeats(connections, prevStation) ==
+	(
+		dcl seats : nat := 0;
+		for all con in set connections do (
+			if(stringEqual(prevStation.name, con.source.name) and stringEqual(name, con.destination.name) and con.type = meanOfTransportationUsed) then (
+				seats := con.getAvailableSeats();
+			);
+		);
+		
+		return seats;
+	);
+	
+	public decreaseAvailableSeats: set of Connection * Station * nat ==> ()
+	decreaseAvailableSeats(connections, prevStation, seatsToBuy) ==
+	(
+		dcl seats : nat := 0;
+		for all con in set connections do (
+			if(stringEqual(prevStation.name, con.source.name) and stringEqual(name, con.destination.name) and con.type = meanOfTransportationUsed) then (
+				con.decreaseNumberOfSeats(seatsToBuy);
+			);
+		);
+	);
+	
+	-- checks if a string is equal
+	private stringEqual: Utilities`String * Utilities`String ==> bool
+	stringEqual(s1, s2) ==
+	(
+	 if len s1 <> len s2 then
+	 	return false;
+	 for idx = 1 to len s1 do
+	 	if s1(idx) <> s2(idx) then return false;
+	 
+	 return true;
+	);
+
+	
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Station
