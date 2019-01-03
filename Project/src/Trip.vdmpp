@@ -11,7 +11,7 @@ types
 
 instance variables
 	protected segments : seq of Segment;
-	protected finalResults : seq of real;
+	public finalResults : seq of real;
 	protected availableSeatsForTrip : nat;
 		
 operations
@@ -50,12 +50,18 @@ operations
 	);
 	
 	-- set final results
-	public setFinalResults : seq of real ==> ()
-	setFinalResults(results) ==
+	public setFinalResults : seq of real * real ==> ()
+	setFinalResults(results, arrivalTime) ==
 	(
-		finalResults := results;
+		finalResults := [results(1), results(2), arrivalTime];
 	)
-	post finalResults = results;   
+	post finalResults = [results(1), results(2), arrivalTime];
+	
+	public getFinalResults : () ==> seq of real
+	getFinalResults() ==
+	(
+		return finalResults;
+	);
 
 	-- gets number of seats available per trip
 	public getAvailableSeats: () ==> nat
