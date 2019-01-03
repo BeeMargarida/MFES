@@ -12,7 +12,7 @@ instance variables
 	inv arrivalTime >= 0;
   inv len calculatedVariables = 3;
   inv meanOfTransportationUsed = <Bus> or meanOfTransportationUsed = <Plane> or
-      meanOfTransportationUsed = <Train> or meanOfTransportationUsed = <Walk> or meanOfTransportationUsed = <NONE>;
+      meanOfTransportationUsed = <Train> or meanOfTransportationUsed = <Walk>;
   --inv seatsAvailable >= 0;
 	
 operations

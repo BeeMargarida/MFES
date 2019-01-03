@@ -12,7 +12,7 @@ values
 instance variables
 
 	protected segments : seq of Segment;
-	public finalResults : seq of real;
+	protected finalResults : seq of real;
 	
 operations
 	

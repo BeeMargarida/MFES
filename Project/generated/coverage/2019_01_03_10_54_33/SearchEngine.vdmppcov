@@ -16,7 +16,6 @@ instance variables
 	protected prev: map Station to Station := {|->};
 	protected stationOrigin : Station;
 	protected minimumNode : Station;
-	protected trips : seq of Trip := [];
 	
 	inv visitedImpliesConnected(settledNodes, unsettledNodes, transportMap);
 			
@@ -370,7 +369,7 @@ operations
 	rome2Rio(origin, destination, meansOfTransportation, weightFactor, maxDuration) ==
 	(
 		dcl stationDest : Station := transportMap.getStation(destination);
-		trips := [];
+		dcl trips : seq of Trip := [];
 		
 		if(stringEqual(stationDest.name, "Error")) then (
 				IO`println("There is no destination station with that name.");
@@ -480,16 +479,18 @@ operations
 
 					i := i + 1;
 			);
-			
-			if(maxDuration > 0 and stationDest.arrivalTime > maxDuration) then (
-				IO`println("There is no path with the configurations given that has a smaller duration than the one given");
-				return []; 
-			);
 				
 			if(trip.getSegments() <> []) then (
 			 		trip.setFinalResults(stationDest.getCalculatedVariables(), stationDest.arrivalTime);
 					trips := trips ^ [trip];
 			);
+			
+			if(maxDuration > 0 and stationDest.arrivalTime > maxDuration) then (
+				IO`println("There is no path with the configurations given that has a smaller duration than the one given");
+				return []; 
+			);
+			
+			
 			
 			if(trips = []) then (
 					IO`println("There are no possible paths for your options.");	
@@ -499,8 +500,7 @@ operations
 		);
 		
 	)
-	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3
-	post maxDuration < 0 or checkMaximumDuration(trips,maxDuration);
+	pre weightFactor = 1 or weightFactor = 2 or weightFactor = 3;
 	
 	-- checks if a string is equal
 	private stringEqual: Utilities`String * Utilities`String ==> bool
@@ -595,17 +595,6 @@ functions
 		let sta in set dom distances
 		be st (sta in set settledNodes inter unsettledNodes)
 		in (distances(sta)(weightFactor) >= distances(minimumNode)(weightFactor))
-	);
-	
-	-- returns finalResults of a trip
-	getFinalResults(trip : Trip) res: seq of real == trip.finalResults;
-	
-	-- checks if the trips don't exceed the maximum duration
-	checkMaximumDuration(trips : seq of Trip, maxDuration : real) res: bool ==
-	(
-		trips  = [] or
-		let trip in seq trips 
-		in (getFinalResults(trip)(3) < maxDuration)
 	);
 	
 	-- INVARIANTS

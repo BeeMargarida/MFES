@@ -480,16 +480,18 @@ operations
 
 					i := i + 1;
 			);
-			
-			if(maxDuration > 0 and stationDest.arrivalTime > maxDuration) then (
-				IO`println("There is no path with the configurations given that has a smaller duration than the one given");
-				return []; 
-			);
 				
 			if(trip.getSegments() <> []) then (
 			 		trip.setFinalResults(stationDest.getCalculatedVariables(), stationDest.arrivalTime);
 					trips := trips ^ [trip];
 			);
+			
+			if(maxDuration > 0 and stationDest.arrivalTime > maxDuration) then (
+				IO`println("There is no path with the configurations given that has a smaller duration than the one given");
+				return []; 
+			);
+			
+			
 			
 			if(trips = []) then (
 					IO`println("There are no possible paths for your options.");	
@@ -597,13 +599,10 @@ functions
 		in (distances(sta)(weightFactor) >= distances(minimumNode)(weightFactor))
 	);
 	
-	-- returns finalResults of a trip
 	getFinalResults(trip : Trip) res: seq of real == trip.finalResults;
 	
-	-- checks if the trips don't exceed the maximum duration
 	checkMaximumDuration(trips : seq of Trip, maxDuration : real) res: bool ==
 	(
-		trips  = [] or
 		let trip in seq trips 
 		in (getFinalResults(trip)(3) < maxDuration)
 	);
