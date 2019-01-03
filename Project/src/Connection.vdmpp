@@ -4,17 +4,6 @@ types
 	public Type = <Plane> | <Bus> | <Train> | <Walk> | <NONE>;
 
 values
-	-- euros / km; constants; to separate in a header file later
-	-- public busPrice:   real = 0.1;
-	-- public trainPrice: real = 0.07;
-	-- public planePrice: real = 0.06;
-	-- public walkPrice:  real = 0;
-	-- km / hour
-	-- public busSpeed: real   = 80;
-	-- public trainSpeed: real = 100;
-	-- public planeSpeed: real = 760;
-	-- public walkSpeed: real  = 4;
-	
 instance variables
 	-- declarations and initializations
 	public type: Type;

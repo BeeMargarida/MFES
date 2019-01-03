@@ -1,10 +1,9 @@
 class SearchEngine
 types
 	public Type = Connection`Type;
-	public ConnectionInfo :: con: seq of Connection
-													 type: Type
-													 weight: real;
-
+	public ConnectionInfo :: con  : seq of Connection
+													 type : Type
+													 weight: real									 
 instance variables
 
 	protected transportMap: TransportGraph;
@@ -13,7 +12,6 @@ instance variables
 	protected distances: map Station to seq of real := {|->}; 
 	protected prev: map Station to Station := {|->}
 	
-		
 operations
 	-- constructor
 	public SearchEngine: () ==> SearchEngine
@@ -157,8 +155,11 @@ operations
 						distances := distances ++ {target |-> newSeq};
 						target.setCalculatedVariables(newSeq);
 						target.setArrivalTime(newArrivalTime);
+						
+						-- TODO set the nr of seats from the picked up connection
+						-- target.setAvailableSeats(con.con.);
+						
 						target.setMeanOfTransportationUsed(con.type);
-						target.setAvailableSeats(con.seatsAvailable); -- here1
 						prev := prev ++ {target |-> node};
 						
 						unsettledNodes := unsettledNodes union {target}; 
@@ -469,8 +470,9 @@ operations
 	 
 	 return true;
 	);
+
 functions
--- TODO Define functiones here
+
 traces
 -- TODO Define Combinatorial Test Traces here
 end SearchEngine

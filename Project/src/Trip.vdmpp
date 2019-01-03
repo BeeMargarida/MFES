@@ -7,7 +7,7 @@ types
 								 		distance: real
 								 		price: real
 								 		meanOfTransport: Connection`Type
-								 		seatsAvailable: nat;
+								 		seatsAvailable: nat
 
 instance variables
 	protected segments : seq of Segment;
@@ -61,19 +61,21 @@ operations
 	public getAvailableSeats: () ==> nat
 	getAvailableSeats() ==
 	(
-		for all sgm in set segments do (
-			if (sgm.seatsAvailable <= minSeatsAvailable) then
-				minSeatsAvailable := sgm.seatsAvailable;
+	  dcl minSeatsAvailable : nat;
+	  minSeatsAvailable := Utilities`MAX_INT;
+		for idx = 1 to len segments do (
+			if (segments(idx).seatsAvailable <= minSeatsAvailable) then
+				minSeatsAvailable := segments(idx).seatsAvailable;
 		);
 		return minSeatsAvailable;
 	);
 	
-	public setAvailableSeats: nat ==> ()
-	setAvailableSeats(nrSeats) ==
+	public totalPrice:() ==> real
+	totalPrice() ==
 	(
-		availableSeatsForTrip := nrSeats;
+		return finalResults(2);
 	);
-		
+
 functions
 -- TODO Define functiones here
 traces

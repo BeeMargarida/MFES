@@ -4,25 +4,28 @@ values
 -- TODO Define values here
 instance variables
 	
-	public name: Utilities`String;
-	public weight: real;
-	public arrivalTime: real;
+	public  name: Utilities`String;
+	public  arrivalTime: real;
 	private calculatedVariables: seq of real := [0,0,0];
 	private meanOfTransportationUsed: Connection`Type;
 	private seatsAvailable: nat;
 	
+	inv arrivalTime >= 0;
+	inv len calculatedVariables = 3;
+	inv meanOfTransportationUsed = <Bus> or meanOfTransportationUsed = <Plane> or
+			meanOfTransportationUsed = <Train> or meanOfTransportationUsed = <Walk>;
+	inv seatsAvailable >= 0;
+			
 operations
 	
 	-- constructor
-	public Station: Utilities`String * real ==> Station
-	Station(n, w) ==
+	public Station: Utilities`String ==> Station
+	Station(n) ==
 	(
 		name := n;
-		weight := w;
-		
 		return self;
 	)
-	post name = n and weight = w;
+	post name = n;
 	
 	-- sets calculated variables 
 	public setCalculatedVariables: seq of real ==> ()
