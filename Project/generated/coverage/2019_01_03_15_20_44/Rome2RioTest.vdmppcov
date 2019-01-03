@@ -126,13 +126,6 @@ operations
 					
 					assertTrue(answer = []);
  			);
- 			
- 			private testGetConnectionWithDestination: () ==> ()
- 			testGetConnectionWithDestination() == (
- 					dcl answer : set of Connection := t.getConnectionsWithDestination("Lisbon");
-					assertTrue(card answer = 3);
-					
- 			);
  			 			
  			public static main: () ==> ()
  			main() == (
@@ -146,7 +139,6 @@ operations
 						new Rome2RioTest().testNoPath();
 						new Rome2RioTest().testWrongStations();
 						new Rome2RioTest().testArrivalTimeProblem();
-						new Rome2RioTest().testGetConnectionWithDestination();
 			);
 			
 functions

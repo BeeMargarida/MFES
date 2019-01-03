@@ -145,7 +145,7 @@ operations
 						new Rome2RioTest().testCombinationPathWithMaximumDuration();
 						new Rome2RioTest().testNoPath();
 						new Rome2RioTest().testWrongStations();
-						new Rome2RioTest().testArrivalTimeProblem();
+						--new Rome2RioTest().testArrivalTimeProblem();
 						new Rome2RioTest().testGetConnectionWithDestination();
 			);
 			
