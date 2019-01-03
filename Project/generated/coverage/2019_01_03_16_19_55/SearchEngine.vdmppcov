@@ -70,8 +70,8 @@ operations
 	);
 	
 	-- gets the arrivalTime in targetNode from startNode on the shortest route regarding distance 
-	private getArrivalTime: real * Station * Station * set of Type ==> real
-	getArrivalTime(startTime, startNode, targetNode, meansOfTransportation) ==
+	private getArrivalTime: real * Station * Station * set of Type * bool ==> real
+	getArrivalTime(startTime, startNode, targetNode, meansOfTransportation, selectedMean) ==
 	(
 		dcl validConnections : set of Connection;
 		dcl connectionsFromSource : set of Connection;
@@ -82,9 +82,13 @@ operations
 		
 		for all c in set connectionsFromSource do (
 			if (stringEqual(c.destination.name, targetNode.name)) then ( -- if they are connections to target node 
-				 if c.type in set meansOfTransportation then (
-				 	validConnections := validConnections union {c};
-				 );
+				if (selectedMean = true) then (
+					 if c.type in set meansOfTransportation then (
+					 	validConnections := validConnections union {c};
+					 );
+				) else (
+					validConnections := validConnections union {c};
+				);
 			);
 		);
 		
@@ -117,10 +121,14 @@ operations
 		dcl adjacentNodes: set of Station := transportMap.getNeighborsOfNode(node.name);
 		dcl neighborArrivalTime : real;
 		dcl startTime : real := 0;
+		dcl hasMean : bool := false;
+		
+		if(meansOfTransportation <> {}) then
+				hasMean := true;
 				
 		-- Compute arrivalTime for all neighbors of the source node
 		for all neighbor in set adjacentNodes do (
-			neighborArrivalTime := getArrivalTime(0, node, neighbor, meansOfTransportation);
+			neighborArrivalTime := getArrivalTime(0, node, neighbor, meansOfTransportation, hasMean);
 			neighbor.setArrivalTime(neighborArrivalTime);
 		);
 

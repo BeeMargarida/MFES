@@ -135,6 +135,13 @@ operations
  			private testArrivalTimeProblem: () ==> ()
  			testArrivalTimeProblem() == (
  					dcl answer : seq of Trip := s.rome2Rio(['M','a','d','r','i','d'], ['M','o','s','c','o','w'], {1,2,3,4}, 2, -1);
+					
+					assertTrue(answer = []);
+					
+					answer := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {}, 2, 0.01);
+					assertTrue(answer = []);
+					
+					answer := s.rome2Rio(['P','o','r','t','o'], ['B','a','r','c','e','l','o','n','a'], {}, 3, 0.01);
 					assertTrue(answer = []);
  			);
  			
