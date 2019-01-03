@@ -133,11 +133,8 @@ functions
 	
 	public possibleTransaction(users : set of User, userID : nat, selectedTrip : Trip, nrSeatsToBuy: nat) res: bool ==
 	(
-		let u in set users in (u.userID <> userID)
-		or
-		let u1 in set users
-		be st (u1.userID = userID)
-		in (u1.moneyAmount >= getFinalResults(selectedTrip)(2)*nrSeatsToBuy)
+		let u in set users
+		in (u.userID = userID and u.moneyAmount >= getFinalResults(selectedTrip)(2)*nrSeatsToBuy)
 	);
 
 traces

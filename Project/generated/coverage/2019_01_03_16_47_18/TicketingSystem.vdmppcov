@@ -119,26 +119,14 @@ operations
 		) else
 			IO`print("Password incorrect");
 			return false;
-	)
-	pre possibleTransaction(users, userID, selectedTrip, nrSeatsToBuy);
+	);
 		
 functions
 
 	public uniqueID(users : set of User) res: bool ==
 	(
 		forall u in set users & (forall v in set users\{u} & (u.userID <> v.userID))
-	);
-	
-	private getFinalResults(trip : Trip) res: seq of real == trip.finalResults;
-	
-	public possibleTransaction(users : set of User, userID : nat, selectedTrip : Trip, nrSeatsToBuy: nat) res: bool ==
-	(
-		let u in set users in (u.userID <> userID)
-		or
-		let u1 in set users
-		be st (u1.userID = userID)
-		in (u1.moneyAmount >= getFinalResults(selectedTrip)(2)*nrSeatsToBuy)
-	);
+	)
 
 traces
 -- TODO Define Combinatorial Test Traces here
