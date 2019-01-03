@@ -5,21 +5,23 @@ values
 instance variables
 	
 	public name: Utilities`String;
+	public weight: real;
 	public arrivalTime: real;
 	private calculatedVariables: seq of real := [0,0,0]; -- seq of reals --> 1: distance; 2: price; 3: duration
 	public meanOfTransportationUsed: Connection`Type;
-
 	
 operations
 	
 	-- constructor
-	public Station: Utilities`String ==> Station
-	Station(n) ==
+	public Station: Utilities`String * real ==> Station
+	Station(n, w) ==
 	(
-		name := n;		
+		name := n;
+		weight := w;
+		
 		return self;
 	)
-	post name = n;
+	post name = n and weight = w;
 	
 	-- sets calculated variables 
 	public setCalculatedVariables: seq of real ==> ()

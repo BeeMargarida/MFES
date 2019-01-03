@@ -16,9 +16,11 @@ instance variables
 	protected prev: map Station to Station := {|->};
 	protected stationOrigin : Station;
 	protected minimumNode : Station;
+	protected weightFactorVar : nat;
+	protected meansOfTransportationVar : set of Type;
 	
-	inv visitedImpliesConnected(settledNodes, unsettledNodes, transportMap);
-			
+	inv SettledMinDistances(stationOrigin, weightFactorVar, settledNodes, meansOfTransportationVar, transportMap, prev, distances);
+		
 operations
 	
 	-- constructor
@@ -210,7 +212,7 @@ operations
 	private getMinimumNode: nat ==> Station 
 	getMinimumNode(weightFactor) == 
 	(
-		minimumNode := new Station("");
+		minimumNode := new Station("",0);
 		for all n in set settledNodes inter unsettledNodes do (
 			if(minimumNode.name = "") then (
 				minimumNode := n;
@@ -370,6 +372,7 @@ operations
 	(
 		dcl stationDest : Station := transportMap.getStation(destination);
 		dcl trips : seq of Trip := [];
+		weightFactorVar := weightFactor;
 		
 		if(stringEqual(stationDest.name, "Error")) then (
 				IO`println("There is no destination station with that name.");
@@ -383,9 +386,9 @@ operations
 		
 		prev := {|->};
 		distances := {|->};
-		unsettledNodes := transportMap.listStations();
 		settledNodes := {};
-	
+		unsettledNodes := transportMap.listStations();
+		
 		if(meansOfTransportation = {}) then (
 			
 			dcl answerOne : seq of Station := [];
@@ -399,10 +402,12 @@ operations
 				dcl trip : Trip := new Trip([]);
 				prev := {|->};
 				distances := {|->};
-				unsettledNodes := transportMap.listStations();
 				settledNodes := {};
+				unsettledNodes := transportMap.listStations();
 				answerOne := [];
-								
+				
+				meansOfTransportationVar := mean;
+				
 				
 				dijkstraAlgorithm(stationOrigin, mean, weightFactor);
 				answerOne := getPath(destination);
@@ -468,7 +473,9 @@ operations
 				else if( m = 4 ) then(
 				means := means union {<Walk>})
 			);
-						
+			
+			meansOfTransportationVar := means;
+			
 			dijkstraAlgorithm(stationOrigin, means, weightFactor);
 			answerSeq := getPath(destination);
 			
@@ -532,8 +539,6 @@ operations
 	
 functions
 	
-	-- checks if the graph is valid, meaning that for each connection, the distance and duration can't be equal to 0, the price is >= 0 and
-	-- the destination and origins of each connection have to be stations in the transportMap
 	validGraph(g : TransportGraph) res: bool ==
 	(
 		
@@ -542,19 +547,15 @@ functions
 		
 	);
 	
-	-- checks if the station given as origin is a station in the transportMap
 	validStart(sta : Station, g : TransportGraph) res: bool ==
 	(
 		sta in set g.stations
 	);
 	
-	-- verifies if the distances are being calculated and that all stations (nodes) have at least on connection related to them
 	IsShortestPath(distances : map Station to seq of real, prev: map Station to Station, settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph, meansOfTransportation : set of Type, weightFactor: nat) res: bool ==
 		definesShortestDist(distances, prev, settledNodes, stationOrigin,transportMap, meansOfTransportation, weightFactor) 
 		and setOfLinkedVertices(settledNodes, stationOrigin, transportMap, meansOfTransportation);
-	
-	-- checks if the algorithm is doing the calculus related to the distances correctly and that the for each connection there is a prev that is
-	-- the option with the shortest path related to the weightFactor
+
 	definesShortestDist(distances : map Station to seq of real, prev: map Station to Station, settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph, meansOfTransportation : set of Type, weightFactor: nat) res: bool ==
 	(
 		distances(stationOrigin) = [0,0,0] and 
@@ -571,23 +572,18 @@ functions
 			in (distances(u1)(weightFactor) <= distances(v)(weightFactor) + getConnectionWeight(tup, weightFactor)))
 	);
 	
-	-- returns a connection weightFactor
 	getConnectionWeight(connection: Connection, weightFactor: nat) res: real == getConnectionVars(connection)(weightFactor);
-	-- returns the calculated variables (distance, price and duration) of a connection
 	getConnectionVars(connection: Connection) res: seq of real == connection.calculatedVariables;
 	
-	-- verifies that all nodes are linked to another node (at least have on connection related to them)
 	setOfLinkedVertices(settledNodes: set of Station, stationOrigin : Station, transportMap: TransportGraph, meansOfTransportation : set of Type) res: bool ==
 	(
 		forall u1 in set settledNodes\{stationOrigin} & (exists v in set settledNodes & neighbour(transportMap, u1, v, meansOfTransportation))
 	);
 	
-	-- checks if the node (station) u is neighbour of node v (has a connection between them in which the u is destination and v is source). It takes into 
-	-- account the means of transporation selected 
 	neighbour(transportMap: TransportGraph, u: Station, v: Station, meansOfTransportation : set of Type) res: bool ==
 		exists tup in set transportMap.connections & (tup.source = v and tup.destination = u and getConnectionVars(tup) <> [0,0,0] and tup.type in set meansOfTransportation);
 	
-	-- checks that the node chosen is indeed the node with the shortests weightFactor
+	
 	isMinimumNode(weightFactor : nat, distances : map Station to seq of real, minimumNode : Station, transportMap : TransportGraph, settledNodes : set of Station, unsettledNodes : set of Station) res: bool ==
 	(
 		dom distances = {minimumNode} 
@@ -598,12 +594,29 @@ functions
 	);
 	
 	-- INVARIANTS
-	-- If node (station) has been visited (not in the unsettledNodes) it means that is in the settledNodes
-	visitedImpliesConnected(settledNodes : set of Station, unsettledNodes : set of Station, transportMap : TransportGraph) res: bool ==
-	(
-		let v = transportMap.stations\unsettledNodes in (forall u in set v & u in set settledNodes) 
-	);
-
+	
+	-- for each vertex u in the set of connected vertices exists a visited vertex v, such that the distance of u
+  -- is the sum of the distance of v and the weight of their common edge
+	public SettledMinDistances: Station * nat * set of Station * set of Type * TransportGraph * map Station to Station * map Station to seq of real -> bool
+    SettledMinDistances(origin, weightFactor, settledNodes, meansOfTransportation, transportMap, prev, distances) ==
+    (
+    	forall u in set settledNodes\{origin} & (exists v in set settledNodes & (
+				prev(u)=v and neighbour(transportMap, u, v, meansOfTransportation) and
+				let tup in set transportMap.connections be 
+				st (tup.source = v and tup.destination = u and tup.type = u.meanOfTransportationUsed) 
+				in (distances(u)(weightFactor) = distances(v)(weightFactor) + getConnectionWeight(tup, weightFactor))
+			))
+			
+    );
+    
+    /*
+        let V = settledNodes in (
+            forall u in set settled \ {origin} & (exists v in set V & (prev(u) = v and u in set getNeighborsOfNode(v) and
+            getShortestDistance(u, weightFactor) = getShortestDistance(v, weightFactor) + getConnection(v, u, <Bus>).weight or
+            getShortestDistance(u, weightFactor) = getShortestDistance(v, weightFactor) + getConnection(v, u, <Train>).weight or
+            getShortestDistance(u, weightFactor) = getShortestDistance(v, weightFactor) + getConnection(v, u, <Plane>).weight or
+            getShortestDistance(u, weightFactor) = getShortestDistance(v, weightFactor) + getConnection(v, u, <Walking>).weight)))*/
+	
 traces
 -- TODO Define Combinatorial Test Traces here
 end SearchEngine

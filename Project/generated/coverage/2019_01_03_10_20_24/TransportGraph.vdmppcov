@@ -125,7 +125,7 @@ operations
 			if stringEqual(station.name, stationName) then 
 					return station;
 		); 
-		return new Station("Error");
+		return new Station("Error", 0);
 	);
 	
 	
@@ -133,13 +133,13 @@ operations
 	public getStationWithCreation: Utilities`String ==> Station
 	getStationWithCreation(stationName) == 
 	(
-		dcl stationRes : Station := new Station("");
+		dcl stationRes : Station := new Station("", 0);
 		for all station in set stations do (
 			if stringEqual(station.name, stationName) then stationRes := station;
 		); 
 		
 		if(stringEqual(stationRes.name, "")) then (
-			stationRes := new Station(stationName);
+			stationRes := new Station(stationName, 0);
 		);
 		
 		return stationRes;
