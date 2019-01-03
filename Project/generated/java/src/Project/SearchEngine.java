@@ -192,19 +192,19 @@ public class SearchEngine {
 
   private Station getMinimumNode(final Number weightFactor) {
 
-    minimumNode_1 = new Station("");
+    minimumNode = new Station("");
     for (Iterator iterator_6 =
             SetUtil.intersect(Utils.copy(settledNodes), Utils.copy(unsettledNodes)).iterator();
         iterator_6.hasNext();
         ) {
       Station n = (Station) iterator_6.next();
       if (Utils.equals(minimumNode.name, "")) {
-        minimumNode_1 = n;
+        minimumNode = n;
 
       } else {
         if (getShortestDistance(n, weightFactor).doubleValue()
             < getShortestDistance(minimumNode, weightFactor).doubleValue()) {
-          minimumNode_1 = n;
+          minimumNode = n;
         }
       }
     }
@@ -296,12 +296,12 @@ public class SearchEngine {
     if (!(Utils.empty(reals))) {
       for (Iterator iterator_8 = reals.iterator(); iterator_8.hasNext(); ) {
         VDMSeq ds = (VDMSeq) iterator_8.next();
-        return Utils.copy(ds);
+        return ds;
       }
 
-    } else {
-      return SeqUtil.seq(1000000L, 1000000L, 1000000L);
     }
+    return SeqUtil.seq(1000000L, 1000000L, 1000000L);
+    
   }
 
   public VDMSeq getPath(final String destination) {

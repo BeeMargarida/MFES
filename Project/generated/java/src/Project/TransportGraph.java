@@ -19,9 +19,9 @@ public class TransportGraph {
 
   public TransportGraph() {
 
-    cg_init_TransportGraph_1();
-    sourceCities = new HashSet<String>();
-    destinationCities = new HashSet<String>();
+	  sourceCities = new HashSet<String>();
+	  destinationCities = new HashSet<String>();
+	  cg_init_TransportGraph_1();
   }
 
   private void addConnection(
