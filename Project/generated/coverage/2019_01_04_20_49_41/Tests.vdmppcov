@@ -1,0 +1,23 @@
+class Tests
+/* 
+		Class that creates and runs all the tests from Rome2RioTest and TicketingSystemTest classes.
+*/
+instance variables
+	public rome2Rio : Rome2RioTest := new Rome2RioTest();
+	ticketingSystem : TicketingSystemTest := new TicketingSystemTest();
+operations
+
+	-- Calls the entry points of Rome2RioTest and TicketingSystemTest classes
+	public create: () ==> ()
+	create() == (
+		rome2Rio.main();
+		ticketingSystem.main();
+	);
+
+	-- Entry point that runs all tests	
+	public static main: () ==> ()
+ 			main() == (
+						new Tests().create();
+			);
+	
+end Tests
