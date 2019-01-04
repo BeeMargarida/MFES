@@ -2,9 +2,13 @@ package Project;
 
 import java.util.Scanner;
 
+import org.overture.codegen.runtime.SeqUtil;
 import org.overture.codegen.runtime.SetUtil;
+import org.overture.codegen.runtime.Utils;
 import org.overture.codegen.runtime.VDMSeq;
 import org.overture.codegen.runtime.VDMSet;
+
+import Project.TicketingSystem.User;
 
 import java.lang.System;
 import java.util.ArrayList;
@@ -40,6 +44,7 @@ public class Main {
 		System.out.println("1 - Add New Connection");
 		System.out.println("2 - Add New User");
 		System.out.println("3 - Search Paths");
+		System.out.println("4 - Exit Program");
 		System.out.println("*****************************************");
 		
 		boolean procede = false;
@@ -47,14 +52,13 @@ public class Main {
 		while (!procede ) {
 			System.out.print("Your option is: ");
 			input = sc.nextInt();
-			if (input < 1 || input > 3) {
+			if (input < 1 || input > 4) {
 				System.out.println("Please insert a valid option");
 			
 			} else {
 				procede = true;
 			}
 		}
-		
 		return input;
 	}
 	
@@ -227,9 +231,210 @@ public class Main {
 		while (userID == -1) {
 			System.out.print("\nPlease insert your user ID: ");
 			userID = sc.nextInt();
+			if(userID < 0) {
+				System.out.println("Invalid option, please try again");
+			}
 		}
 		return userID;
 		
+	}
+	
+	public static int getPassword(Scanner sc) {
+		int password = -1;
+		while (password == -1) {
+			System.out.print("\nPlease insert your password: ");
+			password = sc.nextInt();
+			if(password < 0) {
+				System.out.println("Invalid option, please try again");
+			}
+		}
+		return password;
+		
+	}
+	
+	public static int getTripID(Scanner sc, int lengthTrips) {
+		int tripID = -1;
+		while (tripID == -1) {
+			System.out.print("\nPlease insert the tripID: ");
+			tripID = sc.nextInt();
+			
+			if(tripID < 1 || tripID > lengthTrips) {
+				System.out.println("Invalid option, please try again");
+			}
+		}
+		return tripID;
+		
+	}
+	
+	public static int getNrSeats(Scanner sc) {
+		int nrSeats = -1;
+		while (nrSeats == -1) {
+			System.out.print("\nPlease insert the number of seats you wish to buy: ");
+			nrSeats = sc.nextInt();
+			
+			if(nrSeats < 0) {
+				System.out.println("Invalid option, please try again");
+			}
+		}
+		return nrSeats;
+		
+	}
+	
+	public static void addNewConnection(TransportGraph t) {
+		Scanner sc = new Scanner(System.in);
+		String input;
+		String source = "";
+		String dest = "";
+		String meanOfTransportation = "";
+		int distance;
+		int nrSeatsAvailable;
+		String ttbl = "";
+		VDMSeq ttblSeq = new VDMSeq();
+		Object mean = null;
+		boolean addMore = true;
+		
+		
+		System.out.println("You cann add a new connection just if you are admin.");
+		System.out.print("Insert admin password: ");
+		
+		input = sc.next();
+		if (input.equalsIgnoreCase("admin")) {
+			System.out.println("You are logged in as admin; insert connection data:");
+			
+			while (addMore) {
+				do {
+					System.out.print("Source city: ");
+					source = sc.next();
+				} while (source == "");
+				
+				do {
+					System.out.print("Destination city: ");
+					dest = sc.next();
+				} while (dest == "");
+				
+				do {
+					System.out.print("Mean of transportation (Train, Plane, Bus or Walk): ");
+					meanOfTransportation = sc.next();
+				} while (!meanOfTransportation.equals("Train") && !meanOfTransportation.equals("Plane") &&
+						 !meanOfTransportation.equals("Bus") && !meanOfTransportation.equals("Walk"));
+				
+				do {
+					System.out.print("Distance: ");
+					distance = sc.nextInt();
+				} while (distance <= 0);
+				
+				System.out.print("Available seats: ");
+				nrSeatsAvailable = sc.nextInt();
+				
+				System.out.print("Timetable, with integer values separated by commas: ");
+				ttbl = sc.next();
+				
+				if (ttbl.length() == 0) {
+					ttblSeq = SeqUtil.seq();
+				} else {
+					String[] intervals = ttbl.split(",");
+					for (String timeString: intervals) {
+						int time = Integer.parseInt(timeString);
+						ttblSeq.add(time);
+					}
+				}
+				
+				if (meanOfTransportation.equals("Train")) {
+					mean = Project.quotes.TrainQuote.getInstance();
+				} else if (meanOfTransportation.equals("Plane")) {
+					mean = Project.quotes.PlaneQuote.getInstance();
+				} else if (meanOfTransportation.equals("Bus")) {
+					mean = Project.quotes.BusQuote.getInstance();
+				} else {
+					mean = Project.quotes.WalkQuote.getInstance();
+				}
+				
+				t.addConnection(mean, source, dest, distance, ttblSeq, nrSeatsAvailable);
+				addMore = false;
+				
+				System.out.println("Do you want to add a new connection? [y/n]");
+				if (sc.next().equalsIgnoreCase("y"))
+					addMore = true;
+			}
+		} else {
+			System.out.println("You are not admin. Please choose another option");
+			return;
+		}
+		System.out.println("Connections added successfully");
+	}
+	
+	private static boolean validID(ArrayList<Integer> exID, int id) {
+		return !exID.contains(id) && id >= 0;
+	}
+	
+	private static boolean validPass(int pass) {
+		return (pass >= 1000) && (pass <= 9999);
+	}
+	
+	/*
+	 * Updates the users database with new users. Data should respect the following conditions:
+	 * UserID must be a positive integer and must be unique
+	 * Password must have 4 digits
+	 * Amount of money must be >= 0
+	 */
+	public static void addNewUsers(TicketingSystem ts) {
+		String input;
+		Scanner sc = new Scanner(System.in);
+		boolean addMore = true;
+		int id = -1;
+		int passwd;
+		int amount;
+		ArrayList<Integer> existingID = new ArrayList<>();
+		
+		System.out.println("You cann add a new user just if you are admin.");
+		System.out.print("Insert admin password: ");
+		
+		Iterator it = ts.users.iterator();
+		while (it.hasNext()) {
+			existingID.add(((User)it.next()).userID.intValue());
+		}
+		
+		input = sc.next();
+		if (input.equalsIgnoreCase("admin")) {
+			System.out.println("You are logged in as admin; insert connection data:");
+			
+			while (addMore) {
+				do {
+					System.out.println("Choose an unique user ID");
+					System.out.println("Existing user IDs:");
+					
+					for (Integer i : existingID) {
+						System.out.print(i + " ");
+					}
+					System.out.println();
+					
+					System.out.print("User ID [positive integer]: ");
+					id = sc.nextInt();
+				} while (!validID(existingID, id));
+				
+				do {
+					System.out.print("Password [4 digits]: ");
+					passwd = sc.nextInt();
+				} while (!validPass(passwd));
+				
+				do {
+					System.out.print("Amount of money: ");
+					amount = sc.nextInt();
+				} while (amount < 0);
+				
+				ts.users = SetUtil.union(Utils.copy(ts.users), SetUtil.set(new User(id, passwd, amount)));
+				existingID.add(id);
+				
+				addMore = false;
+				System.out.println("Do you want to add a new user? [y/n]");
+				if (sc.next().equalsIgnoreCase("y"))
+					addMore = true;
+			}
+		} else {
+			System.out.println("You are not admin. Please choose another option");
+			return;
+		}
+		System.out.println("Users added successfully");
 	}
 	
 	public static void main(String[] args) {
@@ -250,18 +455,20 @@ public class Main {
 		System.out.println("Press 1 to load our database. We will travel the world in the most efficient time!");
 		
 		t = loadDatabase(sc);
-		
+		ticketS = new TicketingSystem(t);
 		
 		while(step != -1) {
 			switch(step) {
 				case 0:
-					step = mainMenu(sc);
-				case 1: //new Connection
-					
+					step = mainMenu(sc); break;
+				case 1: //new Connections
+					addNewConnection(t);
+					step = 0;
 					break;
-				case 2: //New User
+				case 2: //New Users
+					addNewUsers(ticketS);
+					step = 0;
 					break;
-					
 				case 3: //Search Path
 					sourceCity = getSourceCity(t, sc);
 					destinationCity = getDestinationCity(t, sc);
@@ -300,7 +507,7 @@ public class Main {
 							procede = true;
 						}
 						else if (optionTicket == 1) {
-							step = 4;
+							step = 5;
 							procede = true;
 						} else {
 							System.out.println("Please insert a valid option");
@@ -308,27 +515,51 @@ public class Main {
 					}
 					break;
 				
-				case 4: //Buy ticket
-					int userID = -1;
-					String password = null;
+				case 4:
+					System.out.println("The program will shutdown...");
+					System.exit(0);
+				
+				case 5: //Buy ticket
+					Number userID = -1;
+					Number password = -1;
 					int tripID = -1;
-					int nrSeats = -1;
+					Number nrSeats = -1;
 					
 					userID = getUserID(sc);
-					// get password, tripID and nr of Seats
-					// call function to buy ticket
-					// make error treatment
+					password = getPassword(sc);
+					
+					System.out.print("You have " + ticketS.getUserById(userID).moneyAmount + " euros.");
+					
+					tripID = getTripID(sc, trips.size());
+					nrSeats = getNrSeats(sc);
+					
+					System.out.println("\n\n");
+					
+					boolean successBuy = ticketS.buyTickets(userID, password, (Trip) trips.get(tripID - 1), nrSeats);
+					
+					if(successBuy) {
+						System.out.println("You have successfully bought " + nrSeats + " tickets for the selected trip");
+						step = 0;
+					}
+					else {
+						System.out.println("\n\nDo you wish to try again? 1 - Yes | 0 - No");
+						procede = false;
+						while(!procede) {
+							int in = sc.nextInt();
+							if(in == 1) {
+								procede = true;
+							}
+							else if(in == 0) {
+								step = 0;
+								procede = true;
+							}
+							else {
+								System.out.println("Please insert a valid option");
+							}
+						}
+					}
 					break;
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-	}
-	
-	
+	}	
 }

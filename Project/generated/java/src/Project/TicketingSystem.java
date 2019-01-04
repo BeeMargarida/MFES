@@ -5,8 +5,8 @@ import org.overture.codegen.runtime.*;
 
 @SuppressWarnings("all")
 public class TicketingSystem {
-  private VDMSet users = SetUtil.set();
-  private TransportGraph transportMap;
+  public VDMSet users = SetUtil.set();
+  public TransportGraph transportMap;
 
   public void cg_init_TicketingSystem_1(final TransportGraph t) {
 
@@ -31,7 +31,7 @@ public class TicketingSystem {
     addUser(14L, 8790L, 7834L);
   }
 
-  private User getUserById(final Number ID) {
+  public User getUserById(final Number ID) {
 
     for (Iterator iterator_18 = users.iterator(); iterator_18.hasNext(); ) {
       User u = (User) iterator_18.next();
@@ -73,8 +73,13 @@ public class TicketingSystem {
       final Trip selectedTrip,
       final Number nrSeatsToBuy) {
 
-    IO.println(selectedTrip);
+	if (selectedTrip.getAvailableSeats().intValue() == 0) {
+		System.out.println("There are no seats left for this trip");
+		return false;
+	}
+	
     if (Utils.equals(passwd, getUserById(userID).passwd)) {
+      System.out.print("You have " + getUserById(userID).moneyAmount + " euros.");
       if (getUserById(userID).moneyAmount.doubleValue()
           >= selectedTrip.totalPrice().doubleValue() * nrSeatsToBuy.longValue()) {
         Number nrAvailableSeats = selectedTrip.getAvailableSeats();
@@ -89,9 +94,6 @@ public class TicketingSystem {
         if (andResult_21) {
           selectedTrip.discountAvailableSeats(nrSeatsToBuy, transportMap);
           discountMoney(userID, selectedTrip.totalPrice(), nrSeatsToBuy);
-          IO.println("***");
-          IO.println(nrAvailableSeats);
-          IO.println("***");
           return true;
 
         } else {

@@ -36,7 +36,7 @@ public class JavaUtils {
 		
 		for(int i = 0; i < trips.size(); i++) {
 			
-			System.out.println("\n***************  " + (i + 1) +"  *****************");
+			System.out.println("\n***************  ID = " + (i + 1) +"  *****************");
 			System.out.println(trips.get(i).toString());
 			
 		}
