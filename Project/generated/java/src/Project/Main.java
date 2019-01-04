@@ -527,6 +527,9 @@ public class Main {
 					
 					userID = getUserID(sc);
 					password = getPassword(sc);
+					
+					System.out.print("You have " + ticketS.getUserById(userID).moneyAmount + " euros.");
+					
 					tripID = getTripID(sc, trips.size());
 					nrSeats = getNrSeats(sc);
 					
