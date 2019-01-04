@@ -46,17 +46,17 @@ public class TransportGraph {
 
   public void createDatabase() {
 
-    addConnection(
-        Project.quotes.BusQuote.getInstance(), "Porto", "Lisbon", 300L, SeqUtil.seq(6L, 12L), 12L);
-    addConnection(
-        Project.quotes.WalkQuote.getInstance(),
-        "Porto",
-        "Gaia",
-        10L,
-        SeqUtil.seq(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L),
-        10L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(), "Porto", "Lisbon", 300L, SeqUtil.seq(8L, 22L), 5L);
+//    addConnection(
+//        Project.quotes.BusQuote.getInstance(), "Porto", "Lisbon", 300L, SeqUtil.seq(6L, 12L), 12L);
+//    addConnection(
+//        Project.quotes.WalkQuote.getInstance(),
+//        "Porto",
+//        "Gaia",
+//        10L,
+//        SeqUtil.seq(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L),
+//        10L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(), "Porto", "Lisbon", 300L, SeqUtil.seq(8L, 22L), 5L);
     addConnection(
         Project.quotes.TrainQuote.getInstance(),
         "Porto",
@@ -64,43 +64,43 @@ public class TransportGraph {
         350L,
         SeqUtil.seq(10L, 12L, 16L, 20L, 22L),
         10L);
-    addConnection(
-        Project.quotes.BusQuote.getInstance(), "Porto", "Madrid", 1500L, SeqUtil.seq(6L, 12L), 10L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(),
-        "Porto",
-        "Paris",
-        1300L,
-        SeqUtil.seq(8L, 20L),
-        15L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(),
-        "Amsterdam",
-        "Bologna",
-        300L,
-        SeqUtil.seq(6L, 12L),
-        5L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(),
-        "Bologna",
-        "Paris",
-        2900L,
-        SeqUtil.seq(9L, 21L),
-        6L);
-    addConnection(
-        Project.quotes.BusQuote.getInstance(),
-        "Macedo de Cavaleiros",
-        "Porto",
-        350L,
-        SeqUtil.seq(10L, 12L, 20L),
-        4L);
-    addConnection(
-        Project.quotes.TrainQuote.getInstance(),
-        "Porto",
-        "Madrid",
-        100L,
-        SeqUtil.seq(10L, 12L, 16L, 20L, 22L),
-        19L);
+//    addConnection(
+//        Project.quotes.BusQuote.getInstance(), "Porto", "Madrid", 1500L, SeqUtil.seq(6L, 12L), 10L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(),
+//        "Porto",
+//        "Paris",
+//        1300L,
+//        SeqUtil.seq(8L, 20L),
+//        15L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(),
+//        "Amsterdam",
+//        "Bologna",
+//        300L,
+//        SeqUtil.seq(6L, 12L),
+//        5L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(),
+//        "Bologna",
+//        "Paris",
+//        2900L,
+//        SeqUtil.seq(9L, 21L),
+//        6L);
+//    addConnection(
+//        Project.quotes.BusQuote.getInstance(),
+//        "Macedo de Cavaleiros",
+//        "Porto",
+//        350L,
+//        SeqUtil.seq(10L, 12L, 20L),
+//        4L);
+//    addConnection(
+//        Project.quotes.TrainQuote.getInstance(),
+//        "Porto",
+//        "Madrid",
+//        100L,
+//        SeqUtil.seq(10L, 12L, 16L, 20L, 22L),
+//        19L);
     addConnection(
         Project.quotes.TrainQuote.getInstance(),
         "Lisbon",
@@ -108,61 +108,63 @@ public class TransportGraph {
         280L,
         SeqUtil.seq(9L, 11L, 15L, 19L),
         20L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(),
-        "Lisbon",
-        "Faro",
-        250L,
-        SeqUtil.seq(8L, 12L, 20L),
-        90L);
-    addConnection(
-        Project.quotes.BusQuote.getInstance(), "Lisbon", "Faro", 285L, SeqUtil.seq(8L, 12L), 54L);
-    addConnection(
-        Project.quotes.BusQuote.getInstance(),
-        "Lisbon",
-        "Madrid",
-        750L,
-        SeqUtil.seq(8L, 12L, 15L, 17L),
-        12L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(),
-        "Lisbon",
-        "Madrid",
-        650L,
-        SeqUtil.seq(8L, 10L, 12L, 15L, 19L, 22L),
-        3L);
-    addConnection(
-        Project.quotes.TrainQuote.getInstance(),
-        "Lisbon",
-        "Madrid",
-        680L,
-        SeqUtil.seq(8L, 10L, 12L, 15L, 17L, 19L, 22L),
-        5L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(),
-        "Lisbon",
-        "Barcelona",
-        1347L,
-        SeqUtil.seq(8L, 12L, 15L, 19L, 22L),
-        2L);
-    addConnection(
-        Project.quotes.TrainQuote.getInstance(),
-        "Madrid",
-        "Barcelona",
-        625L,
-        SeqUtil.seq(8L, 10L, 12L, 15L, 17L, 19L, 22L),
-        10L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(),
-        "Madrid",
-        "Barcelona",
-        625L,
-        SeqUtil.seq(8L, 12L, 15L, 19L, 22L),
-        5L);
-    addConnection(
-        Project.quotes.TrainQuote.getInstance(), "Madrid", "Krakow", 1342L, SeqUtil.seq(8L), 10L);
-    addConnection(
-        Project.quotes.PlaneQuote.getInstance(), "Krakow", "Moscow", 2789L, SeqUtil.seq(9L), 5L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(),
+//        "Lisbon",
+//        "Faro",
+//        250L,
+//        SeqUtil.seq(8L, 12L, 20L),
+//        90L);
+//    addConnection(
+//        Project.quotes.BusQuote.getInstance(), "Lisbon", "Faro", 285L, SeqUtil.seq(8L, 12L), 54L);
+//    addConnection(
+//        Project.quotes.BusQuote.getInstance(),
+//        "Lisbon",
+//        "Madrid",
+//        750L,
+//        SeqUtil.seq(8L, 12L, 15L, 17L),
+//        12L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(),
+//        "Lisbon",
+//        "Madrid",
+//        650L,
+//        SeqUtil.seq(8L, 10L, 12L, 15L, 19L, 22L),
+//        3L);
+//    addConnection(
+//        Project.quotes.TrainQuote.getInstance(),
+//        "Lisbon",
+//        "Madrid",
+//        680L,
+//        SeqUtil.seq(8L, 10L, 12L, 15L, 17L, 19L, 22L),
+//        5L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(),
+//        "Lisbon",
+//        "Barcelona",
+//        1347L,
+//        SeqUtil.seq(8L, 12L, 15L, 19L, 22L),
+//        2L);
+//    addConnection(
+//        Project.quotes.TrainQuote.getInstance(),
+//        "Madrid",
+//        "Barcelona",
+//        625L,
+//        SeqUtil.seq(8L, 10L, 12L, 15L, 17L, 19L, 22L),
+//        10L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(),
+//        "Madrid",
+//        "Barcelona",
+//        625L,
+//        SeqUtil.seq(8L, 12L, 15L, 19L, 22L),
+//        5L);
+//    addConnection(
+//        Project.quotes.TrainQuote.getInstance(), "Madrid", "Krakow", 1342L, SeqUtil.seq(8L), 10L);
+//    addConnection(
+//        Project.quotes.PlaneQuote.getInstance(), "Krakow", "Moscow", 2789L, SeqUtil.seq(9L), 5L);
+      addConnection(
+          Project.quotes.PlaneQuote.getInstance(), "Faro", "Moscow", 2789L, SeqUtil.seq(9L, 30L), 5L);
   }
 
   public VDMSet listConnections() {

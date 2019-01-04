@@ -163,15 +163,42 @@ public class Trip {
   }
 
   public String toString() {
-
-    return "Trip{"
-        + "segments := "
-        + Utils.toString(segments)
-        + ", finalResults := "
-        + Utils.toString(finalResults)
-        + ", availableSeatsForTrip := "
-        + Utils.toString(availableSeatsForTrip)
-        + "}";
+	String result = "";
+	double duration;
+	double distance;
+	double price;
+	int availableSeats;
+	int availableSeatsTrip = Integer.MAX_VALUE;
+	String prev = "";
+	
+	for (int i = 0; i < segments.size(); i++) {
+		if (i == 0) {
+			prev = ((Segment) segments.get(i)).startCity;
+		} else {
+			duration = (double) ((Segment) segments.get(i)).timeDuration;
+			distance = (double) ((Segment) segments.get(i)).distance;
+			price = (double) ((Segment) segments.get(i)).price;
+			availableSeats = ((Segment) segments.get(i)).seatsAvailable.intValue();
+			
+			if (availableSeats <= availableSeatsTrip)
+				availableSeatsTrip = availableSeats;
+			
+			result = result + prev + " -> ";
+			result += ((Segment) segments.get(i)).startCity;
+			result += " by " + ((Segment) segments.get(i)).meanOfTransport
+//					+ "; duration: " + String.format("%.2f", duration)
+//					+ "; distance: " + String.format("%.2f", distance)
+//					+ "; price: " + String.format("%.2f", price)
+					+ "; available seats: " + availableSeats
+					+ "\n";
+		}
+		prev = ((Segment) segments.get(i)).startCity;
+	}
+	result += "\nTotal distance: " + String.format("%.2f", finalResults.get(0))
+			+ "\nTotal price: " + String.format("%.2f", finalResults.get(1))
+			+ "\nTotal duration: " + String.format("%.2f", finalResults.get(2))
+			+ "\nAvailable seats: " + availableSeatsTrip;
+	return result;
   }
 
   public static class Segment implements Record {

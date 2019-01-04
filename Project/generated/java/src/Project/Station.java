@@ -124,16 +124,10 @@ public class Station {
   public String toString() {
 
     return "Station{"
-        + "name := "
         + Utils.toString(name)
-        + ", arrivalTime := "
-        + Utils.toString(arrivalTime)
-        + ", calculatedVariables := "
-        + Utils.toString(calculatedVariables)
-        + ", meanOfTransportationUsed := "
         + Utils.toString(meanOfTransportationUsed)
-        + ", seatsAvailable := "
-        + Utils.toString(seatsAvailable)
+        + ", arrivalTime := "
+        + String.format("%.2f", arrivalTime.doubleValue())
         + "}";
   }
 }
