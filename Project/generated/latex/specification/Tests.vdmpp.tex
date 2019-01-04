@@ -1,0 +1,49 @@
+\begin{vdmpp}[breaklines=true]
+class Tests
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+ public rome2Rio : Rome2RioTest := new Rome2RioTest();
+ ticketingSystem : TicketingSystemTest := new TicketingSystemTest();
+operations
+
+(*@
+\label{create:11}
+@*)
+ public create: () ==> ()
+ create() == (
+  rome2Rio.main();
+  ticketingSystem.main();
+ );
+ 
+(*@
+\label{main:17}
+@*)
+ public static main: () ==> ()
+    main() == (
+      new Tests().create();
+   );
+ 
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Tests
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[create:11]{create} & 11&0.0\% & 0 \\
+\hline
+\hyperref[main:17]{main} & 17&0.0\% & 0 \\
+\hline
+\hline
+Tests.vdmpp & & 0.0\% & 0 \\
+\hline
+\end{longtable}
+

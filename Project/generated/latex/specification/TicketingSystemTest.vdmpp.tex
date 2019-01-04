@@ -1,0 +1,128 @@
+\begin{vdmpp}[breaklines=true]
+class TicketingSystemTest
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+ t : TransportGraph := new TransportGraph();
+ ticket : TicketingSystem := new TicketingSystem(t);
+ s : SearchEngine := new SearchEngine(t);
+operations
+
+(*@
+\label{assertTrue:13}
+@*)
+ private assertTrue: bool ==> ()
+  assertTrue(cond) == return
+  pre cond;
+  
+(*@
+\label{assertFalse:17}
+@*)
+  private assertFalse: bool ==> ()
+  assertFalse(cond) == return
+  pre not cond;
+  
+(*@
+\label{testUserCreation:21}
+@*)
+  private testUserCreation: () ==> ()
+ testUserCreation() == (
+   assertTrue(card ticket.getUsersDatabase() > 0);
+ );
+ 
+(*@
+\label{testBuyTicket:26}
+@*)
+ private testBuyTicket: () ==> ()
+ testBuyTicket() == (
+  dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+  dcl resBuy : bool := ticket.buyTickets(12, 1234, answer(1), 1);
+  
+  assertTrue(resBuy);
+ );
+ 
+(*@
+\label{testBuyTicketNoValidUser:34}
+@*)
+ private testBuyTicketNoValidUser: () ==> ()
+ testBuyTicketNoValidUser() == (
+  dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+  dcl resBuy : bool := ticket.buyTickets(12123123, 1234, answer(1), 1);
+  
+  assertFalse(resBuy);
+ );
+ 
+(*@
+\label{testBuyTicketNotEnoughMoney:42}
+@*)
+ private testBuyTicketNotEnoughMoney: () ==> ()
+ testBuyTicketNotEnoughMoney() == (
+  dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+  dcl resBuy : bool;
+  ticket.addUser(12345, 1234, 10);
+  resBuy := ticket.buyTickets(12345, 1234, answer(1), 1);
+  
+  assertFalse(resBuy);
+ );
+ 
+(*@
+\label{testBuyTicketNotEnoughSeats:52}
+@*)
+ private testBuyTicketNotEnoughSeats: () ==> ()
+ testBuyTicketNotEnoughSeats() == (
+  dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+  dcl resBuy : bool;
+  ticket.addUser(12345, 1234, 10000000);
+  resBuy := ticket.buyTickets(12345, 1234, answer(1), 20);
+  
+  assertFalse(resBuy);
+ );
+  
+(*@
+\label{main:62}
+@*)
+  public static main: () ==> ()
+ main() == (
+    new TicketingSystemTest().testUserCreation();
+    new TicketingSystemTest().testBuyTicket();
+    new TicketingSystemTest().testBuyTicketNoValidUser();
+    new TicketingSystemTest().testBuyTicketNotEnoughMoney();
+    new TicketingSystemTest().testBuyTicketNotEnoughSeats();
+ );
+  
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end TicketingSystemTest
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[assertFalse:17]{assertFalse} & 17&0.0\% & 0 \\
+\hline
+\hyperref[assertTrue:13]{assertTrue} & 13&0.0\% & 0 \\
+\hline
+\hyperref[main:62]{main} & 62&0.0\% & 0 \\
+\hline
+\hyperref[testBuyTicket:26]{testBuyTicket} & 26&0.0\% & 0 \\
+\hline
+\hyperref[testBuyTicketNoValidUser:34]{testBuyTicketNoValidUser} & 34&0.0\% & 0 \\
+\hline
+\hyperref[testBuyTicketNotEnoughMoney:42]{testBuyTicketNotEnoughMoney} & 42&0.0\% & 0 \\
+\hline
+\hyperref[testBuyTicketNotEnoughSeats:52]{testBuyTicketNotEnoughSeats} & 52&0.0\% & 0 \\
+\hline
+\hyperref[testUserCreation:21]{testUserCreation} & 21&0.0\% & 0 \\
+\hline
+\hline
+TicketingSystemTest.vdmpp & & 0.0\% & 0 \\
+\hline
+\end{longtable}
+

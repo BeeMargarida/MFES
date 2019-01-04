@@ -1,0 +1,206 @@
+\begin{vdmpp}[breaklines=true]
+class Trip
+types
+-- TODO Define types here
+ public Segment :: startCity : Utilities`String
+           --destinationCity : Utilities`String
+           timeDuration: real
+           distance: real
+           price: real
+           meanOfTransport: Connection`Type
+           seatsAvailable: nat;
+
+instance variables
+ protected segments : seq of Segment;
+ public finalResults : seq of real;
+ protected availableSeatsForTrip : real := Utilities`MAX_INT;
+  
+operations
+ 
+ -- constructor
+(*@
+\label{Trip:20}
+@*)
+ public Trip: seq of Segment ==> Trip
+ Trip(segs) ==
+ (
+  segments := segs;
+  finalResults := [];
+  return self;
+ )
+ post segments = segs and finalResults = [];
+ 
+ -- add new segment
+(*@
+\label{addSegment:30}
+@*)
+ public addSegment: Utilities`String * seq of real * Connection`Type * nat ==> ()
+ addSegment(origin, distValues, meanType, seatsAvailable) ==
+ (
+  dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), meanType, seatsAvailable);
+  segments := segments ^[segment]; 
+ );
+ 
+ -- add new segment withouy mean of transportation info
+(*@
+\label{addSegmentFirst:38}
+@*)
+ public addSegmentFirst: Utilities`String * seq of real  * nat ==> ()
+ addSegmentFirst(origin, distValues, seatsAvailable) ==
+ (
+  dcl segment : Segment := mk_Segment(origin, distValues(3), distValues(1), distValues(2), <NONE>, seatsAvailable);
+  segments := segments ^[segment]; 
+ );
+ 
+ -- get segments
+(*@
+\label{getSegments:46}
+@*)
+ public getSegments: () ==> seq of Segment
+ getSegments() ==
+ (
+  return segments;
+ );
+ 
+ -- set final results
+(*@
+\label{setFinalResults:53}
+@*)
+ public setFinalResults : seq of real * real ==> ()
+ setFinalResults(results, arrivalTime) ==
+ (
+  finalResults := [results(1), results(2), arrivalTime];
+ )
+ post finalResults = [results(1), results(2), arrivalTime];
+ 
+ -- gets number of seats available per trip
+(*@
+\label{getAvailableSeats:61}
+@*)
+ public getAvailableSeats: () ==> real
+ getAvailableSeats() ==
+ (
+   availableSeatsForTrip := Utilities`MAX_INT;
+  for idx = 2 to len segments do (
+   if (segments(idx).seatsAvailable >= 0 and segments(idx).seatsAvailable <= availableSeatsForTrip) then
+    availableSeatsForTrip := segments(idx).seatsAvailable;
+  );
+   
+  return availableSeatsForTrip;
+ )
+ post availableSeatsForTrip = Utilities`MAX_INT or isMinSeatAvailable(segments, availableSeatsForTrip);
+ 
+(*@
+\label{discountAvailableSeats:74}
+@*)
+ public discountAvailableSeats: nat * TransportGraph ==> ()
+ discountAvailableSeats(nrSeatsToBuy, transportMap) ==
+ (
+  dcl index : nat := 1;
+  dcl newSegments : seq of Segment := [];
+   
+  for seg in segments do (
+   if(index <> 1) then (
+   
+    dcl station : Station := getSegmentStation(transportMap, seg.startCity);
+    dcl prevStation : Station := getSegmentStation(transportMap, segments(index - 1).startCity);
+    station.decreaseAvailableSeats(transportMap.listConnections(), prevStation, nrSeatsToBuy);
+     
+    newSegments := newSegments ^
+    [mk_Segment(seg.startCity, seg.timeDuration, seg.distance, seg.price, seg.meanOfTransport, seg.seatsAvailable - nrSeatsToBuy)];
+   
+   ) else (
+    newSegments := newSegments ^ [seg];
+   );
+   index := index + 1;
+  );
+  segments := newSegments;
+ );
+ 
+(*@
+\label{getSegmentStation:98}
+@*)
+ private getSegmentStation: TransportGraph * Utilities`String ==> Station 
+ getSegmentStation(transportMap, stationName) ==
+ (
+  dcl stationRes : Station;
+  for all station in set transportMap.listStations() do (
+   if(stringEqual(station.name, stationName)) then (
+    stationRes := station;
+   )
+  );
+  
+  return stationRes;
+ );
+ 
+(*@
+\label{totalPrice:111}
+@*)
+ public totalPrice:() ==> real
+ totalPrice() ==
+ (
+  return finalResults(2);
+ );
+ 
+(*@
+\label{stringEqual:117}
+@*)
+ private stringEqual: Utilities`String * Utilities`String ==> bool
+ stringEqual(s1, s2) ==
+ (
+  if len s1 <> len s2 then
+   return false;
+  for idx = 1 to len s1 do
+   if s1(idx) <> s2(idx) then return false;
+  
+  return true;
+ );
+
+functions
+ 
+(*@
+\label{isMinSeatAvailable:130}
+@*)
+ public isMinSeatAvailable(segments : seq of Segment, availableSeatsForTrip : real) res: bool ==
+ (
+  let i in set inds segments be st i > 1 in (segments(i).seatsAvailable >=  availableSeatsForTrip)
+ ); 
+
+ 
+traces
+-- TODO Define Combinatorial Test Traces here
+end Trip
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[Trip:20]{Trip} & 20&0.0\% & 0 \\
+\hline
+\hyperref[addSegment:30]{addSegment} & 30&0.0\% & 0 \\
+\hline
+\hyperref[addSegmentFirst:38]{addSegmentFirst} & 38&0.0\% & 0 \\
+\hline
+\hyperref[discountAvailableSeats:74]{discountAvailableSeats} & 74&0.0\% & 0 \\
+\hline
+\hyperref[getAvailableSeats:61]{getAvailableSeats} & 61&0.0\% & 0 \\
+\hline
+\hyperref[getSegmentStation:98]{getSegmentStation} & 98&0.0\% & 0 \\
+\hline
+\hyperref[getSegments:46]{getSegments} & 46&0.0\% & 0 \\
+\hline
+\hyperref[isMinSeatAvailable:130]{isMinSeatAvailable} & 130&0.0\% & 0 \\
+\hline
+\hyperref[setFinalResults:53]{setFinalResults} & 53&0.0\% & 0 \\
+\hline
+\hyperref[stringEqual:117]{stringEqual} & 117&0.0\% & 0 \\
+\hline
+\hyperref[totalPrice:111]{totalPrice} & 111&0.0\% & 0 \\
+\hline
+\hline
+Trip.vdmpp & & 0.0\% & 0 \\
+\hline
+\end{longtable}
+

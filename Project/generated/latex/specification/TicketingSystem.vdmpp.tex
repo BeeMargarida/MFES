@@ -1,0 +1,213 @@
+\begin{vdmpp}[breaklines=true]
+ class TicketingSystem
+types
+ public User :: userID: nat
+          passwd: nat
+         moneyAmount: real;
+values
+-- TODO Define values here
+instance variables
+ users : set of User := {};
+ transportMap : TransportGraph;
+ 
+ -- TODO
+  inv uniqueID(users);
+ -- find a way to put the nr of seats in a connection in a station
+ -- find a way to update it 
+operations
+
+ --------------------
+-- private validID: nat ==> bool
+-- validID(id) ==
+-- (
+--  for all u in set users do
+--   if u.userID = id then return true;
+--  return false;
+-- );
+-- 
+-- private possibleTransaction: nat * real * nat ==> bool
+-- possibleTransaction(id, price, nrTickets) ==
+-- (
+--  for all u in set users do
+--   if u.userID = id then if u.moneyAmount >= price * nrTickets then return true;
+--  return false;
+-- );
+ ---------------------
+ 
+ -- constructor
+(*@
+\label{TicketingSystem:37}
+@*)
+ public TicketingSystem: TransportGraph ==> TicketingSystem
+ TicketingSystem(t) ==
+ (
+  transportMap := t;
+  createUserDatabase();
+ );
+ 
+(*@
+\label{addUser:44}
+@*)
+ public addUser: nat * nat * real ==> ()
+ addUser(id, passwd, amount) ==
+ (
+  users := users union {mk_User(id, passwd, amount)};
+ )
+ pre id >= 0 and passwd > 999 and passwd <= 9999 and amount >= 0;
+ 
+(*@
+\label{createUserDatabase:51}
+@*)
+ public createUserDatabase: () ==> ()
+ createUserDatabase() ==
+ (
+  addUser(12, 1234, 1000);
+  addUser(13, 5555, 9273);
+  addUser(14, 8790, 7834);
+ );
+ 
+(*@
+\label{getUserById:59}
+@*)
+ private getUserById: nat ==> User
+ getUserById(ID) ==
+ (
+  for all u in set users do
+   if u.userID = ID then return u;
+  return mk_User(0, 0, 0);
+ );
+ 
+(*@
+\label{getUsersDatabase:67}
+@*)
+ public getUsersDatabase: () ==> set of User 
+ getUsersDatabase() ==
+ (
+  return users;
+ );
+ 
+(*@
+\label{discountMoney:73}
+@*)
+ private discountMoney: nat * real * nat ==> ()
+ discountMoney(userID, tripPrice, nrTickets) ==
+ (
+  for all u in set users do (
+   if u.userID = userID then
+    updateDatabase(u, u.moneyAmount - tripPrice * nrTickets);
+  );
+ );
+ -- pre tripPrice >= 0 and nrTickets >= 1 and validID(userID) and possibleTransaction(userID, tripPrice, nrTickets);
+ 
+ -- changes amount of money of a user
+(*@
+\label{updateDatabase:84}
+@*)
+ public updateDatabase: User * real ==> ()
+ updateDatabase(u, newAmount) ==
+ (
+  dcl userID: nat := u.userID;
+  dcl passwd: nat := u.passwd;
+  
+  users := users \ {u};
+  users := users union {mk_User(userID, passwd, newAmount)};
+ );
+ 
+(*@
+\label{buyTickets:94}
+@*)
+ public buyTickets: nat * nat * Trip * nat ==> bool
+ buyTickets(userID, passwd, selectedTrip, nrSeatsToBuy) ==
+ (
+  IO`println(selectedTrip);
+  if passwd = getUserById(userID).passwd then (
+   if (getUserById(userID).moneyAmount >= selectedTrip.totalPrice() * nrSeatsToBuy) then (
+    -- there are enough seats
+    dcl nrAvailableSeats : real := selectedTrip.getAvailableSeats();
+    if (nrAvailableSeats <> Utilities`MAX_INT and nrAvailableSeats >= nrSeatsToBuy) then (
+    
+     selectedTrip.discountAvailableSeats(nrSeatsToBuy, transportMap);
+     discountMoney(userID, selectedTrip.totalPrice(), nrSeatsToBuy);
+     
+     IO`println("***");
+     IO`println(nrAvailableSeats);
+     IO`println("***");
+    
+     return true;
+    
+    ) else
+     IO`print("Not enough seats available for purchase");
+     return false;
+   ) else
+    IO`print("User does not have enough money to make the purchase");
+    return false;
+  ) else
+   IO`print("Password incorrect");
+   return false;
+ )
+ pre possibleTransaction(users, userID, selectedTrip, nrSeatsToBuy);
+  
+functions
+
+(*@
+\label{uniqueID:127}
+@*)
+ public uniqueID(users : set of User) res: bool ==
+ (
+  forall u in set users & (forall v in set users\{u} & (u.userID <> v.userID))
+ );
+ 
+(*@
+\label{getFinalResults:132}
+@*)
+ private getFinalResults(trip : Trip) res: seq of real == trip.finalResults;
+ 
+(*@
+\label{possibleTransaction:134}
+@*)
+ public possibleTransaction(users : set of User, userID : nat, selectedTrip : Trip, nrSeatsToBuy: nat) res: bool ==
+ (
+  let u in set users in (u.userID <> userID)
+  or
+  let u1 in set users
+  be st (u1.userID = userID)
+  in (u1.moneyAmount >= getFinalResults(selectedTrip)(2)*nrSeatsToBuy)
+ );
+
+traces
+-- TODO Define Combinatorial Test Traces here
+end TicketingSystem
+\end{vdmpp}
+\bigskip
+\begin{longtable}{|l|r|r|r|}
+\hline
+Function or operation & Line & Coverage & Calls \\
+\hline
+\hline
+\hyperref[TicketingSystem:37]{TicketingSystem} & 37&0.0\% & 0 \\
+\hline
+\hyperref[addUser:44]{addUser} & 44&0.0\% & 0 \\
+\hline
+\hyperref[buyTickets:94]{buyTickets} & 94&0.0\% & 0 \\
+\hline
+\hyperref[createUserDatabase:51]{createUserDatabase} & 51&0.0\% & 0 \\
+\hline
+\hyperref[discountMoney:73]{discountMoney} & 73&0.0\% & 0 \\
+\hline
+\hyperref[getFinalResults:132]{getFinalResults} & 132&0.0\% & 0 \\
+\hline
+\hyperref[getUserById:59]{getUserById} & 59&0.0\% & 0 \\
+\hline
+\hyperref[getUsersDatabase:67]{getUsersDatabase} & 67&0.0\% & 0 \\
+\hline
+\hyperref[possibleTransaction:134]{possibleTransaction} & 134&0.0\% & 0 \\
+\hline
+\hyperref[uniqueID:127]{uniqueID} & 127&0.0\% & 0 \\
+\hline
+\hyperref[updateDatabase:84]{updateDatabase} & 84&0.0\% & 0 \\
+\hline
+\hline
+TicketingSystem.vdmpp & & 0.0\% & 0 \\
+\hline
+\end{longtable}
+

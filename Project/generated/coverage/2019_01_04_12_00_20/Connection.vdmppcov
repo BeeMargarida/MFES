@@ -1,0 +1,91 @@
+class Connection
+
+types
+	public Type = <Plane> | <Bus> | <Train> | <Walk> | <NONE>;
+	public Ureal = real
+								inv n == n >= 0;
+
+values
+instance variables
+	-- declarations and initializations
+	public type: Type;
+	public source: Station;
+	public destination: Station;
+	public distance: Ureal;
+	public price: Ureal;
+	public duration: real;
+	public timetable : seq of real;
+	public seatsAvailable : nat := 0;
+	public calculatedVariables : seq of real;
+	
+	inv source <> destination;
+	inv seatsAvailable >= 0;
+	
+operations
+	-- Constructor
+	public Connection: Type * Station * Station * real * seq of real * nat ==> Connection
+	Connection(t, s, d, dist, ttbl, seats) ==
+	(
+		type := t;
+		source := s;
+		destination := d;
+		distance := dist;
+		price := getPrice(t, dist);
+		duration := getDuration(t, dist);
+		timetable := ttbl;
+		calculatedVariables := [distance, price, duration];
+		seatsAvailable := seats;
+		
+		return self;
+	)
+	pre ttbl <> []
+	post distance > 0 and price >= 0 and duration > 0 and timetable <> [];
+	
+	-- calculate price of the connection
+	private getPrice: Type * real ==> real
+	getPrice(t, dist) ==
+	(dcl priceKm: real;
+			cases t:
+				<Plane> -> priceKm := 0.06,
+				<Bus> -> priceKm := 0.1,
+				<Train> -> priceKm := 0.07,
+				<Walk> -> priceKm := 0
+			end;
+			
+			return priceKm * dist;
+	)
+	pre dist > 0;
+	
+	-- calculate duration of the connection
+	private getDuration: Type * real ==> real
+	getDuration(t, dist) ==
+	(dcl speed: real;
+		cases t:
+				<Plane> -> speed := 760,
+				<Bus> -> speed := 80,	
+				<Train> -> speed := 100,
+				<Walk> -> speed := 4
+			end;
+			return dist / speed;
+	)
+	pre dist > 0;
+	
+	public getAvailableSeats: () ==> nat
+	getAvailableSeats() ==
+	(
+		return seatsAvailable;
+	);
+	
+	public decreaseNumberOfSeats: nat ==> ()
+	decreaseNumberOfSeats(numSeats) ==
+	(
+		seatsAvailable := seatsAvailable - numSeats;
+	)
+	pre seatsAvailable - numSeats >= 0;
+	
+		
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Connection
