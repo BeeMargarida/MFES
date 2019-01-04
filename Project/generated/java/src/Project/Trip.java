@@ -175,9 +175,9 @@ public class Trip {
 		if (i == 0) {
 			prev = ((Segment) segments.get(i)).startCity;
 		} else {
-			duration = (double) ((Segment) segments.get(i)).timeDuration;
-			distance = (double) ((Segment) segments.get(i)).distance;
-			price = (double) ((Segment) segments.get(i)).price;
+			duration = (double) ((Segment) segments.get(i)).timeDuration.doubleValue();
+			distance = (double) ((Segment) segments.get(i)).distance.doubleValue();
+			price = (double) ((Segment) segments.get(i)).price.doubleValue();
 			availableSeats = ((Segment) segments.get(i)).seatsAvailable.intValue();
 			
 			if (availableSeats <= availableSeatsTrip)

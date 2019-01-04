@@ -2,6 +2,7 @@ package Project;
 
 import java.util.Scanner;
 
+import org.overture.codegen.runtime.SeqUtil;
 import org.overture.codegen.runtime.SetUtil;
 import org.overture.codegen.runtime.VDMSeq;
 import org.overture.codegen.runtime.VDMSet;
@@ -55,7 +56,6 @@ public class Main {
 				procede = true;
 			}
 		}
-		
 		return input;
 	}
 	
@@ -277,6 +277,90 @@ public class Main {
 		
 	}
 	
+	public static boolean addNewConnection(TransportGraph t) {
+		Scanner sc = new Scanner(System.in);
+		String input;
+		String source = "";
+		String dest = "";
+		String meanOfTransportation = "";
+		int distance;
+		int nrSeatsAvailable;
+		String ttbl = "";
+		VDMSeq ttblSeq = new VDMSeq();
+		Object mean = null;
+		boolean addMore = true;
+		
+		
+		System.out.println("You cann add a new connection just if you are admin.");
+		System.out.print("Insert admin password: ");
+		
+		input = sc.next();
+		if (input.equalsIgnoreCase("admin")) {
+			System.out.println("You are logged in as admin; insert connection data:");
+			
+			while (addMore) {
+				do {
+					System.out.print("Source city: ");
+					source = sc.next();
+				} while (source == "");
+				
+				do {
+					System.out.print("Destination city: ");
+					dest = sc.next();
+				} while (dest == "");
+				
+				do {
+					System.out.print("Mean of transportation (Train, Plane, Bus or Walk): ");
+					meanOfTransportation = sc.next();
+				} while (!meanOfTransportation.equals("Train") && !meanOfTransportation.equals("Plane") &&
+						 !meanOfTransportation.equals("Bus") && !meanOfTransportation.equals("Walk"));
+				
+				do {
+					System.out.print("Distance: ");
+					distance = sc.nextInt();
+				} while (distance <= 0);
+				
+				System.out.print("Available seats: ");
+				nrSeatsAvailable = sc.nextInt();
+				
+				System.out.print("Timetable, with integer values separated by commas: ");
+				ttbl = sc.next();
+				
+				if (ttbl.length() == 0) {
+					ttblSeq = SeqUtil.seq();
+				} else {
+					String[] intervals = ttbl.split(",");
+					for (String timeString: intervals) {
+						int time = Integer.parseInt(timeString);
+						ttblSeq.add(time);
+					}
+				}
+				
+				if (meanOfTransportation.equals("Train")) {
+					mean = Project.quotes.TrainQuote.getInstance();
+				} else if (meanOfTransportation.equals("Plane")) {
+					mean = Project.quotes.PlaneQuote.getInstance();
+				} else if (meanOfTransportation.equals("Bus")) {
+					mean = Project.quotes.BusQuote.getInstance();
+				} else {
+					mean = Project.quotes.WalkQuote.getInstance();
+				}
+				
+				t.addConnection(mean, source, dest, distance, ttblSeq, nrSeatsAvailable);
+				addMore = false;
+				
+				System.out.println("Do you want to add a new connection? [y/n]");
+				if (sc.next().equalsIgnoreCase("y"))
+					addMore = true;
+			}
+		} else {
+			System.out.println("You are not admin. Please choose another option");
+			return false;
+		}
+		System.out.println("Connections added successfully");
+		return true;
+	}
+	
 	public static void main(String[] args) {
 		TransportGraph t = null;
 		SearchEngine s = null;
@@ -289,6 +373,7 @@ public class Main {
 		int weightFactor = -1;
 		VDMSet meansOfTransportation = null;
 		int maxDuration = -2;
+		boolean success = false;
 		Scanner sc = new Scanner(System.in);
 		
 		System.out.println("Welcome to Rome2Rio!");
@@ -300,9 +385,10 @@ public class Main {
 		while(step != -1) {
 			switch(step) {
 				case 0:
-					step = mainMenu(sc);
+					step = mainMenu(sc); break;
 				case 1: //new Connection
-					
+					success = addNewConnection(t);
+					step = 0;
 					break;
 				case 2: //New User
 					break;

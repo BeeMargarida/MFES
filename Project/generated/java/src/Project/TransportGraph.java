@@ -24,7 +24,7 @@ public class TransportGraph {
     cg_init_TransportGraph_1();
   }
 
-  private void addConnection(
+  public void addConnection(
       final Object t,
       final String s,
       final String d,
