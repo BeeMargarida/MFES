@@ -197,7 +197,8 @@ public class Trip {
 	result += "\nTotal distance: " + String.format("%.2f", finalResults.get(0))
 			+ "\nTotal price: " + String.format("%.2f", finalResults.get(1))
 			+ "\nTotal duration: " + String.format("%.2f", finalResults.get(2))
-			+ "\nAvailable seats: " + availableSeatsTrip;
+			+ "\nAvailable seats: " + availableSeatsTrip
+			+ "\n\n";
 	return result;
   }
 

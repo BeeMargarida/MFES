@@ -5,8 +5,8 @@ import org.overture.codegen.runtime.*;
 
 @SuppressWarnings("all")
 public class TicketingSystem {
-  private VDMSet users = SetUtil.set();
-  private TransportGraph transportMap;
+  public VDMSet users = SetUtil.set();
+  public TransportGraph transportMap;
 
   public void cg_init_TicketingSystem_1(final TransportGraph t) {
 
@@ -73,6 +73,11 @@ public class TicketingSystem {
       final Trip selectedTrip,
       final Number nrSeatsToBuy) {
 
+	if (selectedTrip.getAvailableSeats().intValue() == 0) {
+		IO.print("There are no seats left for this trip");
+		return false;
+	}
+	
     if (Utils.equals(passwd, getUserById(userID).passwd)) {
       if (getUserById(userID).moneyAmount.doubleValue()
           >= selectedTrip.totalPrice().doubleValue() * nrSeatsToBuy.longValue()) {

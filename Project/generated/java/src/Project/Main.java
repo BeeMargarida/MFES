@@ -4,8 +4,11 @@ import java.util.Scanner;
 
 import org.overture.codegen.runtime.SeqUtil;
 import org.overture.codegen.runtime.SetUtil;
+import org.overture.codegen.runtime.Utils;
 import org.overture.codegen.runtime.VDMSeq;
 import org.overture.codegen.runtime.VDMSet;
+
+import Project.TicketingSystem.User;
 
 import java.lang.System;
 import java.util.ArrayList;
@@ -277,7 +280,7 @@ public class Main {
 		
 	}
 	
-	public static boolean addNewConnection(TransportGraph t) {
+	public static void addNewConnection(TransportGraph t) {
 		Scanner sc = new Scanner(System.in);
 		String input;
 		String source = "";
@@ -355,10 +358,83 @@ public class Main {
 			}
 		} else {
 			System.out.println("You are not admin. Please choose another option");
-			return false;
+			return;
 		}
 		System.out.println("Connections added successfully");
-		return true;
+	}
+	
+	private static boolean validID(ArrayList<Integer> exID, int id) {
+		return !exID.contains(id) && id >= 0;
+	}
+	
+	private static boolean validPass(int pass) {
+		return (pass >= 1000) && (pass <= 9999);
+	}
+	
+	/*
+	 * Updates the users database with new users. Data should respect the following conditions:
+	 * UserID must be a positive integer and must be unique
+	 * Password must have 4 digits
+	 * Amount of money must be >= 0
+	 */
+	public static void addNewUsers(TicketingSystem ts) {
+		String input;
+		Scanner sc = new Scanner(System.in);
+		boolean addMore = true;
+		int id = -1;
+		int passwd;
+		int amount;
+		ArrayList<Integer> existingID = new ArrayList<>();
+		
+		System.out.println("You cann add a new user just if you are admin.");
+		System.out.print("Insert admin password: ");
+		
+		Iterator it = ts.users.iterator();
+		while (it.hasNext()) {
+			existingID.add(((User)it.next()).userID.intValue());
+		}
+		
+		input = sc.next();
+		if (input.equalsIgnoreCase("admin")) {
+			System.out.println("You are logged in as admin; insert connection data:");
+			
+			while (addMore) {
+				do {
+					System.out.println("Choose an unique user ID");
+					System.out.println("Existing user IDs:");
+					
+					for (Integer i : existingID) {
+						System.out.print(i + " ");
+					}
+					System.out.println();
+					
+					System.out.print("User ID [positive integer]: ");
+					id = sc.nextInt();
+				} while (!validID(existingID, id));
+				
+				do {
+					System.out.print("Password [4 digits]: ");
+					passwd = sc.nextInt();
+				} while (!validPass(passwd));
+				
+				do {
+					System.out.print("Amount of money: ");
+					amount = sc.nextInt();
+				} while (amount < 0);
+				
+				ts.users = SetUtil.union(Utils.copy(ts.users), SetUtil.set(new User(id, passwd, amount)));
+				existingID.add(id);
+				
+				addMore = false;
+				System.out.println("Do you want to add a new user? [y/n]");
+				if (sc.next().equalsIgnoreCase("y"))
+					addMore = true;
+			}
+		} else {
+			System.out.println("You are not admin. Please choose another option");
+			return;
+		}
+		System.out.println("Users added successfully");
 	}
 	
 	public static void main(String[] args) {
@@ -373,26 +449,26 @@ public class Main {
 		int weightFactor = -1;
 		VDMSet meansOfTransportation = null;
 		int maxDuration = -2;
-		boolean success = false;
 		Scanner sc = new Scanner(System.in);
 		
 		System.out.println("Welcome to Rome2Rio!");
 		System.out.println("Press 1 to load our database. We will travel the world in the most efficient time!");
 		
 		t = loadDatabase(sc);
-		
+		ticketS = new TicketingSystem(t);
 		
 		while(step != -1) {
 			switch(step) {
 				case 0:
 					step = mainMenu(sc); break;
-				case 1: //new Connection
-					success = addNewConnection(t);
+				case 1: //new Connections
+					addNewConnection(t);
 					step = 0;
 					break;
-				case 2: //New User
+				case 2: //New Users
+					addNewUsers(ticketS);
+					step = 0;
 					break;
-					
 				case 3: //Search Path
 					sourceCity = getSourceCity(t, sc);
 					destinationCity = getDestinationCity(t, sc);
@@ -456,7 +532,6 @@ public class Main {
 					
 					System.out.println("\n\n");
 					
-					ticketS = new TicketingSystem(t);
 					boolean successBuy = ticketS.buyTickets(userID, password, (Trip) trips.get(tripID - 1), nrSeats);
 					
 					if(successBuy) {
@@ -483,14 +558,5 @@ public class Main {
 					break;
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-	}
-	
-	
+	}	
 }
