@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.overture.codegen.runtime.SetUtil;
+import org.overture.codegen.runtime.VDMSeq;
 import org.overture.codegen.runtime.VDMSet;
 
 public class JavaUtils {
@@ -20,6 +21,27 @@ public class JavaUtils {
 		
 		
 		return answer;
+		
+	}
+	
+	public static boolean printTrips(VDMSeq trips) {
+		
+		System.out.println("**************RESULTS****************");
+		System.out.println("*************************************");
+		
+		if(trips.size() == 0) {
+			System.out.println("There are no possible paths");
+			return false;
+		}
+		
+		for(int i = 0; i < trips.size(); i++) {
+			
+			System.out.println("\n***************  " + (i + 1) +"  *****************");
+			System.out.println(trips.get(i).toString());
+			
+		}
+		
+		return true;
 		
 	}
 	

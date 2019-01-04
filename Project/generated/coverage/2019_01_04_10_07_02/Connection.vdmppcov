@@ -2,8 +2,6 @@ class Connection
 
 types
 	public Type = <Plane> | <Bus> | <Train> | <Walk> | <NONE>;
-	public Ureal = real
-								inv n == n >= 0;
 
 values
 instance variables
@@ -11,14 +9,16 @@ instance variables
 	public type: Type;
 	public source: Station;
 	public destination: Station;
-	public distance: Ureal;
-	public price: Ureal;
+	public distance: real;
+	public price: real;
 	public duration: real;
 	public timetable : seq of real;
 	public seatsAvailable : nat := 0;
 	public calculatedVariables : seq of real;
 	
 	inv source <> destination;
+	inv price >= 0;
+	inv distance >= 0;
 	inv seatsAvailable >= 0;
 	
 operations
@@ -38,7 +38,7 @@ operations
 		
 		return self;
 	)
-	pre ttbl <> []
+	pre dist > 0 and ttbl <> []
 	post distance > 0 and price >= 0 and duration > 0 and timetable <> [];
 	
 	-- calculate price of the connection

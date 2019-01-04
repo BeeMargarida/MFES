@@ -33,8 +33,8 @@ public class TicketingSystem {
 
   private User getUserById(final Number ID) {
 
-    for (Iterator iterator_25 = users.iterator(); iterator_25.hasNext(); ) {
-      User u = (User) iterator_25.next();
+    for (Iterator iterator_18 = users.iterator(); iterator_18.hasNext(); ) {
+      User u = (User) iterator_18.next();
       if (Utils.equals(u.userID, ID)) {
         return Utils.copy(u);
       }
@@ -49,8 +49,8 @@ public class TicketingSystem {
 
   private void discountMoney(final Number userID, final Number tripPrice, final Number nrTickets) {
 
-    for (Iterator iterator_26 = users.iterator(); iterator_26.hasNext(); ) {
-      User u = (User) iterator_26.next();
+    for (Iterator iterator_19 = users.iterator(); iterator_19.hasNext(); ) {
+      User u = (User) iterator_19.next();
       if (Utils.equals(u.userID, userID)) {
         updateDatabase(
             Utils.copy(u),
@@ -78,15 +78,15 @@ public class TicketingSystem {
       if (getUserById(userID).moneyAmount.doubleValue()
           >= selectedTrip.totalPrice().doubleValue() * nrSeatsToBuy.longValue()) {
         Number nrAvailableSeats = selectedTrip.getAvailableSeats();
-        Boolean andResult_25 = false;
+        Boolean andResult_21 = false;
 
         if (!(Utils.equals(nrAvailableSeats, Utilities.MAX_INT))) {
           if (nrAvailableSeats.doubleValue() >= nrSeatsToBuy.longValue()) {
-            andResult_25 = true;
+            andResult_21 = true;
           }
         }
 
-        if (andResult_25) {
+        if (andResult_21) {
           selectedTrip.discountAvailableSeats(nrSeatsToBuy, transportMap);
           discountMoney(userID, selectedTrip.totalPrice(), nrSeatsToBuy);
           IO.println("***");

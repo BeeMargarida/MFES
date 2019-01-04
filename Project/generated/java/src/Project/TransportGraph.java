@@ -18,10 +18,10 @@ public class TransportGraph {
   }
 
   public TransportGraph() {
-
-	  sourceCities = new HashSet<String>();
-	  destinationCities = new HashSet<String>();
-	  cg_init_TransportGraph_1();
+	  
+	sourceCities = new HashSet<String>();
+	destinationCities = new HashSet<String>();
+    cg_init_TransportGraph_1();
   }
 
   private void addConnection(
@@ -46,17 +46,17 @@ public class TransportGraph {
 
   public void createDatabase() {
 
-//    addConnection(
-//        Project.quotes.BusQuote.getInstance(), "Porto", "Lisbon", 300L, SeqUtil.seq(6L, 12L), 12L);
-//    addConnection(
-//        Project.quotes.WalkQuote.getInstance(),
-//        "Porto",
-//        "Gaia",
-//        10L,
-//        SeqUtil.seq(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L),
-//        10L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(), "Porto", "Lisbon", 300L, SeqUtil.seq(8L, 22L), 5L);
+    addConnection(
+        Project.quotes.BusQuote.getInstance(), "Porto", "Lisbon", 300L, SeqUtil.seq(6L, 12L), 12L);
+    addConnection(
+        Project.quotes.WalkQuote.getInstance(),
+        "Porto",
+        "Gaia",
+        10L,
+        SeqUtil.seq(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L),
+        10L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(), "Porto", "Lisbon", 300L, SeqUtil.seq(8L, 22L), 5L);
     addConnection(
         Project.quotes.TrainQuote.getInstance(),
         "Porto",
@@ -64,43 +64,43 @@ public class TransportGraph {
         350L,
         SeqUtil.seq(10L, 12L, 16L, 20L, 22L),
         10L);
-//    addConnection(
-//        Project.quotes.BusQuote.getInstance(), "Porto", "Madrid", 1500L, SeqUtil.seq(6L, 12L), 10L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(),
-//        "Porto",
-//        "Paris",
-//        1300L,
-//        SeqUtil.seq(8L, 20L),
-//        15L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(),
-//        "Amsterdam",
-//        "Bologna",
-//        300L,
-//        SeqUtil.seq(6L, 12L),
-//        5L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(),
-//        "Bologna",
-//        "Paris",
-//        2900L,
-//        SeqUtil.seq(9L, 21L),
-//        6L);
-//    addConnection(
-//        Project.quotes.BusQuote.getInstance(),
-//        "Macedo de Cavaleiros",
-//        "Porto",
-//        350L,
-//        SeqUtil.seq(10L, 12L, 20L),
-//        4L);
-//    addConnection(
-//        Project.quotes.TrainQuote.getInstance(),
-//        "Porto",
-//        "Madrid",
-//        100L,
-//        SeqUtil.seq(10L, 12L, 16L, 20L, 22L),
-//        19L);
+    addConnection(
+        Project.quotes.BusQuote.getInstance(), "Porto", "Madrid", 1500L, SeqUtil.seq(6L, 12L), 10L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(),
+        "Porto",
+        "Paris",
+        1300L,
+        SeqUtil.seq(8L, 20L),
+        15L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(),
+        "Amsterdam",
+        "Bologna",
+        300L,
+        SeqUtil.seq(6L, 12L),
+        5L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(),
+        "Bologna",
+        "Paris",
+        2900L,
+        SeqUtil.seq(9L, 21L),
+        6L);
+    addConnection(
+        Project.quotes.BusQuote.getInstance(),
+        "Macedo de Cavaleiros",
+        "Porto",
+        350L,
+        SeqUtil.seq(10L, 12L, 20L),
+        4L);
+    addConnection(
+        Project.quotes.TrainQuote.getInstance(),
+        "Porto",
+        "Madrid",
+        100L,
+        SeqUtil.seq(10L, 12L, 16L, 20L, 22L),
+        19L);
     addConnection(
         Project.quotes.TrainQuote.getInstance(),
         "Lisbon",
@@ -108,63 +108,61 @@ public class TransportGraph {
         280L,
         SeqUtil.seq(9L, 11L, 15L, 19L),
         20L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(),
-//        "Lisbon",
-//        "Faro",
-//        250L,
-//        SeqUtil.seq(8L, 12L, 20L),
-//        90L);
-//    addConnection(
-//        Project.quotes.BusQuote.getInstance(), "Lisbon", "Faro", 285L, SeqUtil.seq(8L, 12L), 54L);
-//    addConnection(
-//        Project.quotes.BusQuote.getInstance(),
-//        "Lisbon",
-//        "Madrid",
-//        750L,
-//        SeqUtil.seq(8L, 12L, 15L, 17L),
-//        12L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(),
-//        "Lisbon",
-//        "Madrid",
-//        650L,
-//        SeqUtil.seq(8L, 10L, 12L, 15L, 19L, 22L),
-//        3L);
-//    addConnection(
-//        Project.quotes.TrainQuote.getInstance(),
-//        "Lisbon",
-//        "Madrid",
-//        680L,
-//        SeqUtil.seq(8L, 10L, 12L, 15L, 17L, 19L, 22L),
-//        5L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(),
-//        "Lisbon",
-//        "Barcelona",
-//        1347L,
-//        SeqUtil.seq(8L, 12L, 15L, 19L, 22L),
-//        2L);
-//    addConnection(
-//        Project.quotes.TrainQuote.getInstance(),
-//        "Madrid",
-//        "Barcelona",
-//        625L,
-//        SeqUtil.seq(8L, 10L, 12L, 15L, 17L, 19L, 22L),
-//        10L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(),
-//        "Madrid",
-//        "Barcelona",
-//        625L,
-//        SeqUtil.seq(8L, 12L, 15L, 19L, 22L),
-//        5L);
-//    addConnection(
-//        Project.quotes.TrainQuote.getInstance(), "Madrid", "Krakow", 1342L, SeqUtil.seq(8L), 10L);
-//    addConnection(
-//        Project.quotes.PlaneQuote.getInstance(), "Krakow", "Moscow", 2789L, SeqUtil.seq(9L), 5L);
-      addConnection(
-          Project.quotes.PlaneQuote.getInstance(), "Faro", "Moscow", 2789L, SeqUtil.seq(9L, 30L), 5L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(),
+        "Lisbon",
+        "Faro",
+        250L,
+        SeqUtil.seq(8L, 12L, 20L),
+        90L);
+    addConnection(
+        Project.quotes.BusQuote.getInstance(), "Lisbon", "Faro", 285L, SeqUtil.seq(8L, 12L), 54L);
+    addConnection(
+        Project.quotes.BusQuote.getInstance(),
+        "Lisbon",
+        "Madrid",
+        750L,
+        SeqUtil.seq(8L, 12L, 15L, 17L),
+        12L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(),
+        "Lisbon",
+        "Madrid",
+        650L,
+        SeqUtil.seq(8L, 10L, 12L, 15L, 19L, 22L),
+        3L);
+    addConnection(
+        Project.quotes.TrainQuote.getInstance(),
+        "Lisbon",
+        "Madrid",
+        680L,
+        SeqUtil.seq(8L, 10L, 12L, 15L, 17L, 19L, 22L),
+        5L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(),
+        "Lisbon",
+        "Barcelona",
+        1347L,
+        SeqUtil.seq(8L, 12L, 15L, 19L, 22L),
+        2L);
+    addConnection(
+        Project.quotes.TrainQuote.getInstance(),
+        "Madrid",
+        "Barcelona",
+        625L,
+        SeqUtil.seq(8L, 10L, 12L, 15L, 17L, 19L, 22L),
+        10L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(),
+        "Madrid",
+        "Barcelona",
+        625L,
+        SeqUtil.seq(8L, 12L, 15L, 19L, 22L),
+        5L);
+    addConnection(
+        Project.quotes.TrainQuote.getInstance(), "Madrid", "Krakow", 1342L, SeqUtil.seq(8L), 10L);
+    addConnection(
+        Project.quotes.PlaneQuote.getInstance(), "Krakow", "Moscow", 2789L, SeqUtil.seq(9L), 5L);
   }
 
   public VDMSet listConnections() {
@@ -197,8 +195,8 @@ public class TransportGraph {
 
     VDMSet result = null;
     result = SetUtil.set();
-    for (Iterator iterator_18 = connections.iterator(); iterator_18.hasNext(); ) {
-      Connection e = (Connection) iterator_18.next();
+    for (Iterator iterator_20 = connections.iterator(); iterator_20.hasNext(); ) {
+      Connection e = (Connection) iterator_20.next();
       if (stringEqual(e.source.name, s)) {
         result = SetUtil.union(Utils.copy(result), SetUtil.set(e));
       }
@@ -209,8 +207,8 @@ public class TransportGraph {
   public VDMSet getNeighborsOfNode(final String name) {
 
     VDMSet result = SetUtil.set();
-    for (Iterator iterator_19 = connections.iterator(); iterator_19.hasNext(); ) {
-      Connection e = (Connection) iterator_19.next();
+    for (Iterator iterator_21 = connections.iterator(); iterator_21.hasNext(); ) {
+      Connection e = (Connection) iterator_21.next();
       if (stringEqual(e.source.name, name)) {
         result = SetUtil.union(Utils.copy(result), SetUtil.set(e.destination));
       }
@@ -222,8 +220,8 @@ public class TransportGraph {
 
     VDMSet result = null;
     result = SetUtil.set();
-    for (Iterator iterator_20 = connections.iterator(); iterator_20.hasNext(); ) {
-      Connection e = (Connection) iterator_20.next();
+    for (Iterator iterator_22 = connections.iterator(); iterator_22.hasNext(); ) {
+      Connection e = (Connection) iterator_22.next();
       if (stringEqual(e.destination.name, d)) {
         result = SetUtil.union(Utils.copy(result), SetUtil.set(e));
       }
@@ -233,8 +231,8 @@ public class TransportGraph {
 
   public Station getStation(final String stationName) {
 
-    for (Iterator iterator_21 = stations.iterator(); iterator_21.hasNext(); ) {
-      Station station = (Station) iterator_21.next();
+    for (Iterator iterator_23 = stations.iterator(); iterator_23.hasNext(); ) {
+      Station station = (Station) iterator_23.next();
       if (stringEqual(station.name, stationName)) {
         return station;
       }
@@ -245,8 +243,8 @@ public class TransportGraph {
   public Station getStationWithCreation(final String stationName) {
 
     Station stationRes = new Station("");
-    for (Iterator iterator_22 = stations.iterator(); iterator_22.hasNext(); ) {
-      Station station = (Station) iterator_22.next();
+    for (Iterator iterator_24 = stations.iterator(); iterator_24.hasNext(); ) {
+      Station station = (Station) iterator_24.next();
       if (stringEqual(station.name, stationName)) {
         stationRes = station;
       }
@@ -256,6 +254,11 @@ public class TransportGraph {
     }
 
     return stationRes;
+  }
+
+  public static Boolean checkValidConnections(final VDMSet connections, final VDMSet stations) {
+
+    throw new UnsupportedOperationException();
   }
 
   public String toString() {

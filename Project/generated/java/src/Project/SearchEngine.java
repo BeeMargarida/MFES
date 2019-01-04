@@ -31,7 +31,7 @@ public class SearchEngine {
     return transportMap;
   }
 
-  public void dijkstraAlgorithm(
+  public void shortestPathAlgorithm(
       final Station origin, final VDMSet meansOfTransportation, final Number weightFactor) {
 
     distances =
@@ -106,15 +106,15 @@ public class SearchEngine {
       timeDiff =
           ((Number) Utils.get(connection.timetable, idx)).doubleValue()
               - node.arrivalTime.doubleValue();
-      Boolean andResult_7 = false;
+      Boolean andResult_6 = false;
 
       if (timeDiff.doubleValue() >= 0L) {
         if (timeDiff.doubleValue() < minDiff.doubleValue()) {
-          andResult_7 = true;
+          andResult_6 = true;
         }
       }
 
-      if (andResult_7) {
+      if (andResult_6) {
         minDiff = timeDiff;
       }
     }
@@ -143,15 +143,15 @@ public class SearchEngine {
               > getShortestDistance(node, weightFactor).doubleValue() + con.weight.doubleValue()) {
             Number newArrivalTime = 0.0;
             Number waitT = waitingTime(((Connection) Utils.get(con.con, 1L)), node);
-            Boolean andResult_8 = false;
+            Boolean andResult_7 = false;
 
             if (waitT.doubleValue() >= 0L) {
               if (!(Utils.equals(waitT, Utilities.MAX_INT))) {
-                andResult_8 = true;
+                andResult_7 = true;
               }
             }
 
-            if (andResult_8) {
+            if (andResult_7) {
               Number newPrice = 0.0;
               Number newDist = 0.0;
               Number newDuration = 0.0;
@@ -230,15 +230,15 @@ public class SearchEngine {
     for (Iterator iterator_7 = transportMap.listConnections().iterator(); iterator_7.hasNext(); ) {
       Connection con = (Connection) iterator_7.next();
       if (SetUtil.inSet(con.type, meansOfTransportation)) {
-        Boolean andResult_9 = false;
+        Boolean andResult_8 = false;
 
         if (stringEqual(con.source.name, node.name)) {
           if (stringEqual(con.destination.name, target.name)) {
-            andResult_9 = true;
+            andResult_8 = true;
           }
         }
 
-        if (andResult_9) {
+        if (andResult_8) {
           if (Utils.equals(weightFactor, 1L)) {
             connectionInfo =
                 SetUtil.union(
@@ -296,12 +296,11 @@ public class SearchEngine {
     if (!(Utils.empty(reals))) {
       for (Iterator iterator_8 = reals.iterator(); iterator_8.hasNext(); ) {
         VDMSeq ds = (VDMSeq) iterator_8.next();
-        return ds;
+        return Utils.copy(ds);
       }
 
     }
     return SeqUtil.seq(1000000L, 1000000L, 1000000L);
-    
   }
 
   public VDMSeq getPath(final String destination) {
@@ -422,21 +421,19 @@ public class SearchEngine {
         unsettledNodes = transportMap.listStations();
         settledNodes = SetUtil.set();
         answerOne = SeqUtil.seq();
-        dijkstraAlgorithm(stationOrigin, Utils.copy(mean), weightFactor);
+        shortestPathAlgorithm(stationOrigin, Utils.copy(mean), weightFactor);
         answerOne = getPath(destination);
-        IO.println(Utils.copy(mean));
-        IO.println("\n\n");
-        Boolean andResult_10 = false;
+        Boolean andResult_9 = false;
 
         if (!(Utils.empty(prev))) {
-          Boolean andResult_11 = false;
+          Boolean andResult_10 = false;
 
           if (!(Utils.equals(((Number) Utils.get(stationDest.getCalculatedVariables(), 1L)), 0L))) {
-            Boolean andResult_12 = false;
+            Boolean andResult_11 = false;
 
             if (!(Utils.equals(
                 ((Number) Utils.get(stationDest.getCalculatedVariables(), 2L)), 0L))) {
-              Boolean andResult_13 = false;
+              Boolean andResult_12 = false;
 
               if (!(Utils.equals(
                   ((Number) Utils.get(stationDest.getCalculatedVariables(), 3L)), 0L))) {
@@ -449,32 +446,31 @@ public class SearchEngine {
                 }
 
                 if (orResult_12) {
-                  andResult_13 = true;
+                  andResult_12 = true;
                 }
               }
 
-              if (andResult_13) {
-                andResult_12 = true;
+              if (andResult_12) {
+                andResult_11 = true;
               }
             }
 
-            if (andResult_12) {
-              andResult_11 = true;
+            if (andResult_11) {
+              andResult_10 = true;
             }
           }
 
-          if (andResult_11) {
-            andResult_10 = true;
+          if (andResult_10) {
+            andResult_9 = true;
           }
         }
 
-        if (andResult_10) {
+        if (andResult_9) {
           Number i = 0L;
           Station prevStation = null;
           for (Iterator iterator_11 = answerOne.iterator(); iterator_11.hasNext(); ) {
             Station el = (Station) iterator_11.next();
             {
-              IO.println(el);
               if (Utils.equals(i, 0L)) {
                 trip.addSegmentFirst(el.name, el.getCalculatedVariables(), 0L);
               } else {
@@ -489,7 +485,6 @@ public class SearchEngine {
               i = i.longValue() + 1L;
             }
           }
-          IO.println("\n\n");
           if (!(Utils.empty(trip.getSegments()))) {
             trip.setFinalResults(stationDest.getCalculatedVariables(), stationDest.arrivalTime);
             if (Utils.empty(trips)) {
@@ -552,7 +547,7 @@ public class SearchEngine {
           }
         }
       }
-      dijkstraAlgorithm(stationOrigin, Utils.copy(means), weightFactor);
+      shortestPathAlgorithm(stationOrigin, Utils.copy(means), weightFactor);
       answerSeq = getPath(destination);
       for (Iterator iterator_14 = answerSeq.iterator(); iterator_14.hasNext(); ) {
         Station el = (Station) iterator_14.next();
@@ -571,15 +566,15 @@ public class SearchEngine {
           i = i.longValue() + 1L;
         }
       }
-      Boolean andResult_14 = false;
+      Boolean andResult_13 = false;
 
       if (maxDuration.doubleValue() > 0L) {
         if (stationDest.arrivalTime.doubleValue() > maxDuration.doubleValue()) {
-          andResult_14 = true;
+          andResult_13 = true;
         }
       }
 
-      if (andResult_14) {
+      if (andResult_13) {
         IO.println(
             "There is no path with the configurations given that has a smaller duration than the one given");
         return SeqUtil.seq();

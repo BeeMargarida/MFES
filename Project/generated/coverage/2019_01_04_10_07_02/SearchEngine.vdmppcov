@@ -30,9 +30,9 @@ operations
 	public getTransportGraph: () ==> TransportGraph
 	getTransportGraph() == return transportMap;
 	
-	-- shortest path algorithm (losely based on dijkstra) logic and main function
-	public shortestPathAlgorithm: Station * set of Connection`Type * nat ==> ()
-	shortestPathAlgorithm(origin, meansOfTransportation, weightFactor) ==
+	-- dijkstra algorithm logic and main function
+	public dijkstraAlgorithm: Station * set of Connection`Type * nat ==> ()
+	dijkstraAlgorithm(origin, meansOfTransportation, weightFactor) ==
 	(
 		
 		distances := distances ++ {origin |-> [0,0,0]};
@@ -325,7 +325,7 @@ operations
 		
 	*/
 	
-	-- checks if the user input was with no means of transportation selected or not, if not, calculates all combinations and runs shortest path algorithm and
+	-- checks if the user input was with no means of transportation selected or not, if not, calculates all combinations and runs dijkstra algorithm and
 	-- and gets the shortest path for each combination.
 	-- If a combination was provided by the user, the dijkstra algorithm is run and the shortest path related to the weightFactor and with the means of 
 	-- transportation selected is returned
@@ -368,7 +368,7 @@ operations
 				answerOne := [];
 								
 				
-				shortestPathAlgorithm(stationOrigin, mean, weightFactor);
+				dijkstraAlgorithm(stationOrigin, mean, weightFactor);
 				answerOne := getPath(destination);
 				
 				IO`println(mean);
@@ -437,7 +437,7 @@ operations
 				means := means union {<Walk>})
 			);
 						
-			shortestPathAlgorithm(stationOrigin, means, weightFactor);
+			dijkstraAlgorithm(stationOrigin, means, weightFactor);
 			answerSeq := getPath(destination);
 			
 			for el in answerSeq do (

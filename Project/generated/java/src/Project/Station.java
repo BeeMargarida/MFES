@@ -52,23 +52,23 @@ public class Station {
     Number seats = 0L;
     for (Iterator iterator_16 = connections.iterator(); iterator_16.hasNext(); ) {
       Connection con = (Connection) iterator_16.next();
-      Boolean andResult_15 = false;
+      Boolean andResult_14 = false;
 
       if (stringEqual(prevStation.name, con.source.name)) {
-        Boolean andResult_16 = false;
+        Boolean andResult_15 = false;
 
         if (stringEqual(name, con.destination.name)) {
           if (Utils.equals(con.type, meanOfTransportationUsed)) {
-            andResult_16 = true;
+            andResult_15 = true;
           }
         }
 
-        if (andResult_16) {
-          andResult_15 = true;
+        if (andResult_15) {
+          andResult_14 = true;
         }
       }
 
-      if (andResult_15) {
+      if (andResult_14) {
         seats = con.getAvailableSeats();
       }
     }
@@ -81,23 +81,23 @@ public class Station {
     Number seats = 0L;
     for (Iterator iterator_17 = connections.iterator(); iterator_17.hasNext(); ) {
       Connection con = (Connection) iterator_17.next();
-      Boolean andResult_17 = false;
+      Boolean andResult_16 = false;
 
       if (stringEqual(prevStation.name, con.source.name)) {
-        Boolean andResult_18 = false;
+        Boolean andResult_17 = false;
 
         if (stringEqual(name, con.destination.name)) {
           if (Utils.equals(con.type, meanOfTransportationUsed)) {
-            andResult_18 = true;
+            andResult_17 = true;
           }
         }
 
-        if (andResult_18) {
-          andResult_17 = true;
+        if (andResult_17) {
+          andResult_16 = true;
         }
       }
 
-      if (andResult_17) {
+      if (andResult_16) {
         con.decreaseNumberOfSeats(seatsToBuy);
       }
     }
@@ -124,10 +124,16 @@ public class Station {
   public String toString() {
 
     return "Station{"
+        + "name := "
         + Utils.toString(name)
-        + Utils.toString(meanOfTransportationUsed)
         + ", arrivalTime := "
-        + String.format("%.2f", arrivalTime.doubleValue())
+        + Utils.toString(arrivalTime)
+        + ", calculatedVariables := "
+        + Utils.toString(calculatedVariables)
+        + ", meanOfTransportationUsed := "
+        + Utils.toString(meanOfTransportationUsed)
+        + ", seatsAvailable := "
+        + Utils.toString(seatsAvailable)
         + "}";
   }
 }
