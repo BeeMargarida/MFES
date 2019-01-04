@@ -1,0 +1,186 @@
+class Rome2RioTest
+
+instance variables
+		t : TransportGraph := new TransportGraph();
+		s : SearchEngine := new SearchEngine(t);
+operations
+			-- Simulates assertion checking by reducing it to pre-condition checking.
+			-- If 'cond' does not hold, a pre-condition violation will be signaled.
+			private assertTrue: bool ==> ()
+ 			assertTrue(cond) == return
+ 			pre cond;
+
+			-- Simulates the creation of connections and their insertion on the database.
+			-- Related to requirement R1
+ 			private testGraphCreation: () ==> ()
+ 			testGraphCreation() == (
+ 					assertTrue(card s.getTransportGraph().listConnections() > 0);
+ 			);
+ 			
+ 			-- Simulates the search of a path with the lowest price.
+			-- Related to requirement R3
+ 			private testPricePath: () ==> ()
+ 			testPricePath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 2, -1);
+ 					dcl segments : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl price : real := segments(3).price;
+					
+ 					assertTrue(price = 57);
+ 					assertTrue(len segments = 3);
+ 					assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+ 			);
+ 			
+ 			-- Simulates the search of a path with the shortest distance.
+			-- Related to requirement R2
+ 			private testDistancePath: () ==> ()
+ 			testDistancePath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 1, -1);
+ 					dcl segments : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl distance : real := segments(3).distance;
+ 					
+ 					assertTrue(distance = 950);
+ 					assertTrue(len segments = 3);
+ 					assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+ 			);
+ 			
+ 			-- Simulates the search of a path with the shortest duration.
+			-- Related to requirement R4
+ 			private testDurationPath: () ==> ()
+ 			testDurationPath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+ 					dcl segments : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl duration : real := segments(3).timeDuration;
+ 					
+ 					assertTrue(duration = 1.25);
+ 					assertTrue(len segments = 3);
+ 					assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments(3).startCity = ['M','a','d','r','i','d']);
+ 			);
+ 			
+ 			-- Simulates the search of a path with a specific means of transportation.
+			-- Related to requirement R5
+ 			private testTrainPath: () ==> ()
+ 			testTrainPath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {3}, 3, -1);
+					dcl segments : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl duration : real := segments(2).timeDuration;
+ 					
+ 					assertTrue(duration = 1);
+ 					assertTrue(len segments = 2);
+ 					assertTrue(segments(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments(2).startCity = ['M','a','d','r','i','d']);
+ 			);
+ 			
+ 			-- Simulates the search of a path with a maximum trip duration, with means of transportation.
+			-- Related to requirements R2,R3,R4,R5
+ 			private testMaxDurationOnePath: () ==> ()
+ 			testMaxDurationOnePath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, 1);
+ 					assertTrue(answer = []);
+ 			);		
+ 			
+ 			-- Simulates the search of a path with no specific means of transportation.
+			-- Related to requirement R6
+ 			private testCombinationPath: () ==> ()
+ 			testCombinationPath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {}, 3, -1);
+ 					dcl segments1 : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl segments2 : seq of Trip`Segment := answer(2).getSegments();
+ 					dcl segments3 : seq of Trip`Segment := answer(3).getSegments();
+ 					
+ 					assertTrue(segments1(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments1(2).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments1(2).timeDuration = 1);
+ 					
+ 					assertTrue(segments2(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments2(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments2(3).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments2(3).timeDuration = 1.25);
+ 					
+ 					assertTrue(segments3(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments3(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments3(3).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments3(3).timeDuration = 13.125);
+ 			);
+ 			
+ 			-- Simulates the search of a path with a maximum trip duration, with means of transportation.
+			-- Related to requirements R2,R3,R4,R6
+ 			private testCombinationPathWithMaximumDuration: () ==> ()
+ 			testCombinationPathWithMaximumDuration() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['B','a','r','c','e','l','o','n','a'], {}, 2, 13);
+ 					dcl segments1 : seq of Trip`Segment := answer(1).getSegments();
+ 					dcl segments2 : seq of Trip`Segment := answer(2).getSegments();
+ 					
+ 					assertTrue(segments1(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments1(2).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments1(3).startCity = ['B','a','r','c','e','l','o','n','a']);
+ 					assertTrue(answer(1).finalResults(3) = 10.167105263157895);
+ 					
+ 					assertTrue(segments2(1).startCity = ['P','o','r','t','o']);
+ 					assertTrue(segments2(2).startCity = ['L','i','s','b','o','n']);
+ 					assertTrue(segments2(3).startCity = ['M','a','d','r','i','d']);
+ 					assertTrue(segments2(4).startCity = ['B','a','r','c','e','l','o','n','a']);
+ 					assertTrue(answer(2).finalResults(3) = 12.822368421052632);
+ 			);
+ 			
+ 			-- Simulates the search of a path with with no possible result, to check error behaviour.
+			-- Related to requirements R2,R3,R4,R5,R6
+ 			private testNoPath: () ==> ()
+ 			testNoPath() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {4}, 3, -1);
+					assertTrue(answer = []);
+					
+					answer := s.rome2Rio(['G','a','i','a'], ['K','r','a','k','o','w'], {}, 3, -1);
+					assertTrue(answer = []);
+ 			);
+ 			
+ 			-- Simulates the search of a path with wrong station names, to check error behaviour.
+			-- Related to requirements R2,R3,R4,R5,R6
+ 			private testWrongStations: () ==> ()
+ 			testWrongStations() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['P','e','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+					assertTrue(answer = []);
+					answer := s.rome2Rio(['P','o','r','t','o'], ['M','e','d','r','i','d'], {1,2}, 3, -1);
+					assertTrue(answer = []);
+ 			);
+ 			
+ 			-- Simulates the search of a path with no possible transfers between segments, to check error behaviour.
+			-- Related to requirements R2,R3,R4,R5,R6
+ 			private testArrivalTimeProblem: () ==> ()
+ 			testArrivalTimeProblem() == (
+ 					dcl answer : seq of Trip := s.rome2Rio(['M','a','d','r','i','d'], ['M','o','s','c','o','w'], {1,2,3,4}, 2, -1);
+					assertTrue(answer = []);
+ 			);
+ 			
+ 			-- Simulates the build of connections until the destination.
+			-- Related to requirements R2,R3,R4,R5,R6
+ 			private testGetConnectionWithDestination: () ==> ()
+ 			testGetConnectionWithDestination() == (
+ 					dcl answer : set of Connection := t.getConnectionsWithDestination("Lisbon");
+					assertTrue(card answer = 3);
+					
+ 			);
+ 			 			
+ 			-- Entry point that runs all the tests.
+ 			public static main: () ==> ()
+ 			main() == (
+						new Rome2RioTest().testGraphCreation();
+						new Rome2RioTest().testPricePath();
+						new Rome2RioTest().testDistancePath();
+						new Rome2RioTest().testTrainPath();
+						new Rome2RioTest().testDurationPath();
+						new Rome2RioTest().testMaxDurationOnePath();
+						new Rome2RioTest().testCombinationPath();
+						new Rome2RioTest().testCombinationPathWithMaximumDuration();
+						new Rome2RioTest().testNoPath();
+						new Rome2RioTest().testWrongStations();
+						new Rome2RioTest().testArrivalTimeProblem();
+						new Rome2RioTest().testGetConnectionWithDestination();
+			);
+			
+end Rome2RioTest
