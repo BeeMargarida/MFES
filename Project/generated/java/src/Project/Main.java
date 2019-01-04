@@ -40,6 +40,7 @@ public class Main {
 		System.out.println("1 - Add New Connection");
 		System.out.println("2 - Add New User");
 		System.out.println("3 - Search Paths");
+		System.out.println("4 - Exit Program");
 		System.out.println("*****************************************");
 		
 		boolean procede = false;
@@ -47,7 +48,7 @@ public class Main {
 		while (!procede ) {
 			System.out.print("Your option is: ");
 			input = sc.nextInt();
-			if (input < 1 || input > 3) {
+			if (input < 1 || input > 4) {
 				System.out.println("Please insert a valid option");
 			
 			} else {
@@ -227,8 +228,52 @@ public class Main {
 		while (userID == -1) {
 			System.out.print("\nPlease insert your user ID: ");
 			userID = sc.nextInt();
+			if(userID < 0) {
+				System.out.println("Invalid option, please try again");
+			}
 		}
 		return userID;
+		
+	}
+	
+	public static int getPassword(Scanner sc) {
+		int password = -1;
+		while (password == -1) {
+			System.out.print("\nPlease insert your password: ");
+			password = sc.nextInt();
+			if(password < 0) {
+				System.out.println("Invalid option, please try again");
+			}
+		}
+		return password;
+		
+	}
+	
+	public static int getTripID(Scanner sc, int lengthTrips) {
+		int tripID = -1;
+		while (tripID == -1) {
+			System.out.print("\nPlease insert the tripID: ");
+			tripID = sc.nextInt();
+			
+			if(tripID < 1 || tripID > lengthTrips) {
+				System.out.println("Invalid option, please try again");
+			}
+		}
+		return tripID;
+		
+	}
+	
+	public static int getNrSeats(Scanner sc) {
+		int nrSeats = -1;
+		while (nrSeats == -1) {
+			System.out.print("\nPlease insert the number of seats you wish to buy: ");
+			nrSeats = sc.nextInt();
+			
+			if(nrSeats < 0) {
+				System.out.println("Invalid option, please try again");
+			}
+		}
+		return nrSeats;
 		
 	}
 	
@@ -300,7 +345,7 @@ public class Main {
 							procede = true;
 						}
 						else if (optionTicket == 1) {
-							step = 4;
+							step = 5;
 							procede = true;
 						} else {
 							System.out.println("Please insert a valid option");
@@ -308,16 +353,47 @@ public class Main {
 					}
 					break;
 				
-				case 4: //Buy ticket
-					int userID = -1;
-					String password = null;
+				case 4:
+					System.out.println("The program will shutdown...");
+					System.exit(0);
+				
+				case 5: //Buy ticket
+					Number userID = -1;
+					Number password = -1;
 					int tripID = -1;
-					int nrSeats = -1;
+					Number nrSeats = -1;
 					
 					userID = getUserID(sc);
-					// get password, tripID and nr of Seats
-					// call function to buy ticket
-					// make error treatment
+					password = getPassword(sc);
+					tripID = getTripID(sc, trips.size());
+					nrSeats = getNrSeats(sc);
+					
+					System.out.println("\n\n");
+					
+					ticketS = new TicketingSystem(t);
+					boolean successBuy = ticketS.buyTickets(userID, password, (Trip) trips.get(tripID - 1), nrSeats);
+					
+					if(successBuy) {
+						System.out.println("You have successfully bought " + nrSeats + " tickets for the selected trip");
+						step = 0;
+					}
+					else {
+						System.out.println("\n\nDo you wish to try again? 1 - Yes | 0 - No");
+						procede = false;
+						while(!procede) {
+							int in = sc.nextInt();
+							if(in == 1) {
+								procede = true;
+							}
+							else if(in == 0) {
+								step = 0;
+								procede = true;
+							}
+							else {
+								System.out.println("Please insert a valid option");
+							}
+						}
+					}
 					break;
 			}
 		}

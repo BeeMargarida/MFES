@@ -73,7 +73,6 @@ public class TicketingSystem {
       final Trip selectedTrip,
       final Number nrSeatsToBuy) {
 
-    IO.println(selectedTrip);
     if (Utils.equals(passwd, getUserById(userID).passwd)) {
       if (getUserById(userID).moneyAmount.doubleValue()
           >= selectedTrip.totalPrice().doubleValue() * nrSeatsToBuy.longValue()) {
@@ -89,9 +88,6 @@ public class TicketingSystem {
         if (andResult_21) {
           selectedTrip.discountAvailableSeats(nrSeatsToBuy, transportMap);
           discountMoney(userID, selectedTrip.totalPrice(), nrSeatsToBuy);
-          IO.println("***");
-          IO.println(nrAvailableSeats);
-          IO.println("***");
           return true;
 
         } else {
