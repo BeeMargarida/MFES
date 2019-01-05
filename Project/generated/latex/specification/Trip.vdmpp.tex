@@ -1,9 +1,7 @@
 \begin{vdmpp}[breaklines=true]
 class Trip
 types
--- TODO Define types here
  public Segment :: startCity : Utilities`String
-           --destinationCity : Utilities`String
            timeDuration: real
            distance: real
            price: real
@@ -19,7 +17,7 @@ operations
  
  -- constructor
 (*@
-\label{Trip:20}
+\label{Trip:18}
 @*)
  public Trip: seq of Segment ==> Trip
  Trip(segs) ==
@@ -32,7 +30,7 @@ operations
  
  -- add new segment
 (*@
-\label{addSegment:30}
+\label{addSegment:28}
 @*)
  public addSegment: Utilities`String * seq of real * Connection`Type * nat ==> ()
  addSegment(origin, distValues, meanType, seatsAvailable) ==
@@ -43,7 +41,7 @@ operations
  
  -- add new segment withouy mean of transportation info
 (*@
-\label{addSegmentFirst:38}
+\label{addSegmentFirst:36}
 @*)
  public addSegmentFirst: Utilities`String * seq of real  * nat ==> ()
  addSegmentFirst(origin, distValues, seatsAvailable) ==
@@ -54,7 +52,7 @@ operations
  
  -- get segments
 (*@
-\label{getSegments:46}
+\label{getSegments:44}
 @*)
  public getSegments: () ==> seq of Segment
  getSegments() ==
@@ -64,7 +62,7 @@ operations
  
  -- set final results
 (*@
-\label{setFinalResults:53}
+\label{setFinalResults:51}
 @*)
  public setFinalResults : seq of real * real ==> ()
  setFinalResults(results, arrivalTime) ==
@@ -75,7 +73,7 @@ operations
  
  -- gets number of seats available per trip
 (*@
-\label{getAvailableSeats:61}
+\label{getAvailableSeats:59}
 @*)
  public getAvailableSeats: () ==> real
  getAvailableSeats() ==
@@ -90,8 +88,9 @@ operations
  )
  post availableSeatsForTrip = Utilities`MAX_INT or isMinSeatAvailable(segments, availableSeatsForTrip);
  
+ -- decreases the available seats of the connections used in the trip
 (*@
-\label{discountAvailableSeats:74}
+\label{discountAvailableSeats:73}
 @*)
  public discountAvailableSeats: nat * TransportGraph ==> ()
  discountAvailableSeats(nrSeatsToBuy, transportMap) ==
@@ -117,6 +116,7 @@ operations
   segments := newSegments;
  );
  
+ -- returns station correspondent to the segment
 (*@
 \label{getSegmentStation:98}
 @*)
@@ -133,8 +133,9 @@ operations
   return stationRes;
  );
  
+ -- returns total price of the trip
 (*@
-\label{totalPrice:111}
+\label{totalPrice:112}
 @*)
  public totalPrice:() ==> real
  totalPrice() ==
@@ -142,8 +143,9 @@ operations
   return finalResults(2);
  );
  
+ -- checks if 2 strings are equal
 (*@
-\label{stringEqual:117}
+\label{stringEqual:119}
 @*)
  private stringEqual: Utilities`String * Utilities`String ==> bool
  stringEqual(s1, s2) ==
@@ -158,8 +160,9 @@ operations
 
 functions
  
+ -- verifies that the available seats for a trip is the minimum number of seats in all the segments
 (*@
-\label{isMinSeatAvailable:130}
+\label{isMinSeatAvailable:133}
 @*)
  public isMinSeatAvailable(segments : seq of Segment, availableSeatsForTrip : real) res: bool ==
  (
@@ -168,7 +171,6 @@ functions
 
  
 traces
--- TODO Define Combinatorial Test Traces here
 end Trip
 \end{vdmpp}
 \bigskip
@@ -177,30 +179,30 @@ end Trip
 Function or operation & Line & Coverage & Calls \\
 \hline
 \hline
-\hyperref[Trip:20]{Trip} & 20&0.0\% & 0 \\
+\hyperref[Trip:18]{Trip} & 18&100.0\% & 56 \\
 \hline
-\hyperref[addSegment:30]{addSegment} & 30&0.0\% & 0 \\
+\hyperref[addSegment:28]{addSegment} & 28&100.0\% & 57 \\
 \hline
-\hyperref[addSegmentFirst:38]{addSegmentFirst} & 38&0.0\% & 0 \\
+\hyperref[addSegmentFirst:36]{addSegmentFirst} & 36&100.0\% & 31 \\
 \hline
-\hyperref[discountAvailableSeats:74]{discountAvailableSeats} & 74&0.0\% & 0 \\
+\hyperref[discountAvailableSeats:73]{discountAvailableSeats} & 73&100.0\% & 2 \\
 \hline
-\hyperref[getAvailableSeats:61]{getAvailableSeats} & 61&0.0\% & 0 \\
+\hyperref[getAvailableSeats:59]{getAvailableSeats} & 59&100.0\% & 2 \\
 \hline
-\hyperref[getSegmentStation:98]{getSegmentStation} & 98&0.0\% & 0 \\
+\hyperref[getSegmentStation:98]{getSegmentStation} & 98&100.0\% & 384 \\
 \hline
-\hyperref[getSegments:46]{getSegments} & 46&0.0\% & 0 \\
+\hyperref[getSegments:44]{getSegments} & 44&100.0\% & 128 \\
 \hline
-\hyperref[isMinSeatAvailable:130]{isMinSeatAvailable} & 130&0.0\% & 0 \\
+\hyperref[isMinSeatAvailable:133]{isMinSeatAvailable} & 133&100.0\% & 2 \\
 \hline
-\hyperref[setFinalResults:53]{setFinalResults} & 53&0.0\% & 0 \\
+\hyperref[setFinalResults:51]{setFinalResults} & 51&100.0\% & 30 \\
 \hline
-\hyperref[stringEqual:117]{stringEqual} & 117&0.0\% & 0 \\
+\hyperref[stringEqual:119]{stringEqual} & 119&100.0\% & 10 \\
 \hline
-\hyperref[totalPrice:111]{totalPrice} & 111&0.0\% & 0 \\
+\hyperref[totalPrice:112]{totalPrice} & 112&100.0\% & 4 \\
 \hline
 \hline
-Trip.vdmpp & & 0.0\% & 0 \\
+Trip.vdmpp & & 100.0\% & 706 \\
 \hline
 \end{longtable}
 

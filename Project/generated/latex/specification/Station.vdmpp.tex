@@ -44,9 +44,6 @@ operations
  post calculatedVariables = vars;
  
  -- set arrival Time
-(*@
-\label{setArrivalTime:40}
-@*)
  public setArrivalTime: real ==> ()
  setArrivalTime(time) ==
  (
@@ -84,8 +81,9 @@ operations
   return meanOfTransportationUsed;
  );
 
+ -- returns available seats for the connection that leads prevStation to this station
 (*@
-\label{getAvailableSeats:68}
+\label{getAvailableSeats:69}
 @*)
  public getAvailableSeats: set of Connection * Station ==> nat
  getAvailableSeats(connections, prevStation) ==
@@ -100,8 +98,9 @@ operations
   return seats;
  );
  
+ -- decreases available seats in the connection used to get to this station
 (*@
-\label{decreaseAvailableSeats:81}
+\label{decreaseAvailableSeats:83}
 @*)
  public decreaseAvailableSeats: set of Connection * Station * nat ==> ()
  decreaseAvailableSeats(connections, prevStation, seatsToBuy) ==
@@ -116,7 +115,7 @@ operations
  
  -- checks if a string is equal
 (*@
-\label{stringEqual:93}
+\label{stringEqual:95}
 @*)
  private stringEqual: Utilities`String * Utilities`String ==> bool
  stringEqual(s1, s2) ==
@@ -131,9 +130,9 @@ operations
 
  
 functions
--- TODO Define functiones here
+
 traces
--- TODO Define Combinatorial Test Traces here
+
 end Station
 \end{vdmpp}
 \bigskip
@@ -142,26 +141,24 @@ end Station
 Function or operation & Line & Coverage & Calls \\
 \hline
 \hline
-\hyperref[Station:23]{Station} & 23&0.0\% & 0 \\
+\hyperref[Station:23]{Station} & 23&100.0\% & 20098 \\
 \hline
-\hyperref[decreaseAvailableSeats:81]{decreaseAvailableSeats} & 81&0.0\% & 0 \\
+\hyperref[decreaseAvailableSeats:83]{decreaseAvailableSeats} & 83&100.0\% & 6 \\
 \hline
-\hyperref[getAvailableSeats:68]{getAvailableSeats} & 68&0.0\% & 0 \\
+\hyperref[getAvailableSeats:69]{getAvailableSeats} & 69&100.0\% & 1197 \\
 \hline
-\hyperref[getCalculatedVariables:48]{getCalculatedVariables} & 48&0.0\% & 0 \\
+\hyperref[getCalculatedVariables:48]{getCalculatedVariables} & 48&100.0\% & 3997 \\
 \hline
-\hyperref[getMeanOfTransportationUsed:62]{getMeanOfTransportationUsed} & 62&0.0\% & 0 \\
+\hyperref[getMeanOfTransportationUsed:62]{getMeanOfTransportationUsed} & 62&100.0\% & 1016 \\
 \hline
-\hyperref[setArrivalTime:40]{setArrivalTime} & 40&0.0\% & 0 \\
+\hyperref[setCalculatedVariables:32]{setCalculatedVariables} & 32&100.0\% & 5259 \\
 \hline
-\hyperref[setCalculatedVariables:32]{setCalculatedVariables} & 32&0.0\% & 0 \\
+\hyperref[setMeanOfTransportationUsed:55]{setMeanOfTransportationUsed} & 55&100.0\% & 5259 \\
 \hline
-\hyperref[setMeanOfTransportationUsed:55]{setMeanOfTransportationUsed} & 55&0.0\% & 0 \\
-\hline
-\hyperref[stringEqual:93]{stringEqual} & 93&0.0\% & 0 \\
+\hyperref[stringEqual:95]{stringEqual} & 95&100.0\% & 537 \\
 \hline
 \hline
-Station.vdmpp & & 0.0\% & 0 \\
+Station.vdmpp & & 100.0\% & 37369 \\
 \hline
 \end{longtable}
 

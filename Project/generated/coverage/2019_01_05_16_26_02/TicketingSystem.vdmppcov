@@ -1,0 +1,144 @@
+class TicketingSystem
+types
+	public User :: userID: nat
+							   passwd: nat
+								 moneyAmount: real;
+
+instance variables
+	users : set of User := {};
+	transportMap : TransportGraph;
+	
+  inv uniqueID(users); 
+operations
+
+	-- constructor
+	public TicketingSystem: TransportGraph ==> TicketingSystem
+	TicketingSystem(t) ==
+	(
+		transportMap := t;
+		createUserDatabase();
+	);
+	-- adds user to set of Users
+	public addUser: nat * nat * real ==> ()
+	addUser(id, passwd, amount) ==
+	(
+		users := users union {mk_User(id, passwd, amount)};
+	)
+	pre id >= 0 and passwd > 999 and passwd <= 9999 and amount >= 0;
+	
+	-- fills the set of users with users
+	public createUserDatabase: () ==> ()
+	createUserDatabase() ==
+	(
+		addUser(12, 1234, 1000);
+		addUser(13, 5555, 9273);
+		addUser(14, 8790, 7834);
+	);
+	
+	-- returns user with the given ID
+	private getUserById: nat ==> User
+	getUserById(ID) ==
+	(
+		for all u in set users do
+			if u.userID = ID then return u;
+		return mk_User(0, 0, 0);
+	);
+	
+	-- returns all users
+	public getUsersDatabase: () ==> set of User 
+	getUsersDatabase() ==
+	(
+		return users;
+	);
+	
+	-- discounts from the user with the userID's account
+	-- the price for nrTickets tickets with the tripPrice
+	private discountMoney: nat * real * nat ==> ()
+	discountMoney(userID, tripPrice, nrTickets) ==
+	(
+		for all u in set users do (
+			if u.userID = userID then
+				updateDatabase(u, u.moneyAmount - tripPrice * nrTickets);
+		);
+	)
+	pre tripPrice >= 0 and nrTickets >= 1 and validID(users,userID) and possibleTransactionWithPrice(users, userID, tripPrice, nrTickets);
+	
+	-- changes amount of money of a user
+	public updateDatabase: User * real ==> ()
+	updateDatabase(u, newAmount) ==
+	(
+		dcl userID: nat := u.userID;
+		dcl passwd: nat := u.passwd;
+		
+		users := users \ {u};
+		users := users union {mk_User(userID, passwd, newAmount)};
+	);
+	
+	-- verify if the user with the given userID has enough money to buy
+	-- the desired amount of tickets and if the trip has enough available
+	-- places and executes the payment and purchase of tickets 
+	public buyTickets: nat * nat * Trip * nat ==> bool
+	buyTickets(userID, passwd, selectedTrip, nrSeatsToBuy) ==
+	(
+		IO`println(selectedTrip);
+		if passwd = getUserById(userID).passwd then (
+			if (getUserById(userID).moneyAmount >= selectedTrip.totalPrice() * nrSeatsToBuy) then (
+				-- there are enough seats
+				dcl nrAvailableSeats : real := selectedTrip.getAvailableSeats();
+				if (nrAvailableSeats <> Utilities`MAX_INT and nrAvailableSeats >= nrSeatsToBuy) then (
+				
+					selectedTrip.discountAvailableSeats(nrSeatsToBuy, transportMap);
+					discountMoney(userID, selectedTrip.totalPrice(), nrSeatsToBuy);
+					
+					return true;
+				
+				) else
+					IO`print("Not enough seats available for purchase");
+					return false;
+			) else
+				IO`print("User does not have enough money to make the purchase");
+				return false;
+		) else
+			IO`print("Password incorrect");
+			return false;
+	)
+	pre possibleTransaction(users, userID, selectedTrip, nrSeatsToBuy);
+		
+functions
+
+	-- there are no users with the same ID
+	public uniqueID(users : set of User) res: bool ==
+	(
+		forall u in set users & (forall v in set users\{u} & (u.userID <> v.userID))
+	);
+	
+	-- checks that user with id userID exists
+	public validID(users : set of User, userID : nat) res: bool ==
+	(
+		let u in set users
+		in (u.userID = userID)
+	);
+	
+	private getFinalResults(trip : Trip) res: seq of real == trip.finalResults;
+	
+	-- user has enough money to buy the desired amount of seats for the selected trip
+	public possibleTransaction(users : set of User, userID : nat, selectedTrip : Trip, nrSeatsToBuy: nat) res: bool ==
+	(
+		let u in set users in (u.userID <> userID)
+		or
+		let u1 in set users
+		be st (u1.userID = userID)
+		in (u1.moneyAmount >= getFinalResults(selectedTrip)(2)*nrSeatsToBuy)
+	);
+	
+	-- user has enough money to buy desired amount of seats
+	public possibleTransactionWithPrice(users : set of User, userID : nat, tripPrice : nat, nrSeatsToBuy: nat) res: bool ==
+	(
+		let u1 in set users
+		be st (u1.userID = userID)
+		in (u1.moneyAmount >= tripPrice*nrSeatsToBuy)
+	);
+
+traces
+
+end TicketingSystem

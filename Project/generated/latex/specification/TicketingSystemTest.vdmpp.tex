@@ -1,16 +1,16 @@
 \begin{vdmpp}[breaklines=true]
 class TicketingSystemTest
-types
--- TODO Define types here
-values
--- TODO Define values here
+/*
+  Class that defines the usage scenarios and test cases for the ticketing system.
+*/
 instance variables
--- TODO Define instance variables here
  t : TransportGraph := new TransportGraph();
  ticket : TicketingSystem := new TicketingSystem(t);
  s : SearchEngine := new SearchEngine(t);
 operations
 
+ -- Simulates assertion checking by reducing it to pre-condition checking.
+ -- If 'cond' does not hold, a pre-condition violation will be signaled.
 (*@
 \label{assertTrue:13}
 @*)
@@ -18,23 +18,29 @@ operations
   assertTrue(cond) == return
   pre cond;
   
+  -- Simulates assertion checking by reducing it to pre-condition checking.
+ -- If 'cond' holds, a pre-condition violation will be signaled.
 (*@
-\label{assertFalse:17}
+\label{assertFalse:19}
 @*)
   private assertFalse: bool ==> ()
   assertFalse(cond) == return
   pre not cond;
   
+  -- Simulates the creation of a user and its insertion on the database.
+  -- Related to requirement R1
 (*@
-\label{testUserCreation:21}
+\label{testUserCreation:25}
 @*)
   private testUserCreation: () ==> ()
  testUserCreation() == (
    assertTrue(card ticket.getUsersDatabase() > 0);
  );
  
+ -- Simulates the bought of tickets by a user
+  -- Related to requirement R7
 (*@
-\label{testBuyTicket:26}
+\label{testBuyTicket:32}
 @*)
  private testBuyTicket: () ==> ()
  testBuyTicket() == (
@@ -44,8 +50,10 @@ operations
   assertTrue(resBuy);
  );
  
+ -- Simulates the bought of tickets by a user, with a non existing user, to check error behaviour
+  -- Related to requirement R7
 (*@
-\label{testBuyTicketNoValidUser:34}
+\label{testBuyTicketNoValidUser:42}
 @*)
  private testBuyTicketNoValidUser: () ==> ()
  testBuyTicketNoValidUser() == (
@@ -55,8 +63,10 @@ operations
   assertFalse(resBuy);
  );
  
+ -- Simulates the bought of tickets by a user without enough money, to check error behaviour
+  -- Related to requirement R7
 (*@
-\label{testBuyTicketNotEnoughMoney:42}
+\label{testBuyTicketNotEnoughMoney:52}
 @*)
  private testBuyTicketNotEnoughMoney: () ==> ()
  testBuyTicketNotEnoughMoney() == (
@@ -68,8 +78,10 @@ operations
   assertFalse(resBuy);
  );
  
+ -- Simulates the bought of tickets by a user, for a trip without enough empty seats, to check error behaviour
+  -- Related to requirement R7
 (*@
-\label{testBuyTicketNotEnoughSeats:52}
+\label{testBuyTicketNotEnoughSeats:64}
 @*)
  private testBuyTicketNotEnoughSeats: () ==> ()
  testBuyTicketNotEnoughSeats() == (
@@ -81,8 +93,9 @@ operations
   assertFalse(resBuy);
  );
   
+  -- Entry point that runs all the tests.
 (*@
-\label{main:62}
+\label{main:75}
 @*)
   public static main: () ==> ()
  main() == (
@@ -93,10 +106,6 @@ operations
     new TicketingSystemTest().testBuyTicketNotEnoughSeats();
  );
   
-functions
--- TODO Define functiones here
-traces
--- TODO Define Combinatorial Test Traces here
 end TicketingSystemTest
 \end{vdmpp}
 \bigskip
@@ -105,24 +114,24 @@ end TicketingSystemTest
 Function or operation & Line & Coverage & Calls \\
 \hline
 \hline
-\hyperref[assertFalse:17]{assertFalse} & 17&0.0\% & 0 \\
+\hyperref[assertFalse:19]{assertFalse} & 19&100.0\% & 15 \\
 \hline
-\hyperref[assertTrue:13]{assertTrue} & 13&0.0\% & 0 \\
+\hyperref[assertTrue:13]{assertTrue} & 13&100.0\% & 32 \\
 \hline
-\hyperref[main:62]{main} & 62&0.0\% & 0 \\
+\hyperref[main:75]{main} & 75&100.0\% & 10 \\
 \hline
-\hyperref[testBuyTicket:26]{testBuyTicket} & 26&0.0\% & 0 \\
+\hyperref[testBuyTicket:32]{testBuyTicket} & 32&100.0\% & 5 \\
 \hline
-\hyperref[testBuyTicketNoValidUser:34]{testBuyTicketNoValidUser} & 34&0.0\% & 0 \\
+\hyperref[testBuyTicketNoValidUser:42]{testBuyTicketNoValidUser} & 42&100.0\% & 5 \\
 \hline
-\hyperref[testBuyTicketNotEnoughMoney:42]{testBuyTicketNotEnoughMoney} & 42&0.0\% & 0 \\
+\hyperref[testBuyTicketNotEnoughMoney:52]{testBuyTicketNotEnoughMoney} & 52&100.0\% & 8 \\
 \hline
-\hyperref[testBuyTicketNotEnoughSeats:52]{testBuyTicketNotEnoughSeats} & 52&0.0\% & 0 \\
+\hyperref[testBuyTicketNotEnoughSeats:64]{testBuyTicketNotEnoughSeats} & 64&100.0\% & 5 \\
 \hline
-\hyperref[testUserCreation:21]{testUserCreation} & 21&0.0\% & 0 \\
+\hyperref[testUserCreation:25]{testUserCreation} & 25&100.0\% & 5 \\
 \hline
 \hline
-TicketingSystemTest.vdmpp & & 0.0\% & 0 \\
+TicketingSystemTest.vdmpp & & 100.0\% & 85 \\
 \hline
 \end{longtable}
 

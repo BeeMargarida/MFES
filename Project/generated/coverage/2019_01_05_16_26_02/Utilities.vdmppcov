@@ -1,0 +1,11 @@
+class Utilities
+types
+	public String = seq of char;
+	
+values
+	public MAX_INT = 256;
+instance variables
+operations
+functions
+traces
+end Utilities

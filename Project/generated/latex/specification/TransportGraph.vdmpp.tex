@@ -69,26 +69,25 @@ operations
    addConnection(<Plane>, "Madrid", "Barcelona", 625, [8, 12, 15, 19, 22],5);
    addConnection(<Train>, "Madrid", "Krakow", 1342, [8],10);
    addConnection(<Plane>, "Krakow", "Moscow", 2789, [9],5);
-   -- TODO add more connections
   ); 
   
  -- lists all connections
 (*@
-\label{listConnections:66}
+\label{listConnections:65}
 @*)
  public listConnections: () ==> set of Connection 
   listConnections() == return connections;
   
  -- lists all stations
 (*@
-\label{listStations:70}
+\label{listStations:69}
 @*)
  public listStations: () ==> set of Station
   listStations() == return stations;
   
  -- checks if 2 strings are equal
 (*@
-\label{stringEqual:74}
+\label{stringEqual:73}
 @*)
  public stringEqual: Utilities`String * Utilities`String ==> bool
  stringEqual(s1, s2) ==
@@ -103,7 +102,7 @@ operations
  
  -- returns connections with the station provided as origin
 (*@
-\label{getConnectionsWithSource:86}
+\label{getConnectionsWithSource:85}
 @*)
  public getConnectionsWithSource: Utilities`String ==> set of Connection
  getConnectionsWithSource(s) ==
@@ -118,7 +117,7 @@ operations
  
  -- returns all stations that have connections with the origin name equal to the one provided
 (*@
-\label{getNeighborsOfNode:98}
+\label{getNeighborsOfNode:97}
 @*)
  public getNeighborsOfNode: Utilities`String ==> set of Station
  getNeighborsOfNode(name) ==
@@ -133,7 +132,7 @@ operations
  
  -- returns all stations that have connections with the destination name equal to the one provided
 (*@
-\label{getConnectionsWithDestination:110}
+\label{getConnectionsWithDestination:109}
 @*)
  public getConnectionsWithDestination: Utilities`String ==> set of Connection
  getConnectionsWithDestination(d) ==
@@ -149,7 +148,7 @@ operations
  
  -- returns station with the name provided
 (*@
-\label{getStation:123}
+\label{getStation:122}
 @*)
  public getStation: Utilities`String ==> Station
  getStation(stationName) ==
@@ -164,7 +163,7 @@ operations
  
  -- Searches for a station by name and, if it does not exist, the station is created with the specified name 
 (*@
-\label{getStationWithCreation:135}
+\label{getStationWithCreation:134}
 @*)
  public getStationWithCreation: Utilities`String ==> Station
  getStationWithCreation(stationName) == 
@@ -183,6 +182,7 @@ operations
  
 functions
 
+ -- checks that all sources and destination in all connections exist in the set of stations
 (*@
 \label{checkValidConnections:152}
 @*)
@@ -202,32 +202,32 @@ end TransportGraph
 Function or operation & Line & Coverage & Calls \\
 \hline
 \hline
-\hyperref[TransportGraph:14]{TransportGraph} & 14&0.0\% & 0 \\
+\hyperref[TransportGraph:14]{TransportGraph} & 14&100.0\% & 133 \\
 \hline
-\hyperref[addConnection:23]{addConnection} & 23&0.0\% & 0 \\
+\hyperref[addConnection:23]{addConnection} & 23&100.0\% & 2793 \\
 \hline
-\hyperref[checkValidConnections:152]{checkValidConnections} & 152&0.0\% & 0 \\
+\hyperref[checkValidConnections:152]{checkValidConnections} & 152&100.0\% & 8750 \\
 \hline
-\hyperref[createDatabase:38]{createDatabase} & 38&0.0\% & 0 \\
+\hyperref[createDatabase:38]{createDatabase} & 38&100.0\% & 282 \\
 \hline
-\hyperref[getConnectionsWithDestination:110]{getConnectionsWithDestination} & 110&0.0\% & 0 \\
+\hyperref[getConnectionsWithDestination:109]{getConnectionsWithDestination} & 109&100.0\% & 21 \\
 \hline
-\hyperref[getConnectionsWithSource:86]{getConnectionsWithSource} & 86&0.0\% & 0 \\
+\hyperref[getConnectionsWithSource:85]{getConnectionsWithSource} & 85&100.0\% & 348 \\
 \hline
-\hyperref[getNeighborsOfNode:98]{getNeighborsOfNode} & 98&0.0\% & 0 \\
+\hyperref[getNeighborsOfNode:97]{getNeighborsOfNode} & 97&100.0\% & 243 \\
 \hline
-\hyperref[getStation:123]{getStation} & 123&0.0\% & 0 \\
+\hyperref[getStation:122]{getStation} & 122&100.0\% & 2 \\
 \hline
-\hyperref[getStationWithCreation:135]{getStationWithCreation} & 135&0.0\% & 0 \\
+\hyperref[getStationWithCreation:134]{getStationWithCreation} & 134&100.0\% & 228 \\
 \hline
-\hyperref[listConnections:66]{listConnections} & 66&0.0\% & 0 \\
+\hyperref[listConnections:65]{listConnections} & 65&100.0\% & 408 \\
 \hline
-\hyperref[listStations:70]{listStations} & 70&0.0\% & 0 \\
+\hyperref[listStations:69]{listStations} & 69&100.0\% & 82 \\
 \hline
-\hyperref[stringEqual:74]{stringEqual} & 74&0.0\% & 0 \\
+\hyperref[stringEqual:73]{stringEqual} & 73&100.0\% & 19291 \\
 \hline
 \hline
-TransportGraph.vdmpp & & 0.0\% & 0 \\
+TransportGraph.vdmpp & & 100.0\% & 32581 \\
 \hline
 \end{longtable}
 
