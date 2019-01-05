@@ -441,7 +441,7 @@ operations
 			answerSeq := getPath(destination);
 			
 			for el in answerSeq do (
-			
+					-- TODO: CHANGE SEATS AVAILABLE!!!
 			 		if(i = 0) then trip.addSegmentFirst(el.name, el.getCalculatedVariables(), 0)
 					else trip.addSegment(el.name, el.getCalculatedVariables(), el.getMeanOfTransportationUsed(), el.getAvailableSeats(transportMap.listConnections(), prevStation));
 					
@@ -584,5 +584,5 @@ functions
 	);
 
 traces
-
+-- TODO Define Combinatorial Test Traces here
 end SearchEngine

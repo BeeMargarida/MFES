@@ -59,6 +59,7 @@ operations
 			addConnection(<Plane>, "Madrid", "Barcelona", 625, [8, 12, 15, 19, 22],5);
 			addConnection(<Train>, "Madrid", "Krakow", 1342, [8],10);
 			addConnection(<Plane>, "Krakow", "Moscow", 2789, [9],5);
+			-- TODO add more connections
 		);	
 		
 	-- lists all connections
@@ -148,7 +149,6 @@ operations
 	
 functions
 
-	-- checks that all sources and destination in all connections exist in the set of stations
 	public checkValidConnections(connections : set of Connection, stations : set of Station) res: bool ==
 	(
 		let c in set connections

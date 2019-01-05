@@ -18,7 +18,7 @@ operations
 		transportMap := t;
 		createUserDatabase();
 	);
-	-- adds user to set of Users
+	
 	public addUser: nat * nat * real ==> ()
 	addUser(id, passwd, amount) ==
 	(
@@ -26,7 +26,7 @@ operations
 	)
 	pre id >= 0 and passwd > 999 and passwd <= 9999 and amount >= 0;
 	
-	-- fills the set of users with users
+	
 	public createUserDatabase: () ==> ()
 	createUserDatabase() ==
 	(
@@ -35,7 +35,6 @@ operations
 		addUser(14, 8790, 7834);
 	);
 	
-	-- returns user with the given ID
 	private getUserById: nat ==> User
 	getUserById(ID) ==
 	(
@@ -44,7 +43,6 @@ operations
 		return mk_User(0, 0, 0);
 	);
 	
-	-- returns all users
 	public getUsersDatabase: () ==> set of User 
 	getUsersDatabase() ==
 	(
@@ -106,13 +104,12 @@ operations
 		
 functions
 
-	-- there are no users with the same ID
+	-- there are no two users with the same ID
 	public uniqueID(users : set of User) res: bool ==
 	(
 		forall u in set users & (forall v in set users\{u} & (u.userID <> v.userID))
 	);
 	
-	-- checks that user with id userID exists
 	public validID(users : set of User, userID : nat) res: bool ==
 	(
 		let u in set users
@@ -131,7 +128,6 @@ functions
 		in (u1.moneyAmount >= getFinalResults(selectedTrip)(2)*nrSeatsToBuy)
 	);
 	
-	-- user has enough money to buy desired amount of seats
 	public possibleTransactionWithPrice(users : set of User, userID : nat, tripPrice : nat, nrSeatsToBuy: nat) res: bool ==
 	(
 		let u1 in set users
@@ -140,5 +136,5 @@ functions
 	);
 
 traces
-
+-- TODO Define Combinatorial Test Traces here
 end TicketingSystem

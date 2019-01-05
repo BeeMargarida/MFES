@@ -1,0 +1,84 @@
+class TicketingSystemTest
+/*
+		Class that defines the usage scenarios and test cases for the ticketing system.
+*/
+instance variables
+	t : TransportGraph := new TransportGraph();
+	ticket : TicketingSystem := new TicketingSystem(t);
+	s : SearchEngine := new SearchEngine(t);
+operations
+
+	-- Simulates assertion checking by reducing it to pre-condition checking.
+	-- If 'cond' does not hold, a pre-condition violation will be signaled.
+	private assertTrue: bool ==> ()
+ 	assertTrue(cond) == return
+ 	pre cond;
+ 	
+ 	-- Simulates assertion checking by reducing it to pre-condition checking.
+	-- If 'cond' holds, a pre-condition violation will be signaled.
+ 	private assertFalse: bool ==> ()
+ 	assertFalse(cond) == return
+ 	pre not cond;
+ 	
+ 	-- Simulates the creation of a user and its insertion on the database.
+ 	-- Related to requirement R1
+ 	private testUserCreation: () ==> ()
+	testUserCreation() == (
+			assertTrue(card ticket.getUsersDatabase() > 0);
+	);
+	
+	-- Simulates the bought of tickets by a user
+ 	-- Related to requirement R7
+	private testBuyTicket: () ==> ()
+	testBuyTicket() == (
+		dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+		dcl resBuy : bool := ticket.buyTickets(12, 1234, answer(1), 1);
+		
+		assertTrue(resBuy);
+	);
+	
+	-- Simulates the bought of tickets by a user, with a non existing user, to check error behaviour
+ 	-- Related to requirement R7
+	private testBuyTicketNoValidUser: () ==> ()
+	testBuyTicketNoValidUser() == (
+		dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+		dcl resBuy : bool := ticket.buyTickets(12123123, 1234, answer(1), 1);
+		
+		assertFalse(resBuy);
+	);
+	
+	-- Simulates the bought of tickets by a user without enough money, to check error behaviour
+ 	-- Related to requirement R7
+	private testBuyTicketNotEnoughMoney: () ==> ()
+	testBuyTicketNotEnoughMoney() == (
+		dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+		dcl resBuy : bool;
+		ticket.addUser(12345, 1234, 10);
+		resBuy := ticket.buyTickets(12345, 1234, answer(1), 1);
+		
+		assertFalse(resBuy);
+	);
+	
+	-- Simulates the bought of tickets by a user, for a trip without enough empty seats, to check error behaviour
+ 	-- Related to requirement R7
+	private testBuyTicketNotEnoughSeats: () ==> ()
+	testBuyTicketNotEnoughSeats() == (
+		dcl answer : seq of Trip := s.rome2Rio(['P','o','r','t','o'], ['M','a','d','r','i','d'], {1,2}, 3, -1);
+		dcl resBuy : bool;
+		ticket.addUser(12345, 1234, 10000000);
+		resBuy := ticket.buyTickets(12345, 1234, answer(1), 20);
+		
+		assertFalse(resBuy);
+	);
+ 	
+ 	-- Entry point that runs all the tests.
+ 	public static main: () ==> ()
+	main() == (
+				new TicketingSystemTest().testUserCreation();
+				new TicketingSystemTest().testBuyTicket();
+				new TicketingSystemTest().testBuyTicketNoValidUser();
+				new TicketingSystemTest().testBuyTicketNotEnoughMoney();
+				new TicketingSystemTest().testBuyTicketNotEnoughSeats();
+	);
+ 	
+end TicketingSystemTest

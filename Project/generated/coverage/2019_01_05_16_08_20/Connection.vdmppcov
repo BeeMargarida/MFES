@@ -70,14 +70,12 @@ operations
 	)
 	pre dist > 0;
 	
-	-- returns available seats in this connection
 	public getAvailableSeats: () ==> nat
 	getAvailableSeats() ==
 	(
 		return seatsAvailable;
 	);
 	
-	-- decreases number of seats in the connection
 	public decreaseNumberOfSeats: nat ==> ()
 	decreaseNumberOfSeats(numSeats) ==
 	(
@@ -87,7 +85,7 @@ operations
 	
 		
 functions
-
+-- TODO Define functiones here
 traces
-
+-- TODO Define Combinatorial Test Traces here
 end Connection
