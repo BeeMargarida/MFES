@@ -65,7 +65,6 @@ operations
 		return meanOfTransportationUsed;
 	);
 
-	-- returns available seats for the connection that leads prevStation to this station
 	public getAvailableSeats: set of Connection * Station ==> nat
 	getAvailableSeats(connections, prevStation) ==
 	(
@@ -79,7 +78,6 @@ operations
 		return seats;
 	);
 	
-	-- decreases available seats in the connection used to get to this station
 	public decreaseAvailableSeats: set of Connection * Station * nat ==> ()
 	decreaseAvailableSeats(connections, prevStation, seatsToBuy) ==
 	(
@@ -105,7 +103,7 @@ operations
 
 	
 functions
-
+-- TODO Define functiones here
 traces
-
+-- TODO Define Combinatorial Test Traces here
 end Station

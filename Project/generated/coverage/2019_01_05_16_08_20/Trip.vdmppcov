@@ -1,6 +1,8 @@
 class Trip
 types
+-- TODO Define types here
 	public Segment :: startCity : Utilities`String
+								 		--destinationCity : Utilities`String
 								 		timeDuration: real
 								 		distance: real
 								 		price: real
@@ -69,7 +71,6 @@ operations
 	)
 	post availableSeatsForTrip = Utilities`MAX_INT or isMinSeatAvailable(segments, availableSeatsForTrip);
 	
-	-- decreases the available seats of the connections used in the trip
 	public discountAvailableSeats: nat * TransportGraph ==> ()
 	discountAvailableSeats(nrSeatsToBuy, transportMap) ==
 	(
@@ -94,7 +95,6 @@ operations
 		segments := newSegments;
 	);
 	
-	-- returns station correspondent to the segment
 	private getSegmentStation: TransportGraph * Utilities`String ==> Station 
 	getSegmentStation(transportMap, stationName) ==
 	(
@@ -108,14 +108,12 @@ operations
 		return stationRes;
 	);
 	
-	-- returns total price of the trip
 	public totalPrice:() ==> real
 	totalPrice() ==
 	(
 		return finalResults(2);
 	);
 	
-	-- checks if 2 strings are equal
 	private stringEqual: Utilities`String * Utilities`String ==> bool
 	stringEqual(s1, s2) ==
 	(
@@ -129,7 +127,6 @@ operations
 
 functions
 	
-	-- verifies that the available seats for a trip is the minimum number of seats in all the segments
 	public isMinSeatAvailable(segments : seq of Segment, availableSeatsForTrip : real) res: bool ==
 	(
 		let i in set inds segments be st i > 1 in (segments(i).seatsAvailable >=  availableSeatsForTrip)
@@ -137,4 +134,5 @@ functions
 
 	
 traces
+-- TODO Define Combinatorial Test Traces here
 end Trip
