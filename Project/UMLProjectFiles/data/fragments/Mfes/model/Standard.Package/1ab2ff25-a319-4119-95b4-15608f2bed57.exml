@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Binding classes" version="4">
+  <OBJECT>
+    <ID name="Binding classes" mc="Standard.Package" uid="1ab2ff25-a319-4119-95b4-15608f2bed57"/>
+    <PID name="mfes" mc="Standard.Package" uid="53597879-f470-42b6-babf-c77a928f8abe"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[Binding classes]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="Seq&lt;char&gt;" mc="Standard.Class" uid="db3671e7-2de3-4d33-bde7-04d4f04d5f1b"/>
+        <COMPID name="Seq&lt;Connection&gt;" mc="Standard.Class" uid="c27a9b07-bc7e-43e0-a639-5eff43e378b7"/>
+        <COMPID name="Seq&lt;Any&gt;" mc="Standard.Class" uid="1e32e704-d105-4614-814c-51b5af8551bf"/>
+        <COMPID name="Product&lt;bool,Optional&lt;p&gt;&gt;" mc="Standard.Class" uid="e9822fec-3380-4a16-91b0-e8c353a998e7"/>
+        <COMPID name="Optional&lt;p&gt;" mc="Standard.Class" uid="2baa8af1-d52f-461a-867b-6fa08d172ae6"/>
+        <COMPID name="Product&lt;bool,int&gt;" mc="Standard.Class" uid="e44791db-32e9-4e49-8dd3-6ccbf170989b"/>
+        <COMPID name="Optional&lt;IO::filedirective&gt;" mc="Standard.Class" uid="42a2bcd6-45fa-4abc-824e-22120cc04a24"/>
+        <COMPID name="Seq&lt;Test&gt;" mc="Standard.Class" uid="9bc5af22-9e41-4027-92cf-53a72c006247"/>
+        <COMPID name="Set&lt;Test&gt;" mc="Standard.Class" uid="805df6fb-b660-483d-b6d4-ad21afc534e0"/>
+        <COMPID name="Seq&lt;Seq&lt;char&gt;&gt;" mc="Standard.Class" uid="b1ae0f04-b1fa-4621-9113-13c1301b87df"/>
+        <COMPID name="Seq&lt;AssertionFailedError&gt;" mc="Standard.Class" uid="e7b6a31d-3bf8-4547-a6d4-e588c7fd42fb"/>
+        <COMPID name="Seq&lt;TestResult::InternalError&gt;" mc="Standard.Class" uid="723877a2-0757-4467-94d8-84ecc191a8d3"/>
+        <COMPID name="Set&lt;TestListener&gt;" mc="Standard.Class" uid="f75a69d1-cc1c-4a09-b326-c255b4e596c2"/>
+        <COMPID name="Union&lt;int&gt;" mc="Standard.Class" uid="09362ecd-7fc3-4920-9f51-396b8d467f86"/>
+        <COMPID name="Optional&lt;Product&lt;Seq&lt;char&gt;,nat,nat,Seq&lt;char&gt;,Seq&lt;char&gt;&gt;&gt;" mc="Standard.Class" uid="a631a7fb-9ba4-4648-a7d8-a36c7afa5951"/>
+        <COMPID name="Product&lt;Seq&lt;char&gt;,nat,nat,Seq&lt;char&gt;,Seq&lt;char&gt;&gt;" mc="Standard.Class" uid="0aab3256-df84-4521-b87f-8789e4654843"/>
+        <COMPID name="Product&lt;bool,Any&gt;" mc="Standard.Class" uid="1c484b8d-0a23-46b1-8bdc-b30b54c8edb8"/>
+        <COMPID name="Optional&lt;Seq&lt;char&gt;&gt;" mc="Standard.Class" uid="76f50431-6000-4321-b5ec-75ab6db0622d"/>
+        <COMPID name="Seq&lt;real&gt;" mc="Standard.Class" uid="6437ea15-99d8-4439-bbcb-59e900252df5"/>
+        <COMPID name="Set&lt;Station&gt;" mc="Standard.Class" uid="176ec7bf-8d6c-44dc-98ba-6eef2bc55458"/>
+        <COMPID name="Map&lt;Station,Seq&lt;real&gt;&gt;" mc="Standard.Class" uid="abc690a9-94fc-4c0c-930c-859da05f74d9"/>
+        <COMPID name="Map&lt;Station,Station&gt;" mc="Standard.Class" uid="07d490c2-2988-4525-a713-03de5417c0b4"/>
+        <COMPID name="Seq&lt;Trip&gt;" mc="Standard.Class" uid="1a193127-74a8-4bd5-a9b1-f3ff2f117fc3"/>
+        <COMPID name="Set&lt;Connection::Type&gt;" mc="Standard.Class" uid="7363fb97-08ad-4bd4-bad0-8dfa13dc3615"/>
+        <COMPID name="Set&lt;Connection&gt;" mc="Standard.Class" uid="324b7333-ee61-4bab-8900-a3b3b3448b7f"/>
+        <COMPID name="Set&lt;SearchEngine::Type&gt;" mc="Standard.Class" uid="5de3c39a-bd69-4649-9244-179141c356d5"/>
+        <COMPID name="Set&lt;SearchEngine::ConnectionInfo&gt;" mc="Standard.Class" uid="36701976-e375-4a44-8dcb-9a61fb2c90be"/>
+        <COMPID name="Set&lt;Seq&lt;real&gt;&gt;" mc="Standard.Class" uid="32fedf01-66fb-48f8-9e55-29d1723c7d77"/>
+        <COMPID name="Seq&lt;Station&gt;" mc="Standard.Class" uid="7506d5f3-4e8f-4af1-b070-1a11249a93c5"/>
+        <COMPID name="Set&lt;nat&gt;" mc="Standard.Class" uid="c94abe74-b98a-4fbe-97ec-c80f9180413c"/>
+        <COMPID name="Set&lt;TicketingSystem::User&gt;" mc="Standard.Class" uid="35bbe212-a0b3-4b47-9800-1ff197e16de8"/>
+        <COMPID name="Seq&lt;Trip::Segment&gt;" mc="Standard.Class" uid="c64da8d1-b390-4688-8116-67eeda4bf7d5"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

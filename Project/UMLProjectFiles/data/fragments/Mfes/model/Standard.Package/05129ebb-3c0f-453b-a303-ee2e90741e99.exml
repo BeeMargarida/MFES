@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Basic VDM Types" version="4">
+  <OBJECT>
+    <ID name="Basic VDM Types" mc="Standard.Package" uid="05129ebb-3c0f-453b-a303-ee2e90741e99"/>
+    <PID name="mfes" mc="Standard.Package" uid="53597879-f470-42b6-babf-c77a928f8abe"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[Basic VDM Types]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="&lt;append&gt;" mc="Standard.DataType" uid="607da7a0-5101-44e7-a71e-8a3b6524161a"/>
+        <COMPID name="&lt;start&gt;" mc="Standard.DataType" uid="ecf54c38-46a5-4542-890c-305a319357fb"/>
+        <COMPID name="&lt;Bus&gt;" mc="Standard.DataType" uid="3d8e212d-89b1-451d-8c2f-791fdde77b3b"/>
+        <COMPID name="&lt;NONE&gt;" mc="Standard.DataType" uid="14ac7deb-78db-4ef1-9db1-59582ad9fefe"/>
+        <COMPID name="&lt;Plane&gt;" mc="Standard.DataType" uid="ba511580-71af-4617-b05f-1da8957a1e84"/>
+        <COMPID name="&lt;Train&gt;" mc="Standard.DataType" uid="ed7391a1-74f5-492d-a84c-c4ca0deabeda"/>
+        <COMPID name="&lt;Walk&gt;" mc="Standard.DataType" uid="9dbbc4e3-1095-4145-a011-98ddb3b689bc"/>
+        <COMPID name="real" mc="Standard.DataType" uid="3aee3aed-7176-42fb-bddc-23f1e2e247e1"/>
+        <COMPID name="nat" mc="Standard.DataType" uid="bc5961cb-b239-4420-864a-ae08e306edc5"/>
+        <COMPID name="Any" mc="Standard.DataType" uid="6e27cfcf-b555-4059-a376-99c4b236efbe"/>
+        <COMPID name="bool" mc="Standard.DataType" uid="1b48559f-afdb-402c-aa5c-1cd8275f60ea"/>
+        <COMPID name="int" mc="Standard.DataType" uid="46c5d02d-da2d-48e9-b7ad-4bc05806ef9b"/>
+        <COMPID name="Void" mc="Standard.DataType" uid="e7cbe5e2-e40d-435c-b934-eaba9b455eea"/>
+        <COMPID name="nat1" mc="Standard.DataType" uid="075ed8d9-f1ca-455a-9842-ae0ecaf1ce07"/>
+        <COMPID name="rat" mc="Standard.DataType" uid="05913b17-af5f-47ea-a2fa-a8287ec44f48"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

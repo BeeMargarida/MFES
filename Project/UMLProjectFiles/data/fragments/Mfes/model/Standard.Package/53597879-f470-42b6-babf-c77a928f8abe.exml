@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="mfes" version="4">
+  <OBJECT>
+    <ID name="mfes" mc="Standard.Package" uid="53597879-f470-42b6-babf-c77a928f8abe"/>
+    <PID name="Mfes" mc="Standard.Project" uid="430c1846-b936-4b56-9d93-9d35bc62a420"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[mfes]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="Basic VDM Types" mc="Standard.Package" uid="05129ebb-3c0f-453b-a303-ee2e90741e99"/>
+        <COMPID name="CSV" mc="Standard.Class" uid="03d20f6d-81dc-4bcc-be46-f22b8a4fe0da"/>
+        <COMPID name="IO" mc="Standard.Class" uid="65447fcb-253b-4979-875f-8c5131615b1d"/>
+        <COMPID name="MATH" mc="Standard.Class" uid="52b9aaad-f90b-45ea-9099-fd75b326ebb0"/>
+        <COMPID name="Throwable" mc="Standard.Class" uid="46fbdcfe-8a7d-49f6-83df-fcf757d5505d"/>
+        <COMPID name="Error" mc="Standard.Class" uid="a43c2f65-81a0-444f-95af-413cbbed8045"/>
+        <COMPID name="AssertionFailedError" mc="Standard.Class" uid="f0bb9d4b-79ac-4bcc-ad45-0fdf583797d7"/>
+        <COMPID name="Assert" mc="Standard.Class" uid="bdfdaac4-e854-4a2c-8230-5f88a078ca20"/>
+        <COMPID name="Test" mc="Standard.Class" uid="7f124593-fea9-4c49-9d55-e5e0e008c50c"/>
+        <COMPID name="TestCase" mc="Standard.Class" uid="6a9391c5-aa57-44fa-bfb9-6dce13fdb894"/>
+        <COMPID name="TestSuite" mc="Standard.Class" uid="cf11c6f7-d94f-4271-9672-54b7fecbd1a8"/>
+        <COMPID name="TestListener" mc="Standard.Class" uid="2b59a285-2d65-43a2-b547-778c69f6ea66"/>
+        <COMPID name="TestResult" mc="Standard.Class" uid="bd68e7b2-04ea-43e4-b219-5fcbe5c97d9c"/>
+        <COMPID name="TestRunner" mc="Standard.Class" uid="38382b18-4957-42bc-a178-028bf7d71ed7"/>
+        <COMPID name="VDMUtil" mc="Standard.Class" uid="50989e32-0276-43d7-8cf0-a233dca16238"/>
+        <COMPID name="Connection" mc="Standard.Class" uid="96e8de14-48ef-459d-bd56-825fc072e0f1"/>
+        <COMPID name="Rome2RioTest" mc="Standard.Class" uid="4173c634-e629-42e7-89a8-f2c95e70659a"/>
+        <COMPID name="SearchEngine" mc="Standard.Class" uid="d2e7d03f-f0ad-4c24-b993-30d6892af5f3"/>
+        <COMPID name="Station" mc="Standard.Class" uid="ce419465-3d39-4d6b-872c-fdb1e344d421"/>
+        <COMPID name="Tests" mc="Standard.Class" uid="6ff6f638-88b4-4759-bcd5-bc5d034f1ade"/>
+        <COMPID name="TicketingSystem" mc="Standard.Class" uid="167c7809-1231-4f2d-bf89-d61dca119002"/>
+        <COMPID name="TicketingSystemTest" mc="Standard.Class" uid="de062439-dcda-4ad4-80a7-49dec81fc57c"/>
+        <COMPID name="TransportGraph" mc="Standard.Class" uid="416458b5-931d-4033-8eaa-f3f886b944e1"/>
+        <COMPID name="Trip" mc="Standard.Class" uid="ad0f5271-7ec7-4878-92c4-d6519e04525b"/>
+        <COMPID name="Utilities" mc="Standard.Class" uid="033b9001-bb2f-455c-9db4-79ab15608702"/>
+        <COMPID name="Composite VDM Types" mc="Standard.Package" uid="a2ac0d51-820c-4472-b752-55a8689b0a5a"/>
+        <COMPID name="Binding classes" mc="Standard.Package" uid="1ab2ff25-a319-4119-95b4-15608f2bed57"/>
+        <COMPID name="Administrator" mc="Standard.Actor" uid="1e9e6982-8139-450c-b416-9d905df42367"/>
+        <COMPID name="Populate database" mc="Standard.UseCase" uid="714e8628-272a-4a66-a8e2-6eb6a5e57643"/>
+        <COMPID name="User" mc="Standard.Actor" uid="d746a73d-a453-4af2-85b6-cf70e8798d80"/>
+        <COMPID name="Search Path" mc="Standard.UseCase" uid="14c0a0f3-d7b4-4641-a1c6-d35cabe57a1e"/>
+        <COMPID name="Add connections" mc="Standard.UseCase" uid="3511efd1-ef3b-425a-8dcc-baa4f438975f"/>
+        <COMPID name="Add users" mc="Standard.UseCase" uid="ee691ca8-0cce-416a-bd4b-1fbbb43cc45f"/>
+        <COMPID name="Search path with shortest distance" mc="Standard.UseCase" uid="061c883b-2f42-4e0a-994b-809e30bc97c5"/>
+        <COMPID name="Search path with lowest price" mc="Standard.UseCase" uid="a2c72c6e-21b7-465f-9f0b-ebbf088c2115"/>
+        <COMPID name="Search path with shortest duration" mc="Standard.UseCase" uid="6b9ba5f8-7ffa-4f98-a129-7a1093194cd3"/>
+        <COMPID name="Search path with specific means of transportation" mc="Standard.UseCase" uid="17f6c84c-b54d-49ca-ae90-2a1a56194686"/>
+        <COMPID name="Search path with any means of transportation" mc="Standard.UseCase" uid="9812af57-1325-419f-ba5b-1f6601abfdef"/>
+        <COMPID name="User" mc="Standard.Actor" uid="f00e7f5e-0583-4396-989b-9d7ad188b983"/>
+        <COMPID name="Buy ticket" mc="Standard.UseCase" uid="c49a30ac-f1c4-48c1-b6d5-ad9f76f0c07e"/>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="mfes Class diagram" mc="Standard.ClassDiagram" uid="84554f20-03c8-45a0-b7f9-b6c06f2c0877"/>
+        <COMPID name="mfes Use Case diagram" mc="Standard.UseCaseDiagram" uid="b5ae6a79-1207-4c62-baf4-caa7c35823c5"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>
